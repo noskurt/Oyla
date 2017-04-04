@@ -7,13 +7,25 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 public class SplashActivity extends Activity {
 
     private LinearLayout loginLayout;
     private ProgressBar progressBar;
+
+    private Button signIn;
+    private Button register;
+    private Button contGuest;
+
+    private EditText email;
+    private EditText password;
+    private CheckBox remember;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,10 +35,38 @@ public class SplashActivity extends Activity {
         loginLayout = (LinearLayout) findViewById(R.id.signInLayout);
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
 
+        signIn = (Button) findViewById(R.id.signInButton);
+        register = (Button) findViewById(R.id.registerButton);
+        contGuest = (Button) findViewById(R.id.continueButton);
+
+        email = (EditText) findViewById(R.id.emailSignIn);
+        password = (EditText) findViewById(R.id.passwordSignIn);
+        remember = (CheckBox) findViewById(R.id.rememberMeBox);
+
+        signIn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(SplashActivity.this,"Giriş",Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        register.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(SplashActivity.this, RegisterActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        contGuest.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(SplashActivity.this,"Misafir Girişi",Toast.LENGTH_SHORT).show();
+            }
+        });
+
 
         new SharedTask().execute((Void) null);
-
-
 
     }
 
