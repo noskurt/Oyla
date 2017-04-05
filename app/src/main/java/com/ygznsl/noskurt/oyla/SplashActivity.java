@@ -7,7 +7,11 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.MainThread;
 import android.support.annotation.NonNull;
+import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
+import android.text.method.PasswordTransformationMethod;
+import android.util.Patterns;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -32,6 +36,9 @@ public class SplashActivity extends AppCompatActivity {
 
     private EditText email;
     private EditText password;
+
+    private TextInputLayout emailLayout;
+    private TextInputLayout pwLayout;
 
     public static FirebaseAuth auth;
     private FirebaseAuth.AuthStateListener authStateListener;
@@ -60,6 +67,9 @@ public class SplashActivity extends AppCompatActivity {
         email = (EditText) findViewById(R.id.emailSignIn);
         password = (EditText) findViewById(R.id.passwordSignIn);
 
+        emailLayout = (TextInputLayout) findViewById(R.id.emailSignInLayout);
+        pwLayout = (TextInputLayout) findViewById(R.id.passwordSignInLayout);
+
         auth = FirebaseAuth.getInstance();
 
         checkSigned();
@@ -86,10 +96,12 @@ public class SplashActivity extends AppCompatActivity {
             }
         });
 
-
     }
 
     private void signIn(String email, String pw) {
+
+        if (!validateEmail(email) || !validatePassword(pw)) return;
+
         final ProgressDialog progressDialog = ProgressDialog.show(SplashActivity.this, "Giriş", "Giriş yapılıyor...", true);
         auth.signInWithEmailAndPassword(email, pw)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -97,10 +109,36 @@ public class SplashActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         progressDialog.dismiss();
                         if (!task.isSuccessful()) {
-                            Toast.makeText(SplashActivity.this, "Giriş Hatalı!", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(SplashActivity.this, "Şifre veya E-Mail hatalı!!", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
+    }
+
+    private boolean validateEmail(String email) {
+        email = email.trim();
+
+        boolean isValidEmail = !TextUtils.isEmpty(email) &&
+                android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
+
+        if (email.isEmpty() || !isValidEmail) {
+            emailLayout.setError("Geçerli E-Mail adresi giriniz!");
+            return false;
+        } else {
+            emailLayout.setErrorEnabled(false);
+        }
+        return true;
+    }
+
+    private boolean validatePassword(String pw) {
+        if (pw.trim().isEmpty()) {
+            pwLayout.setError("Geçerli şifre giriniz!");
+            return false;
+        } else {
+            pwLayout.setErrorEnabled(false);
+        }
+
+        return true;
     }
 
     private void checkSigned() {
@@ -114,10 +152,9 @@ public class SplashActivity extends AppCompatActivity {
                     startActivity(intent);
                     finish();
                 } else {
-                    Toast.makeText(SplashActivity.this, "Signed Out", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(SplashActivity.this, "Giriş yapınız!", Toast.LENGTH_LONG).show();
                 }
             }
         };
     }
-
 }
