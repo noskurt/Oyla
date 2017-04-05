@@ -1,9 +1,12 @@
 package com.ygznsl.noskurt.oyla;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.MainThread;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.animation.Animation;
@@ -15,10 +18,13 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-public class SplashActivity extends AppCompatActivity {
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
-    private LinearLayout loginLayout;
-    private ProgressBar progressBar;
+public class SplashActivity extends AppCompatActivity {
 
     private Button signIn;
     private Button register;
@@ -26,15 +32,26 @@ public class SplashActivity extends AppCompatActivity {
 
     private EditText email;
     private EditText password;
-    private CheckBox remember;
+
+    public static FirebaseAuth auth;
+    private FirebaseAuth.AuthStateListener authStateListener;
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        auth.addAuthStateListener(authStateListener);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (authStateListener != null) auth.removeAuthStateListener(authStateListener);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
-
-        loginLayout = (LinearLayout) findViewById(R.id.signInLayout);
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
 
         signIn = (Button) findViewById(R.id.signInButton);
         register = (Button) findViewById(R.id.registerButton);
@@ -42,12 +59,15 @@ public class SplashActivity extends AppCompatActivity {
 
         email = (EditText) findViewById(R.id.emailSignIn);
         password = (EditText) findViewById(R.id.passwordSignIn);
-        remember = (CheckBox) findViewById(R.id.rememberMeBox);
+
+        auth = FirebaseAuth.getInstance();
+
+        checkSigned();
 
         signIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(SplashActivity.this,"Giriş",Toast.LENGTH_SHORT).show();
+                signIn(email.getText().toString(), password.getText().toString());
             }
         });
 
@@ -62,47 +82,42 @@ public class SplashActivity extends AppCompatActivity {
         contGuest.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(SplashActivity.this,"Misafir Girişi",Toast.LENGTH_SHORT).show();
+                Toast.makeText(SplashActivity.this, "Misafir Girişi", Toast.LENGTH_SHORT).show();
             }
         });
 
 
-        new SharedTask().execute((Void) null);
-
     }
 
-    class SharedTask extends AsyncTask <Void, Void ,Void> {
+    private void signIn(String email, String pw) {
+        final ProgressDialog progressDialog = ProgressDialog.show(SplashActivity.this, "Giriş", "Giriş yapılıyor...", true);
+        auth.signInWithEmailAndPassword(email, pw)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        progressDialog.dismiss();
+                        if (!task.isSuccessful()) {
+                            Toast.makeText(SplashActivity.this, "Giriş Hatalı!", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+    }
 
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-
-            loginLayout.setVisibility(View.INVISIBLE);
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-
-            Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade);
-            progressBar.startAnimation(animation);
-            loginLayout.startAnimation(animation);
-
-            progressBar.setVisibility(View.INVISIBLE);
-            loginLayout.setVisibility(View.VISIBLE);
-        }
-
-        @Override
-        protected Void doInBackground(Void... params) {
-
-            try {
-                Thread.sleep(3000);
-            } catch (Exception e) {
-                e.printStackTrace();
+    private void checkSigned() {
+        authStateListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+                if (user != null) {
+                    Toast.makeText(SplashActivity.this, user.getEmail(), Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(SplashActivity.this, MainActivity.class);
+                    startActivity(intent);
+                    finish();
+                } else {
+                    Toast.makeText(SplashActivity.this, "Signed Out", Toast.LENGTH_SHORT).show();
+                }
             }
-
-            return null;
-        }
+        };
     }
 
 }

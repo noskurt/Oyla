@@ -15,12 +15,12 @@
         android:src="@drawable/logo"
         android:textAlignment="center" />
 
-    <ProgressBar
-        android:id="@+id/progressBar"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_centerInParent="true"
-        android:layout_gravity="center" />
+    <!--<ProgressBar-->
+        <!--android:id="@+id/progressBar"-->
+        <!--android:layout_width="50dp"-->
+        <!--android:layout_height="50dp"-->
+        <!--android:layout_centerInParent="true"-->
+        <!--android:layout_gravity="center" />-->
 
     <LinearLayout
         android:id="@+id/signInLayout"
@@ -61,12 +61,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <CheckBox
-                android:id="@+id/rememberMeBox"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.5"
-                android:text="Beni Hatırla" />
+            <!--<CheckBox-->
+                <!--android:id="@+id/rememberMeBox"-->
+                <!--android:layout_width="0dp"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_weight="0.5"-->
+                <!--android:text="Beni Hatırla" />-->
 
             <Button
                 android:id="@+id/signInButton"
