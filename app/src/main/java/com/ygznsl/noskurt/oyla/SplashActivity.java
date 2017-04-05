@@ -123,7 +123,7 @@ public class SplashActivity extends AppCompatActivity {
                 android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
 
         if (email.isEmpty() || !isValidEmail) {
-            emailLayout.setError("Geçerli E-Mail adresi giriniz!");
+            this.email.setError("Geçerli E-Mail adresi giriniz!");
             return false;
         } else {
             emailLayout.setErrorEnabled(false);
