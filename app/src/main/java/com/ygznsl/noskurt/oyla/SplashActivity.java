@@ -86,6 +86,7 @@ public class SplashActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(SplashActivity.this, RegisterActivity.class);
                 startActivity(intent);
+                finish();
             }
         });
 
@@ -147,12 +148,12 @@ public class SplashActivity extends AppCompatActivity {
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 if (user != null) {
-                    Toast.makeText(SplashActivity.this, user.getEmail(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(SplashActivity.this, "Giriş BAŞARILI!", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(SplashActivity.this, MainActivity.class);
                     startActivity(intent);
                     finish();
                 } else {
-                    Toast.makeText(SplashActivity.this, "Giriş yapınız!", Toast.LENGTH_LONG).show();
+                    Toast.makeText(SplashActivity.this, "Giriş YAPINIZ!", Toast.LENGTH_LONG).show();
                 }
             }
         };

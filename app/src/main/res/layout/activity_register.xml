@@ -22,7 +22,8 @@
 
     <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        app:passwordToggleEnabled="true">
 
         <EditText
             android:id="@+id/passwordRegister"
@@ -34,7 +35,8 @@
 
     <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        app:passwordToggleEnabled="true">
 
         <EditText
             android:id="@+id/passwordAgainRegister"
@@ -81,6 +83,7 @@
     <RadioGroup
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
         android:orientation="horizontal">
 
         <RadioButton
@@ -120,8 +123,10 @@
 
     <Spinner
         android:id="@+id/cityRegister"
+
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
         android:entries="@array/city_array"
         android:hint="Şehir"
         android:inputType="text" />

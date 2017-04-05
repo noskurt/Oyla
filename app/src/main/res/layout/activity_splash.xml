@@ -60,25 +60,11 @@
 
         </android.support.design.widget.TextInputLayout>
 
-        <LinearLayout
+        <Button
+            android:id="@+id/signInButton"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <!--<CheckBox-->
-            <!--android:id="@+id/rememberMeBox"-->
-            <!--android:layout_width="0dp"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_weight="0.5"-->
-            <!--android:text="Beni Hatırla" />-->
-
-            <Button
-                android:id="@+id/signInButton"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.5"
-                android:text="GİRİŞ" />
-
-        </LinearLayout>
+            android:layout_height="wrap_content"
+            android:text="GİRİŞ" />
 
         <Button
             android:id="@+id/registerButton"
@@ -93,7 +79,6 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:text="MİSAFİR OLARAK GİRİŞ YAP" />
-
 
     </LinearLayout>
 
