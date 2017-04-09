@@ -1,5 +1,9 @@
 package com.ygznsl.noskurt.oyla.entity;
 
+import android.support.annotation.NonNull;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -7,7 +11,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.io.Serializable;
 
-public final class Category implements Serializable {
+public final class Category extends Entity implements Serializable {
 
     private int id;
     private String name;
@@ -15,11 +19,11 @@ public final class Category implements Serializable {
 
     public Category(DatabaseReference reference) {
         this.reference = reference;
-        reference.addValueEventListener(new ValueEventListener() {
+        reference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                changeId(Integer.parseInt(dataSnapshot.child("id").getValue().toString()));
-                changeName(dataSnapshot.child("name").getValue().toString());
+                Category.this.id = Integer.parseInt(dataSnapshot.child("id").getValue().toString());
+                Category.this.name = dataSnapshot.child("name").getValue().toString();
             }
 
             @Override
@@ -27,30 +31,38 @@ public final class Category implements Serializable {
         });
     }
 
-    private void changeId(int id){
-        this.id = id;
-    }
-
-    private void changeName(String name){
-        this.name = name;
-    }
-
     public int getId() {
         return id;
     }
 
-    public void setId(int id) {
-        changeId(id);
-        reference.child("id").setValue(id);
+    public void setId(final int id) {
+        reference.child("id").setValue(id).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()){
+                    Category.this.id = id;
+                }
+            }
+        });
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
-        changeName(name);
-        reference.child("name").setValue(id);
+    public void setName(final String name) {
+        reference.child("name").setValue(id).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()){
+                    Category.this.name = name;
+                }
+            }
+        });
+    }
+
+    public DatabaseReference getReference() {
+        return reference;
     }
 
     @Override

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -7,78 +8,100 @@
     android:orientation="vertical"
     tools:context="com.ygznsl.noskurt.oyla.SplashActivity">
 
-    <ImageView
-        android:id="@+id/logo"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/signInLayout"
-        android:src="@drawable/logo"
-        android:textAlignment="center" />
-
-    <!--<ProgressBar-->
-    <!--android:id="@+id/progressBar"-->
-    <!--android:layout_width="50dp"-->
-    <!--android:layout_height="50dp"-->
-    <!--android:layout_centerInParent="true"-->
-    <!--android:layout_gravity="center" />-->
-
     <LinearLayout
-        android:id="@+id/signInLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:layout_marginEnd="50dp"
-        android:layout_marginStart="50dp"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" >
 
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/emailSignInLayout"
+        <ImageView
+            android:id="@+id/imgLogo"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:src="@drawable/logo"
+            android:contentDescription="@string/app_name"
+            android:textAlignment="center" />
 
-            <EditText
-                android:id="@+id/emailSignIn"
+        <ProgressBar
+            android:id="@+id/pbSignIn"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            android:layout_margin="20dp"
+            android:layout_gravity="center_horizontal"
+            android:visibility="visible" />
+
+        <LinearLayout
+            android:id="@+id/signInLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="50dp"
+            android:layout_marginStart="50dp"
+            android:orientation="vertical"
+            android:visibility="gone" >
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/emailSignInLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:id="@+id/txtEmailSignIn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/hint_txtEmailSignIn"
+                    android:inputType="textEmailAddress" />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/passwordSignInLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="E-Mail"
-                android:inputType="textEmailAddress" />
+                app:passwordToggleEnabled="true">
 
-        </android.support.design.widget.TextInputLayout>
+                <EditText
+                    android:id="@+id/txtPasswordSignIn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/hint_txtPasswordSignIn"
+                    android:inputType="textPassword" />
 
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/passwordSignInLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:passwordToggleEnabled="true">
+            </android.support.design.widget.TextInputLayout>
 
-            <EditText
-                android:id="@+id/passwordSignIn"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Şifre"
-                android:inputType="textPassword" />
+                android:orientation="horizontal" >
 
-        </android.support.design.widget.TextInputLayout>
+                <Button
+                    android:id="@+id/btnRegister"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/text_btnRegister"
+                    android:layout_weight="1" />
 
-        <Button
-            android:id="@+id/signInButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="GİRİŞ" />
+                <Button
+                    android:id="@+id/btnSignIn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/text_btnSignIn"
+                    android:layout_weight="1"/>
 
-        <Button
-            android:id="@+id/registerButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text="KAYIT OL" />
+            </LinearLayout>
 
-        <Button
-            android:id="@+id/continueButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text="MİSAFİR OLARAK GİRİŞ YAP" />
+            <TextView
+                android:id="@+id/btnSignInAnonymously"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:textColor="@android:color/holo_blue_dark"
+                android:textStyle="italic"
+                android:textSize="10pt"
+                android:text="@string/text_btnSignInAnonymously"
+                android:layout_gravity="center_horizontal" />
+
+        </LinearLayout>
 
     </LinearLayout>
 

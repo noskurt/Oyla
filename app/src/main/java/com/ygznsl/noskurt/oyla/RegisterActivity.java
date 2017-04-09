@@ -76,7 +76,7 @@ public class RegisterActivity extends AppCompatActivity {
             return;
         }
         final ProgressDialog progressDialog = ProgressDialog.show(RegisterActivity.this, "Kayıt", "Kayıt yapılıyor...", true);
-        SplashActivity.auth.createUserWithEmailAndPassword(email, pw)
+        /*SplashActivity.auth.createUserWithEmailAndPassword(email, pw)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
@@ -90,7 +90,7 @@ public class RegisterActivity extends AppCompatActivity {
                             finish();
                         }
                     }
-                });
+                });*/
     }
 
     private boolean validateEmail(String email) {

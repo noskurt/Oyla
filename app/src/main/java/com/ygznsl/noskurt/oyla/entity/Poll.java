@@ -1,5 +1,9 @@
 package com.ygznsl.noskurt.oyla.entity;
 
+import android.support.annotation.NonNull;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -9,41 +13,37 @@ import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
-public final class Poll implements Serializable {
+public final class Poll extends Entity implements Serializable {
 
-    private int id;
+    private int id, category, user;
     private String title, url;
     private Date publishDate;
     private boolean multiple;
-    private Gender genderSpecified;
-    private Category category;
-    private User user;
+    private char genderSpecified;
     private final DatabaseReference reference;
-    private transient final List<User> users;
-    private transient final List<Category> categories;
+    private final List<Option> options = new LinkedList<>();
     private transient final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", new Locale("tr", "TR"));
 
-    public Poll(DatabaseReference reference, List<Category> categories, List<User> users) {
-        this.categories = categories;
-        this.users = users;
+    public Poll(DatabaseReference reference) {
         this.reference = reference;
-        reference.addValueEventListener(new ValueEventListener() {
+        reference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                changeId(Integer.parseInt(dataSnapshot.child("id").getValue().toString()));
-                changeTitle(dataSnapshot.child("title").getValue().toString());
-                changeUrl(dataSnapshot.child("url").getValue().toString());
-                changeMultiple(dataSnapshot.child("multiple").getValue().toString().equals("1"));
-                changeGenderSpecified(dataSnapshot.child("genderSpecified").getValue().toString().charAt(0));
-                changeCategory(Integer.parseInt(dataSnapshot.child("category").getValue().toString()));
-                changeUser(Integer.parseInt(dataSnapshot.child("user").getValue().toString()));
+                Poll.this.id = Integer.parseInt(dataSnapshot.child("id").getValue().toString());
+                Poll.this.title = dataSnapshot.child("title").getValue().toString();
+                Poll.this.url = dataSnapshot.child("title").getValue().toString();
+                Poll.this.multiple = dataSnapshot.child("multiple").getValue().toString().equals("1");
+                Poll.this.genderSpecified = dataSnapshot.child("genderSpecified").getValue().toString().charAt(0);
+                Poll.this.category = Integer.parseInt(dataSnapshot.child("category").getValue().toString());
+                Poll.this.user = Integer.parseInt(dataSnapshot.child("user").getValue().toString());
                 try {
-                    changePublishDate(sdf.parse(dataSnapshot.child("publishDate").getValue().toString()));
+                    Poll.this.publishDate = sdf.parse(dataSnapshot.child("publishDate").getValue().toString());
                 } catch (ParseException ex) {
-                    changePublishDate(null);
+                    Poll.this.publishDate = null;
                 }
             }
 
@@ -52,132 +52,136 @@ public final class Poll implements Serializable {
         });
     }
 
-    private void changeId(int id){
-        this.id = id;
-    }
-
-    private void changeUrl(String url){
-        this.url = url;
-    }
-
-    private void changeTitle(String title){
-        this.title = title;
-    }
-
-    private void changePublishDate(Date publishDate){
-        this.publishDate = publishDate;
-    }
-
-    private void changeMultiple(boolean multiple){
-        this.multiple = multiple;
-    }
-
-    private void changeGenderSpecified(Gender genderSpecified){
-        this.genderSpecified = genderSpecified;
-    }
-
-    private void changeGenderSpecified(char character){
-        genderSpecified = Gender.of(character);
-    }
-
-    private void changeCategory(Category category){
-        this.category = category;
-    }
-
-    private void changeCategory(int categoryId){
-        for (Category c : categories){
-            if (c.getId() == categoryId){
-                category = c;
-                return;
-            }
-        }
-        category = null;
-    }
-
-    private void changeUser(User user){
-        this.user = user;
-    }
-
-    private void changeUser(int userId){
-        for (User u : users){
-            if (u.getId() == userId){
-                user = u;
-                return;
-            }
-        }
-        user = null;
-    }
-
     public int getId() {
         return id;
     }
 
-    public void setId(int id) {
-        changeId(id);
-        reference.child("id").setValue(id);
+    public void setId(final int id) {
+        reference.child("id").setValue(id).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()){
+                    Poll.this.id = id;
+                }
+            }
+        });
     }
 
     public String getTitle() {
         return title;
     }
 
-    public void setTitle(String title) {
-        changeTitle(title);
-        reference.child("title").setValue(title);
+    public void setTitle(final String title) {
+        reference.child("title").setValue(title).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()){
+                    Poll.this.title = title;
+                }
+            }
+        });
     }
 
     public String getUrl() {
         return url;
     }
 
-    public void setUrl(String url) {
-        changeUrl(url);
-        reference.child("url").setValue(url);
+    public void setUrl(final String url) {
+        reference.child("url").setValue(url).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()){
+                    Poll.this.url = url;
+                }
+            }
+        });
     }
 
     public Date getPublishDate() {
         return publishDate;
     }
 
-    public void setPublishDate(Date publishDate) {
-        changePublishDate(publishDate);
-        reference.child("publishDate").setValue(sdf.format(publishDate));
+    public void setPublishDate(final Date publishDate) {
+        reference.child("publishDate").setValue(sdf.format(publishDate)).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()){
+                    Poll.this.publishDate = publishDate;
+                }
+            }
+        });
     }
 
     public boolean isMultiple() {
         return multiple;
     }
 
-    public void setMultiple(boolean multiple) {
-        changeMultiple(multiple);
-        reference.child("multiple").setValue(multiple ? 1 : 0);
+    public void setMultiple(final boolean multiple) {
+        reference.child("multiple").setValue(multiple ? 1 : 0).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()){
+                    Poll.this.multiple = multiple;
+                }
+            }
+        });
     }
 
-    public Gender getGenderSpecified() {
+    public char getGenderSpecified() {
         return genderSpecified;
     }
 
-    public void setGenderSpecified(Gender genderSpecified) {
-        changeGenderSpecified(genderSpecified);
-        reference.child("genderSpecified").setValue(genderSpecified.getCharacter());
+    public void setGenderSpecified(final char genderSpecified) {
+        reference.child("genderSpecified").setValue("" + genderSpecified).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()){
+                    Poll.this.genderSpecified = genderSpecified;
+                }
+            }
+        });
     }
 
-    public Category getCategory() {
+    public int getCategory() {
         return category;
     }
 
-    public void setCategory(Category category) {
-        changeCategory(category);
-        reference.child("category").setValue(category.getId());
+    public void setCategory(final int category) {
+        reference.child("category").setValue(category).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()){
+                    Poll.this.category = category;
+                }
+            }
+        });
     }
 
-    public User getUser() {
+    public int getUser() {
         return user;
     }
 
-    public void setUser(User user) {
-        changeUser(user);
-        reference.child("user").setValue(user.getId());
+    public void setUser(final int user) {
+        reference.child("user").setValue(user).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()){
+                    Poll.this.user = user;
+                }
+            }
+        });
+    }
+
+    public List<Option> getOptions() {
+        return options;
+    }
+
+    public SimpleDateFormat getDateFormat() {
+        return sdf;
+    }
+
+    public DatabaseReference getReference() {
+        return reference;
     }
 
     @Override

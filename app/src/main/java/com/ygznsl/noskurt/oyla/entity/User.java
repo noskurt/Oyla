@@ -1,5 +1,9 @@
 package com.ygznsl.noskurt.oyla.entity;
 
+import android.support.annotation.NonNull;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -9,36 +13,31 @@ import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
-public final class User implements Serializable {
+public final class User extends Entity implements Serializable {
 
-    private int id;
-    private Gender gender;
-    private City city;
+    private int id, city;
     private Date birthDate;
-    private String name, email, password;
+    private String name, email, password, gender;
     private final DatabaseReference reference;
-    private transient final List<City> cities;
     private transient final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", new Locale("tr", "TR"));
 
-    public User(DatabaseReference reference, List<City> cities) {
-        this.cities = cities;
+    public User(DatabaseReference reference) {
         this.reference = reference;
-        reference.addValueEventListener(new ValueEventListener() {
+        reference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                changeId(Integer.parseInt(dataSnapshot.child("id").getValue().toString()));
-                changeName(dataSnapshot.child("name").getValue().toString());
-                changeEmail(dataSnapshot.child("email").getValue().toString());
-                changePassword(dataSnapshot.child("hashedPassword").getValue().toString());
-                changeGender(dataSnapshot.child("gender").getValue().toString().charAt(0));
-                changeCity(Integer.parseInt(dataSnapshot.child("city").getValue().toString()));
+                User.this.id = Integer.parseInt(dataSnapshot.child("id").getValue().toString());
+                User.this.city = Integer.parseInt(dataSnapshot.child("city").getValue().toString());
+                User.this.name = dataSnapshot.child("name").getValue().toString();
+                User.this.email = dataSnapshot.child("email").getValue().toString();
+                User.this.password = dataSnapshot.child("hashedPassword").getValue().toString();
+                User.this.gender = dataSnapshot.child("gender").getValue().toString();
                 try {
-                    changeBirthDate(sdf.parse(dataSnapshot.child("birthDate").getValue().toString()));
+                    User.this.birthDate = sdf.parse(dataSnapshot.child("birthDate").getValue().toString());
                 } catch (ParseException ex) {
-                    changeBirthDate(null);
+                    User.this.birthDate = null;
                 }
             }
 
@@ -47,109 +46,117 @@ public final class User implements Serializable {
         });
     }
 
-    private void changeId(int id){
-        this.id = id;
-    }
-
-    private void changeName(String name){
-        this.name = name;
-    }
-
-    private void changeEmail(String email){
-        this.email = email;
-    }
-
-    private void changePassword(String password){
-        this.password = password;
-    }
-
-    private void changeBirthDate(Date birthDate){
-        this.birthDate = birthDate;
-    }
-
-    private void changeGender(Gender gender){
-        this.gender = gender;
-    }
-
-    private void changeGender(char character){
-        gender = Gender.of(character);
-    }
-
-    private void changeCity(City city){
-        this.city = city;
-    }
-
-    private void changeCity(int cityId){
-        for (City c : cities){
-            if (c.getId() == cityId){
-                city = c;
-                return;
-            }
-        }
-        city = null;
-    }
-
     public int getId() {
         return id;
     }
 
-    public void setId(int id) {
-        changeId(id);
-        reference.child("id").setValue(id);
+    public void setId(final int id) {
+        reference.child("id").setValue(id).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()){
+                    User.this.id = id;
+                }
+            }
+        });
     }
 
-    public Gender getGender() {
+    public String getGender() {
         return gender;
     }
 
-    public void setGender(Gender gender) {
-        changeGender(gender);
-        reference.child("gender").setValue(gender.getCharacter());
+    public void setGender(final String gender) {
+        reference.child("gender").setValue(gender).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()){
+                    User.this.gender = gender;
+                }
+            }
+        });
     }
 
-    public City getCity() {
+    public int getCity() {
         return city;
     }
 
-    public void setCity(City city) {
-        changeCity(city);
-        reference.child("city").setValue(city.getId());
+    public void setCity(final int city) {
+        reference.child("city").setValue(city).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()){
+                    User.this.city = city;
+                }
+            }
+        });
     }
 
     public Date getBirthDate() {
         return birthDate;
     }
 
-    public void setBirthDate(Date birthDate) {
-        changeBirthDate(birthDate);
-        reference.child("birthDate").setValue(sdf.format(birthDate));
+    public void setBirthDate(final Date birthDate) {
+        reference.child("birthDate").setValue(sdf.format(birthDate)).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()){
+                    User.this.birthDate = birthDate;
+                }
+            }
+        });
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
-        changeName(name);
-        reference.child("name").setValue(name);
+    public void setName(final String name) {
+        reference.child("name").setValue(name).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()){
+                    User.this.name = name;
+                }
+            }
+        });
     }
 
     public String getEmail() {
         return email;
     }
 
-    public void setEmail(String email) {
-        changeEmail(email);
-        reference.child("email").setValue(email);
+    public void setEmail(final String email) {
+        reference.child("email").setValue(email).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()){
+                    User.this.email = email;
+                }
+            }
+        });
     }
 
     public String getPassword() {
         return password;
     }
 
-    public void setPassword(String password) {
-        changePassword(password);
-        reference.child("password").setValue(password);
+    public void setPassword(final String hashedPassword) {
+        reference.child("hashedPassword").setValue(hashedPassword).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()){
+                    User.this.password = hashedPassword;
+                }
+            }
+        });
+    }
+
+    public DatabaseReference getReference() {
+        return reference;
+    }
+
+    public SimpleDateFormat getDateFormat() {
+        return sdf;
     }
 
     @Override

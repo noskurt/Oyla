@@ -1,30 +1,30 @@
 package com.ygznsl.noskurt.oyla.entity;
 
+import android.support.annotation.NonNull;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
 import java.io.Serializable;
-import java.util.List;
 
-public final class Option implements Serializable {
+public final class Option extends Entity implements Serializable {
 
-    private int id;
+    private int id, poll;
     private String title;
-    private Poll poll;
     private final DatabaseReference reference;
-    private transient final List<Poll> polls;
 
-    public Option(DatabaseReference reference, List<Poll> polls) {
-        this.polls = polls;
+    public Option(DatabaseReference reference) {
         this.reference = reference;
-        reference.addValueEventListener(new ValueEventListener() {
+        reference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                changeId(Integer.parseInt(dataSnapshot.child("id").getValue().toString()));
-                changeTitle(dataSnapshot.child("title").getValue().toString());
-                changePoll(Integer.parseInt(dataSnapshot.child("poll").getValue().toString()));
+                Option.this.id = Integer.parseInt(dataSnapshot.child("id").getValue().toString());
+                Option.this.poll = Integer.parseInt(dataSnapshot.child("poll").getValue().toString());
+                Option.this.title = dataSnapshot.child("title").getValue().toString();
             }
 
             @Override
@@ -32,53 +32,49 @@ public final class Option implements Serializable {
         });
     }
 
-    private void changeId(int id){
-        this.id = id;
-    }
-
-    private void changeTitle(String title){
-        this.title = title;
-    }
-
-    private void changePoll(Poll poll){
-        this.poll = poll;
-    }
-
-    private void changePoll(int pollId){
-        for (Poll p : polls){
-            if (p.getId() == pollId){
-                poll = p;
-                return;
-            }
-        }
-        poll = null;
-    }
-
     public int getId() {
         return id;
     }
 
-    public void setId(int id) {
-        changeId(id);
-        reference.child("id").setValue(id);
+    public void setId(final int id) {
+        reference.child("id").setValue(id).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()){
+                    Option.this.id = id;
+                }
+            }
+        });
     }
 
     public String getTitle() {
         return title;
     }
 
-    public void setTitle(String title) {
-        changeTitle(title);
-        reference.child("title").setValue(title);
+    public void setTitle(final String title) {
+        reference.child("title").setValue(title).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()){
+                    Option.this.title = title;
+                }
+            }
+        });
     }
 
-    public Poll getPoll() {
+    public int getPoll() {
         return poll;
     }
 
-    public void setPoll(Poll poll) {
-        changePoll(poll);
-        reference.child("poll").setValue(poll.getId());
+    public void setPoll(final int poll) {
+        reference.child("poll").setValue(poll).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()){
+                    Option.this.poll = poll;
+                }
+            }
+        });
     }
 
     @Override
@@ -90,6 +86,10 @@ public final class Option implements Serializable {
 
         return id == option.id;
 
+    }
+
+    public DatabaseReference getReference() {
+        return reference;
     }
 
     @Override

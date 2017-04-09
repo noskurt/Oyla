@@ -1,25 +1,32 @@
 package com.ygznsl.noskurt.oyla.entity;
 
+import android.support.annotation.NonNull;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
 import java.io.Serializable;
+import java.util.LinkedList;
+import java.util.List;
 
-public final class State implements Serializable {
+public final class State extends Entity implements Serializable {
 
     private int id;
     private String name;
     private final DatabaseReference reference;
+    private final List<City> cities = new LinkedList<>();
 
     public State(DatabaseReference reference) {
         this.reference = reference;
-        reference.addValueEventListener(new ValueEventListener() {
+        reference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                changeId(Integer.parseInt(dataSnapshot.child("id").getValue().toString()));
-                changeName(dataSnapshot.child("name").getValue().toString());
+                State.this.id = Integer.parseInt(dataSnapshot.child("id").getValue().toString());
+                State.this.name = dataSnapshot.child("name").getValue().toString();
             }
 
             @Override
@@ -27,30 +34,42 @@ public final class State implements Serializable {
         });
     }
 
-    private void changeId(int id){
-        this.id = id;
-    }
-
-    private void changeName(String name){
-        this.name = name;
-    }
-
     public int getId() {
         return id;
     }
 
-    public void setId(int id) {
-        changeId(id);
-        reference.child("id").setValue(id);
+    public void setId(final int id) {
+        reference.child("id").setValue(id).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()){
+                    State.this.id = id;
+                }
+            }
+        });
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
-        changeName(name);
-        reference.child("name").setValue(name);
+    public void setName(final String name) {
+        reference.child("name").setValue(name).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()){
+                    State.this.name = name;
+                }
+            }
+        });
+    }
+
+    public List<City> getCities() {
+        return cities;
+    }
+
+    public DatabaseReference getReference() {
+        return reference;
     }
 
     @Override

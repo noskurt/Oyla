@@ -1,161 +1,108 @@
 package com.ygznsl.noskurt.oyla;
 
-import android.app.Activity;
-import android.app.ProgressDialog;
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.MainThread;
-import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.text.method.PasswordTransformationMethod;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.Toast;
+import android.widget.TextView;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.FirebaseDatabase;
+import com.ygznsl.noskurt.oyla.collection.UserCollection;
+import com.ygznsl.noskurt.oyla.entity.User;
 
 public class SplashActivity extends AppCompatActivity {
 
-    private Button signIn;
-    private Button register;
-    private Button contGuest;
+    private final FirebaseDatabase db = FirebaseDatabase.getInstance();
+    private UserCollection users;
 
-    private EditText email;
-    private EditText password;
-
+    private Button btnSignIn;
+    private Button btnRegister;
+    private ProgressBar pbSignIn;
+    private TextView btnSignInAnonymously;
+    private EditText txtEmailSignIn;
+    private EditText txtPasswordSignIn;
+    private LinearLayout signInLayout;
     private TextInputLayout emailLayout;
     private TextInputLayout pwLayout;
-
-    public static FirebaseAuth auth;
-    private FirebaseAuth.AuthStateListener authStateListener;
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        auth.addAuthStateListener(authStateListener);
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        if (authStateListener != null) auth.removeAuthStateListener(authStateListener);
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
-        signIn = (Button) findViewById(R.id.signInButton);
-        register = (Button) findViewById(R.id.registerButton);
-        contGuest = (Button) findViewById(R.id.continueButton);
+        db.setPersistenceEnabled(true);
+        db.getReference().keepSynced(true);
+        db.getReference("user").keepSynced(true);
 
-        email = (EditText) findViewById(R.id.emailSignIn);
-        password = (EditText) findViewById(R.id.passwordSignIn);
+        pbSignIn = (ProgressBar) findViewById(R.id.pbSignIn);
+        signInLayout = (LinearLayout) findViewById(R.id.signInLayout);
+
+        btnSignIn = (Button) findViewById(R.id.btnSignIn);
+        btnRegister = (Button) findViewById(R.id.btnRegister);
+        btnSignInAnonymously = (TextView) findViewById(R.id.btnSignInAnonymously);
+
+        txtEmailSignIn = (EditText) findViewById(R.id.txtEmailSignIn);
+        txtPasswordSignIn = (EditText) findViewById(R.id.txtPasswordSignIn);
 
         emailLayout = (TextInputLayout) findViewById(R.id.emailSignInLayout);
         pwLayout = (TextInputLayout) findViewById(R.id.passwordSignInLayout);
 
-        auth = FirebaseAuth.getInstance();
-
-        checkSigned();
-
-        signIn.setOnClickListener(new View.OnClickListener() {
+        btnSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                signIn(email.getText().toString(), password.getText().toString());
+            public void onClick(View view) {
+                for (User u : SplashActivity.this.users){
+                    Log.w("User", u.toString());
+                }
             }
         });
 
-        register.setOnClickListener(new View.OnClickListener() {
+        final AsyncTask task = new AsyncTask() {
             @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(SplashActivity.this, RegisterActivity.class);
-                startActivity(intent);
-                finish();
+            protected Object doInBackground(Object[] objects) {
+                SplashActivity.this.users = new UserCollection(db.getReference().child("user").getRef());
+                SplashActivity.this.users.run();
+                return null;
             }
-        });
 
-        contGuest.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                Toast.makeText(SplashActivity.this, "Misafir Girişi", Toast.LENGTH_SHORT).show();
+            protected void onPostExecute(Object o) {
+                showSignInLayout();
             }
-        });
-
-    }
-
-    private void signIn(String email, String pw) {
-
-        if (!validateEmail(email) || !validatePassword(pw)) return;
-
-        final ProgressDialog progressDialog = ProgressDialog.show(SplashActivity.this, "Giriş", "Giriş yapılıyor...", true);
-        auth.signInWithEmailAndPassword(email, pw)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        progressDialog.dismiss();
-                        if (!task.isSuccessful()) {
-                            Toast.makeText(SplashActivity.this, "Şifre veya E-Mail hatalı!!", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
+        };
+        task.execute();
     }
 
     private boolean validateEmail(String email) {
-        email = email.trim();
-
-        boolean isValidEmail = !TextUtils.isEmpty(email) &&
-                android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
-
-        if (email.isEmpty() || !isValidEmail) {
-            this.email.setError("Geçerli E-Mail adresi giriniz!");
-            return false;
+        boolean isValidEmail = !TextUtils.isEmpty(email) && Patterns.EMAIL_ADDRESS.matcher(email).matches();
+        if (!isValidEmail) {
+            txtEmailSignIn.setError("Geçerli bir e-posta adresi giriniz!");
+            txtEmailSignIn.requestFocus();
         } else {
             emailLayout.setErrorEnabled(false);
         }
-        return true;
+        return isValidEmail;
     }
 
-    private boolean validatePassword(String pw) {
-        if (pw.trim().isEmpty()) {
-            pwLayout.setError("Geçerli şifre giriniz!");
+    private boolean validatePassword(String password) {
+        if (password.trim().isEmpty()) {
+            pwLayout.setError("Geçerli bir şifre giriniz!");
             return false;
-        } else {
-            pwLayout.setErrorEnabled(false);
         }
-
+        pwLayout.setErrorEnabled(false);
         return true;
     }
 
-    private void checkSigned() {
-        authStateListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser user = firebaseAuth.getCurrentUser();
-                if (user != null) {
-                    Toast.makeText(SplashActivity.this, "Giriş BAŞARILI!", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(SplashActivity.this, MainActivity.class);
-                    startActivity(intent);
-                    finish();
-                } else {
-                    Toast.makeText(SplashActivity.this, "Giriş YAPINIZ!", Toast.LENGTH_LONG).show();
-                }
-            }
-        };
+    private void showSignInLayout(){
+        pbSignIn.setVisibility(View.GONE);
+        signInLayout.setVisibility(View.VISIBLE);
     }
+
 }

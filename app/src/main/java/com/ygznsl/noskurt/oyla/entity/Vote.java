@@ -1,5 +1,9 @@
 package com.ygznsl.noskurt.oyla.entity;
 
+import android.support.annotation.NonNull;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -9,32 +13,26 @@ import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
 public final class Vote implements Serializable {
 
-    private Option option;
-    private User user;
     private Date voteDate;
+    private int user, option;
     private final DatabaseReference reference;
-    private transient final List<User> users;
-    private transient final List<Option> options;
     private transient final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", new Locale("tr", "TR"));
 
-    public Vote(DatabaseReference reference, List<User> users, List<Option> options) {
-        this.users = users;
-        this.options = options;
+    public Vote(DatabaseReference reference) {
         this.reference = reference;
-        reference.addValueEventListener(new ValueEventListener() {
+        reference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                changeOption(Integer.parseInt(dataSnapshot.child("oid").getValue().toString()));
-                changeUser(Integer.parseInt(dataSnapshot.child("uid").getValue().toString()));
+                Vote.this.option = Integer.parseInt(dataSnapshot.child("oid").getValue().toString());
+                Vote.this.user = Integer.parseInt(dataSnapshot.child("uid").getValue().toString());
                 try {
-                    changeVoteDate(sdf.parse(dataSnapshot.child("votedate").getValue().toString()));
+                    Vote.this.voteDate = sdf.parse(dataSnapshot.child("votedate").getValue().toString());
                 } catch (ParseException ex) {
-                    changeVoteDate(null);
+                    Vote.this.voteDate = null;
                 }
             }
 
@@ -43,63 +41,57 @@ public final class Vote implements Serializable {
         });
     }
 
-    private void changeOption(Option option){
-        this.option = option;
-    }
-
-    private void changeOption(int optionId){
-        for (Option o : options){
-            if (o.getId() == optionId){
-                option = o;
-                return;
-            }
-        }
-        option = null;
-    }
-
-    private void changeUser(User user){
-        this.user = user;
-    }
-
-    private void changeUser(int userId){
-        for (User u : users){
-            if (u.getId() == userId){
-                user = u;
-                return;
-            }
-        }
-        user = null;
-    }
-
-    private void changeVoteDate(Date voteDate){
-        this.voteDate = voteDate;
-    }
-
-    public Option getOption() {
+    public int getOption() {
         return option;
     }
 
-    public void setOption(Option option) {
-        changeOption(option);
-        reference.child("oid").setValue(option.getId());
+    public void setOption(final int option) {
+        reference.child("oid").setValue(option).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()){
+                    Vote.this.option = option;
+                }
+            }
+        });
     }
 
-    public User getUser() {
+    public int getUser() {
         return user;
     }
 
-    public void setUser(User user) {
-        changeUser(user);
-        reference.child("uid").setValue(user.getId());
+    public void setUser(final int user) {
+        reference.child("uid").setValue(user).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()){
+                    Vote.this.user = user;
+                }
+            }
+        });
     }
 
     public Date getVoteDate() {
         return voteDate;
     }
 
-    public void setVoteDate(Date voteDate) {
-        changeVoteDate(voteDate);
-        reference.child("votedate").setValue(sdf.format(voteDate));
+    public void setVoteDate(final Date voteDate) {
+        reference.child("votedate").setValue(sdf.format(voteDate)).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()){
+                    Vote.this.voteDate = voteDate;
+                }
+            }
+        });
+    }
+
+    public DatabaseReference getReference() {
+        return reference;
+    }
+
+    public SimpleDateFormat getDateFormat() {
+        return sdf;
     }
 
     @Override
@@ -109,17 +101,17 @@ public final class Vote implements Serializable {
 
         Vote vote = (Vote) o;
 
-        if (!option.equals(vote.option)) return false;
-        if (!user.equals(vote.user)) return false;
-        return voteDate != null ? voteDate.equals(vote.voteDate) : vote.voteDate == null;
+        if (user != vote.user) return false;
+        if (option != vote.option) return false;
+        return voteDate.equals(vote.voteDate);
 
     }
 
     @Override
     public int hashCode() {
-        int result = option.hashCode();
-        result = 31 * result + user.hashCode();
-        result = 31 * result + (voteDate != null ? voteDate.hashCode() : 0);
+        int result = voteDate.hashCode();
+        result = 31 * result + user;
+        result = 31 * result + option;
         return result;
     }
 
