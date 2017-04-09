@@ -40,27 +40,31 @@ public final class UserCollection implements Serializable, Runnable, Iterable<Us
 
     @Override
     public void run() {
+        final CountWatcher watcher = new CountWatcher();
         final CountDownLatch latch = new CountDownLatch(1);
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 final int count = (int) dataSnapshot.getChildrenCount();
                 Log.w("Count", "" + count);
-                if (list.size() >= count){
-                    latch.countDown();
-                }
+                watcher.increment(count);
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {}
         });
-
         reference.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String previousChildName) {
                 final User user = new User(dataSnapshot.getRef());
                 list.add(user);
                 Log.w("User added", "" + dataSnapshot);
+                watcher.decrement();
+                if (watcher.get() == 0){
+                    if (latch.getCount() != 0){
+                        latch.countDown();
+                    }
+                }
             }
 
             @Override
@@ -85,6 +89,26 @@ public final class UserCollection implements Serializable, Runnable, Iterable<Us
         } catch (InterruptedException ex) {
             Log.e("UserCollection", ex.getMessage());
         }
+    }
+
+    private class CountWatcher {
+
+        private int count = 0;
+
+        public void increment() { count++; }
+
+        public void increment(int by) { count += by; }
+
+        public void decrement() { count--; }
+
+        public int get() {
+            return count;
+        }
+
+        public void set(int count) {
+            this.count = count;
+        }
+
     }
 
 }

@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
@@ -16,7 +15,6 @@ import android.widget.TextView;
 
 import com.google.firebase.database.FirebaseDatabase;
 import com.ygznsl.noskurt.oyla.collection.UserCollection;
-import com.ygznsl.noskurt.oyla.entity.User;
 
 public class SplashActivity extends AppCompatActivity {
 
@@ -54,15 +52,6 @@ public class SplashActivity extends AppCompatActivity {
 
         emailLayout = (TextInputLayout) findViewById(R.id.emailSignInLayout);
         pwLayout = (TextInputLayout) findViewById(R.id.passwordSignInLayout);
-
-        btnSignIn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                for (User u : SplashActivity.this.users){
-                    Log.w("User", u.toString());
-                }
-            }
-        });
 
         final AsyncTask task = new AsyncTask() {
             @Override
