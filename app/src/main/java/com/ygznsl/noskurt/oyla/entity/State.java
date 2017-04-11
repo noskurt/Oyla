@@ -17,8 +17,8 @@ public final class State extends Entity implements Serializable {
 
     private int id;
     private String name;
-    private final DatabaseReference reference;
     private final List<City> cities = new LinkedList<>();
+    private transient final DatabaseReference reference;
 
     public State(DatabaseReference reference) {
         this.reference = reference;

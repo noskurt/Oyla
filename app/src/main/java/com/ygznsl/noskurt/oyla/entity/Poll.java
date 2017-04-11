@@ -24,8 +24,8 @@ public final class Poll extends Entity implements Serializable {
     private Date publishDate;
     private boolean multiple;
     private char genderSpecified;
-    private final DatabaseReference reference;
     private final List<Option> options = new LinkedList<>();
+    private transient final DatabaseReference reference;
     private transient final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", new Locale("tr", "TR"));
 
     public Poll(DatabaseReference reference) {

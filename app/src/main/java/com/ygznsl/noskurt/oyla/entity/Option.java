@@ -15,7 +15,7 @@ public final class Option extends Entity implements Serializable {
 
     private int id, poll;
     private String title;
-    private final DatabaseReference reference;
+    private transient final DatabaseReference reference;
 
     public Option(DatabaseReference reference) {
         this.reference = reference;

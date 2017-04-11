@@ -15,7 +15,7 @@ public final class Category extends Entity implements Serializable {
 
     private int id;
     private String name;
-    private final DatabaseReference reference;
+    private transient final DatabaseReference reference;
 
     public Category(DatabaseReference reference) {
         this.reference = reference;

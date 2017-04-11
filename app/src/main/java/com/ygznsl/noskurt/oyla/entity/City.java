@@ -16,8 +16,8 @@ public final class City extends Entity implements Serializable {
 
     private int id, state;
     private String name;
-    private final DatabaseReference reference;
-    private transient final List<State> states;
+    private final List<State> states;
+    private transient final DatabaseReference reference;
 
     public City(DatabaseReference reference, List<State> states) {
         this.states = states;

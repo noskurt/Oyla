@@ -8,6 +8,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
+import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 import java.text.ParseException;
@@ -17,10 +18,14 @@ import java.util.Locale;
 
 public final class Vote implements Serializable {
 
+    @SerializedName("u")
+    private int user;
+    @SerializedName("o")
+    private int option;
+    @SerializedName("vd")
     private Date voteDate;
-    private int user, option;
-    private final DatabaseReference reference;
-    private transient final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", new Locale("tr", "TR"));
+    private transient final DatabaseReference reference;
+    public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", new Locale("tr", "TR"));
 
     public Vote(DatabaseReference reference) {
         this.reference = reference;
@@ -30,7 +35,7 @@ public final class Vote implements Serializable {
                 Vote.this.option = Integer.parseInt(dataSnapshot.child("oid").getValue().toString());
                 Vote.this.user = Integer.parseInt(dataSnapshot.child("uid").getValue().toString());
                 try {
-                    Vote.this.voteDate = sdf.parse(dataSnapshot.child("votedate").getValue().toString());
+                    Vote.this.voteDate = DATE_FORMAT.parse(dataSnapshot.child("votedate").getValue().toString());
                 } catch (ParseException ex) {
                     Vote.this.voteDate = null;
                 }
@@ -76,7 +81,7 @@ public final class Vote implements Serializable {
     }
 
     public void setVoteDate(final Date voteDate) {
-        reference.child("votedate").setValue(sdf.format(voteDate)).addOnCompleteListener(new OnCompleteListener<Void>() {
+        reference.child("votedate").setValue(DATE_FORMAT.format(voteDate)).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if (task.isSuccessful()){
@@ -88,10 +93,6 @@ public final class Vote implements Serializable {
 
     public DatabaseReference getReference() {
         return reference;
-    }
-
-    public SimpleDateFormat getDateFormat() {
-        return sdf;
     }
 
     @Override
@@ -120,7 +121,7 @@ public final class Vote implements Serializable {
         return "Vote{" +
                 "option=" + option +
                 ", user=" + user +
-                ", voteDate=" + sdf.format(voteDate) +
+                ", voteDate=" + DATE_FORMAT.format(voteDate) +
                 '}';
     }
 

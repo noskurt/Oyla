@@ -20,7 +20,7 @@ public final class User extends Entity implements Serializable {
     private int id, city;
     private Date birthDate;
     private String name, email, password, gender;
-    private final DatabaseReference reference;
+    private transient final DatabaseReference reference;
     private transient final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", new Locale("tr", "TR"));
 
     public User(DatabaseReference reference) {

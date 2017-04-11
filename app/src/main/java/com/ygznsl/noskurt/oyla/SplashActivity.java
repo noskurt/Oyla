@@ -31,28 +31,10 @@ public class SplashActivity extends AppCompatActivity {
     private TextInputLayout emailLayout;
     private TextInputLayout pwLayout;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_splash);
-
+    public SplashActivity(){
         db.setPersistenceEnabled(true);
         db.getReference().keepSynced(true);
         db.getReference("user").keepSynced(true);
-
-        pbSignIn = (ProgressBar) findViewById(R.id.pbSignIn);
-        signInLayout = (LinearLayout) findViewById(R.id.signInLayout);
-
-        btnSignIn = (Button) findViewById(R.id.btnSignIn);
-        btnRegister = (Button) findViewById(R.id.btnRegister);
-        btnSignInAnonymously = (TextView) findViewById(R.id.btnSignInAnonymously);
-
-        txtEmailSignIn = (EditText) findViewById(R.id.txtEmailSignIn);
-        txtPasswordSignIn = (EditText) findViewById(R.id.txtPasswordSignIn);
-
-        emailLayout = (TextInputLayout) findViewById(R.id.emailSignInLayout);
-        pwLayout = (TextInputLayout) findViewById(R.id.passwordSignInLayout);
-
         final AsyncTask task = new AsyncTask() {
             @Override
             protected Object doInBackground(Object[] objects) {
@@ -67,6 +49,25 @@ public class SplashActivity extends AppCompatActivity {
             }
         };
         task.execute();
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_splash);
+
+        pbSignIn = (ProgressBar) findViewById(R.id.pbSignIn);
+        signInLayout = (LinearLayout) findViewById(R.id.signInLayout);
+
+        btnSignIn = (Button) findViewById(R.id.btnSignIn);
+        btnRegister = (Button) findViewById(R.id.btnRegister);
+        btnSignInAnonymously = (TextView) findViewById(R.id.btnSignInAnonymously);
+
+        txtEmailSignIn = (EditText) findViewById(R.id.txtEmailSignIn);
+        txtPasswordSignIn = (EditText) findViewById(R.id.txtPasswordSignIn);
+
+        emailLayout = (TextInputLayout) findViewById(R.id.emailSignInLayout);
+        pwLayout = (TextInputLayout) findViewById(R.id.passwordSignInLayout);
     }
 
     private boolean validateEmail(String email) {
@@ -90,6 +91,7 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     private void showSignInLayout(){
+        if (pbSignIn == null || signInLayout == null) return;
         pbSignIn.setVisibility(View.GONE);
         signInLayout.setVisibility(View.VISIBLE);
     }

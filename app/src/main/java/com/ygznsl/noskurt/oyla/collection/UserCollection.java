@@ -42,11 +42,10 @@ public final class UserCollection implements Serializable, Runnable, Iterable<Us
     public void run() {
         final CountWatcher watcher = new CountWatcher();
         final CountDownLatch latch = new CountDownLatch(1);
-        reference.addValueEventListener(new ValueEventListener() {
+        reference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 final int count = (int) dataSnapshot.getChildrenCount();
-                Log.w("Count", "" + count);
                 watcher.increment(count);
             }
 
