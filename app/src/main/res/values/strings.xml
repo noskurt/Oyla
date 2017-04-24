@@ -2,7 +2,17 @@
     <string name="app_name">Oyla</string>
     <string name="hint_txtEmailSignIn">E-posta Adresi</string>
     <string name="hint_txtPasswordSignIn">Şifre</string>
+    <string name="hint_txtNameRegister">Kullanıcı Adı</string>
+    <string name="hint_txtBirthDateRegister">Doğum Tarihi</string>
+    <string name="hint_city">Şehir</string>
+    <string name="text_gender">Cinsiyet: </string>
     <string name="text_btnSignIn">Giriş Yap</string>
     <string name="text_btnRegister">Kayıt Ol</string>
     <string name="text_btnSignInAnonymously">Giriş yapmadan devam et</string>
+    <string name="text_btnRadioMale">Erkek</string>
+    <string name="text_btnRadioFemale">Kadın</string>
+    <string name="text_city">Şehir: </string>
+    <string name="text_btnCancel">İptal</string>
+
+
 </resources>

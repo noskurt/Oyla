@@ -1,10 +1,14 @@
 package com.ygznsl.noskurt.oyla;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
@@ -12,62 +16,162 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.google.firebase.database.FirebaseDatabase;
-import com.ygznsl.noskurt.oyla.collection.UserCollection;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
+import com.google.firebase.auth.FirebaseAuthInvalidUserException;
+import com.google.firebase.auth.FirebaseUser;
 
 public class SplashActivity extends AppCompatActivity {
 
-    private final FirebaseDatabase db = FirebaseDatabase.getInstance();
-    private UserCollection users;
+    private final FirebaseAuth auth = FirebaseAuth.getInstance();
 
-    private Button btnSignIn;
-    private Button btnRegister;
     private ProgressBar pbSignIn;
-    private TextView btnSignInAnonymously;
     private EditText txtEmailSignIn;
     private EditText txtPasswordSignIn;
     private LinearLayout signInLayout;
     private TextInputLayout emailLayout;
     private TextInputLayout pwLayout;
 
-    public SplashActivity(){
-        db.setPersistenceEnabled(true);
-        db.getReference().keepSynced(true);
-        db.getReference("user").keepSynced(true);
-        final AsyncTask task = new AsyncTask() {
-            @Override
-            protected Object doInBackground(Object[] objects) {
-                SplashActivity.this.users = new UserCollection(db.getReference().child("user").getRef());
-                SplashActivity.this.users.run();
-                return null;
-            }
-
-            @Override
-            protected void onPostExecute(Object o) {
-                showSignInLayout();
-            }
-        };
-        task.execute();
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
+        final Button btnSignIn = (Button) findViewById(R.id.btnSignIn);
+        final Button btnRegister = (Button) findViewById(R.id.btnRegister);
+        final TextView btnSignInAnonymously = (TextView) findViewById(R.id.btnSignInAnonymously);
+
         pbSignIn = (ProgressBar) findViewById(R.id.pbSignIn);
         signInLayout = (LinearLayout) findViewById(R.id.signInLayout);
-
-        btnSignIn = (Button) findViewById(R.id.btnSignIn);
-        btnRegister = (Button) findViewById(R.id.btnRegister);
-        btnSignInAnonymously = (TextView) findViewById(R.id.btnSignInAnonymously);
 
         txtEmailSignIn = (EditText) findViewById(R.id.txtEmailSignIn);
         txtPasswordSignIn = (EditText) findViewById(R.id.txtPasswordSignIn);
 
         emailLayout = (TextInputLayout) findViewById(R.id.emailSignInLayout);
         pwLayout = (TextInputLayout) findViewById(R.id.passwordSignInLayout);
+
+        btnRegister.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final Intent intent = new Intent(SplashActivity.this, RegisterActivity.class);
+                startActivity(intent);
+                SplashActivity.this.finish();
+            }
+        });
+
+        btnSignIn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final String email = txtEmailSignIn.getText().toString();
+                final String password = txtPasswordSignIn.getText().toString();
+                if (!validateEmail(email) || !validatePassword(password)) return;
+                new AsyncTask<String, Integer, Boolean>() {
+                    @Override
+                    protected void onPreExecute() {
+                        showProgressBar();
+                    }
+
+                    @Override
+                    protected void onPostExecute(Boolean aBoolean) {
+                        hideProgressBar();
+                    }
+
+                    @Override
+                    protected Boolean doInBackground(String... strings) {
+                        try { Thread.sleep(1000); }
+                        catch (InterruptedException ex) { Log.e("signIn.doInBackground", ex.getMessage()); }
+                        auth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                try {
+                                    if (task.getResult().getUser() != null) logIn();
+                                } catch (Exception ex) {
+                                    final Class c = ex.getClass();
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            if (c.equals(FirebaseAuthInvalidUserException.class)) {
+                                                Toast.makeText(SplashActivity.this, "Böyle bir kullanıcı mevcut değil.\r\nGiriş yapabilmek için lütfen kaydolun.", Toast.LENGTH_LONG).show();
+                                                emailLayout.setError("Böyle bir kullanıcı mevcut değil");
+                                                txtEmailSignIn.requestFocus();
+                                            } else if (c.equals(FirebaseAuthInvalidCredentialsException.class)) {
+                                                Toast.makeText(SplashActivity.this, "Hatalı şifre girdiniz.", Toast.LENGTH_LONG).show();
+                                                pwLayout.setError("Hatalı şifre girdiniz.");
+                                                txtPasswordSignIn.requestFocus();
+                                            } else {
+                                                Toast.makeText(SplashActivity.this, "Giriş başarısız oldu.", Toast.LENGTH_LONG).show();
+                                                emailLayout.setErrorEnabled(false);
+                                                pwLayout.setErrorEnabled(false);
+                                            }
+                                        }
+                                    });
+                                }
+                            }
+                        });
+                        return true;
+                    }
+                }.execute();
+            }
+        });
+
+        btnSignInAnonymously.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                new AsyncTask<String, Integer, Boolean>() {
+                    @Override
+                    protected void onPreExecute() {
+                        showProgressBar();
+                    }
+
+                    @Override
+                    protected void onPostExecute(Boolean aBoolean) {
+                        hideProgressBar();
+                    }
+
+                    @Override
+                    protected Boolean doInBackground(String... strings) {
+                        try { Thread.sleep(1000); }
+                        catch (InterruptedException ex) { Log.e("signInAn.doInBackground", ex.getMessage()); }
+                        auth.signInAnonymously().addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                try {
+                                    if (task.getResult().getUser() != null) logIn();
+                                } catch (Exception ex) {
+                                    Toast.makeText(SplashActivity.this, "Giriş başarısız oldu.", Toast.LENGTH_LONG).show();
+                                }
+                            }
+                        });
+                        return true;
+                    }
+                }.execute();
+            }
+        });
+
+        final AsyncTask<FirebaseAuth, Integer, FirebaseUser> task = new AsyncTask<FirebaseAuth, Integer, FirebaseUser>() {
+            private FirebaseUser user = null;
+
+            @Override
+            protected FirebaseUser doInBackground(FirebaseAuth... firebaseAuths) {
+                user = auth.getCurrentUser();
+                try { Thread.sleep(1500); }
+                catch (InterruptedException ex) { Log.e("task.doInBackground", ex.getMessage()); }
+                if (user != null) logIn();
+                return user;
+            }
+
+            @Override
+            protected void onPostExecute(FirebaseUser firebaseUser) {
+                if (user == null) hideProgressBar();
+            }
+        };
+        task.execute();
     }
 
     private boolean validateEmail(String email) {
@@ -75,10 +179,10 @@ public class SplashActivity extends AppCompatActivity {
         if (!isValidEmail) {
             txtEmailSignIn.setError("Geçerli bir e-posta adresi giriniz!");
             txtEmailSignIn.requestFocus();
-        } else {
-            emailLayout.setErrorEnabled(false);
+            return false;
         }
-        return isValidEmail;
+        emailLayout.setErrorEnabled(false);
+        return true;
     }
 
     private boolean validatePassword(String password) {
@@ -90,10 +194,22 @@ public class SplashActivity extends AppCompatActivity {
         return true;
     }
 
-    private void showSignInLayout(){
+    private void showProgressBar(){
+        if (pbSignIn == null || signInLayout == null) return;
+        pbSignIn.setVisibility(View.VISIBLE);
+        signInLayout.setVisibility(View.GONE);
+    }
+
+    private void hideProgressBar(){
         if (pbSignIn == null || signInLayout == null) return;
         pbSignIn.setVisibility(View.GONE);
         signInLayout.setVisibility(View.VISIBLE);
+    }
+
+    private void logIn(){
+        final Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+        finish();
     }
 
 }

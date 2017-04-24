@@ -1,83 +1,35 @@
 package com.ygznsl.noskurt.oyla.entity;
 
-import android.support.annotation.NonNull;
-
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.ValueEventListener;
-
 import java.io.Serializable;
-import java.util.List;
 
 public final class City extends Entity implements Serializable {
 
-    private int id, state;
+    private int id;
     private String name;
-    private final List<State> states;
-    private transient final DatabaseReference reference;
 
-    public City(DatabaseReference reference, List<State> states) {
-        this.states = states;
-        this.reference = reference;
-        reference.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                City.this.id = Integer.parseInt(dataSnapshot.child("id").getValue().toString());
-                City.this.state = Integer.parseInt(dataSnapshot.child("state").getValue().toString());
-                City.this.name = dataSnapshot.child("name").getValue().toString();
-            }
+    public City() {}
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {}
-        });
+    public City(int id, String name) {
+        this.id = id;
+        this.name = name;
     }
 
+    @Override
     public int getId() {
         return id;
     }
 
-    public void setId(final int id) {
-        reference.child("id").setValue(id).addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                if (task.isSuccessful()){
-                    City.this.id = id;
-                }
-            }
-        });
-    }
-
-    public int getState() {
-        return state;
-    }
-
-    public void setState(final int state) {
-        reference.child("state").setValue(state).addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                if (task.isSuccessful()){
-                    City.this.state = state;
-                }
-            }
-        });
+    @Override
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(final String name) {
-        reference.child("name").setValue(name).addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                if (task.isSuccessful()){
-                    City.this.name = name;
-                }
-            }
-        });
+    public void setName(String name) {
+        this.name = name;
     }
 
     @Override
@@ -87,26 +39,21 @@ public final class City extends Entity implements Serializable {
 
         City city = (City) o;
 
-        return id == city.id;
+        if (id != city.id) return false;
+        return name.equals(city.name);
 
-    }
-
-    public DatabaseReference getReference() {
-        return reference;
     }
 
     @Override
     public int hashCode() {
-        return id;
+        int result = id;
+        result = 31 * result + name.hashCode();
+        return result;
     }
 
     @Override
     public String toString() {
-        return "City{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", state=" + state +
-                '}';
+        return name;
     }
 
 }
