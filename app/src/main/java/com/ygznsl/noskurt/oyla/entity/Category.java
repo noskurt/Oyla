@@ -1,6 +1,18 @@
 package com.ygznsl.noskurt.oyla.entity;
 
+import android.content.Context;
+import android.util.Log;
+
+import com.google.gson.Gson;
+import com.google.gson.stream.JsonReader;
+
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.Serializable;
+import java.nio.charset.Charset;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 
 public final class Category extends Entity implements Serializable {
 
@@ -43,6 +55,20 @@ public final class Category extends Entity implements Serializable {
     @Override
     public String toString() {
         return name;
+    }
+
+    public static List<Category> getCategories(Context context){
+        final List<Category> categories = new LinkedList<>();
+        try (InputStreamReader isr = new InputStreamReader(context.getAssets().open("category.json"), Charset.forName("utf-8"))){
+            try (JsonReader reader = new JsonReader(isr)){
+                final Category[] array = new Gson().fromJson(reader, Category[].class);
+                categories.addAll(Arrays.asList(array));
+                return categories;
+            }
+        } catch (IOException ex) {
+            Log.e("City.getCities", ex.getMessage());
+            return null;
+        }
     }
 
 }

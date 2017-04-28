@@ -63,9 +63,6 @@ public class SplashActivity extends AppCompatActivity {
             }
         });
 
-        // TODO sil
-        //auth.signOut();
-
         btnSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -85,10 +82,10 @@ public class SplashActivity extends AppCompatActivity {
                         auth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
-                                try {
-                                    if (task.getResult().getUser() != null) logIn();
-                                } catch (Exception ex) {
-                                    final Class c = ex.getClass();
+                                if (task.isSuccessful()){
+                                    logIn();
+                                } else {
+                                    final Class c = task.getException().getClass();
                                     runOnUiThread(new Runnable() {
                                         @Override
                                         public void run() {
@@ -206,6 +203,12 @@ public class SplashActivity extends AppCompatActivity {
     private void logIn(){
         final Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
+        finish();
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
         finish();
     }
 

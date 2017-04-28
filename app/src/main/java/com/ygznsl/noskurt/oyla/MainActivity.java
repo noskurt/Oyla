@@ -11,7 +11,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -23,17 +22,18 @@ import com.ygznsl.noskurt.oyla.entity.User;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Random;
-import java.util.concurrent.Semaphore;
 
 public class MainActivity extends AppCompatActivity {
 
     private final DatabaseReference db = FirebaseDatabase.getInstance().getReference();
     private final FirebaseAuth auth = FirebaseAuth.getInstance();
-    private final Semaphore semMaxPollId = new Semaphore(1);
-    private Poll randomPoll;
-    private int maxPollId;
-    private User user;
+    private final List<Poll> polls = Collections.synchronizedList(new LinkedList<Poll>());
+    private boolean pollsGot = false;
+    private Poll randomPoll = null;
+    private User user = null;
+    private String userKey;
 
     private ProgressBar pbUserNameMain;
     private ProgressBar pbPollCountMain;
@@ -44,9 +44,9 @@ public class MainActivity extends AppCompatActivity {
     private LinearLayout llRandomPollMain;
 
     public MainActivity(){
+        db.child("poll").keepSynced(true);
         getUserInfo();
-        getPollCount();
-        getRandomPoll();
+        getPolls();
     }
 
     private void getUserInfo(){
@@ -55,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot ds : dataSnapshot.getChildren()){
                     user = ds.getValue(User.class);
+                    userKey = ds.getKey();
                     if (txtUserNameMain != null){
                         txtUserNameMain.setText(user.getName());
                         txtUserNameMain.setVisibility(View.VISIBLE);
@@ -70,61 +71,46 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void getPollCount(){
-        try {
-            semMaxPollId.acquire();
-            db.child("poll").orderByChild("id").addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    if (txtPollCountMain != null){
-                        txtPollCountMain.setText(String.valueOf(dataSnapshot.getChildrenCount()));
-                        txtPollCountMain.setVisibility(View.VISIBLE);
-                    }
-                    if (pbPollCountMain != null){
-                        pbPollCountMain.setVisibility(View.GONE);
-                    }
-                    final LinkedList<Poll> polls = new LinkedList<>();
-                    for (DataSnapshot ds : dataSnapshot.getChildren()) polls.add(ds.getValue(Poll.class));
-                    Collections.sort(polls, new Comparator<Poll>() {
-                        @Override
-                        public int compare(Poll p1, Poll p2) {
-                            return Integer.valueOf(p2.getId()).compareTo(p1.getId());
-                        }
-                    });
-                    maxPollId = polls.getFirst().getId();
-                    semMaxPollId.release();
+    private void getPolls(){
+        db.child("poll").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot ds : dataSnapshot.getChildren()){
+                    final Poll poll = ds.getValue(Poll.class);
+                    if (!polls.contains(poll)) polls.add(poll);
                 }
+                Collections.sort(polls, new Comparator<Poll>() {
+                    @Override
+                    public int compare(Poll p1, Poll p2) {
+                        return Integer.valueOf(p2.getId()).compareTo(p1.getId());
+                    }
+                });
+                if (txtPollCountMain != null){
+                    txtPollCountMain.setText(String.valueOf(polls.size()));
+                    txtPollCountMain.setVisibility(View.VISIBLE);
+                }
+                if (pbPollCountMain != null){
+                    pbPollCountMain.setVisibility(View.GONE);
+                }
+                pollsGot = true;
+                selectRandomPoll();
+            }
 
-                @Override
-                public void onCancelled(DatabaseError databaseError) {}
-            });
-        } catch (InterruptedException ex) {
-            Log.e("getPollCount", ex.getMessage());
-        }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {}
+        });
     }
 
-    private void getRandomPoll(){
-        try {
-            semMaxPollId.acquire();
-            final int random = new Random().nextInt(maxPollId) + 1;
-            db.child("poll").orderByChild("id").startAt(random).limitToFirst(1).addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    for (DataSnapshot ds : dataSnapshot.getChildren()){
-                        randomPoll = ds.getValue(Poll.class);
-                        Log.w("Random poll", randomPoll.toString());
-                        semMaxPollId.release();
-                    }
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
-        } catch (InterruptedException ex) {
-            Log.e("getPollCount", ex.getMessage());
+    private Poll selectRandomPoll(){
+        randomPoll = polls.get(new Random().nextInt(polls.size()));
+        Log.w("Random Poll", randomPoll.toString());
+        if (llRandomPollMain != null){
+            llRandomPollMain.setVisibility(View.VISIBLE);
         }
+        if (pbRandomPollMain != null){
+            pbRandomPollMain.setVisibility(View.GONE);
+        }
+        return randomPoll;
     }
 
     @Override
@@ -140,9 +126,20 @@ public class MainActivity extends AppCompatActivity {
         txtPollCountMain = (TextView) findViewById(R.id.txtPollCountMain);
         llRandomPollMain = (LinearLayout) findViewById(R.id.llRandomPollMain);
 
+        final Button btnAccountMain = (Button) findViewById(R.id.btnAccountMain);
+
+        btnAccountMain.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final Intent intent = new Intent(MainActivity.this, AccountActivity.class);
+                intent.putExtra("user", user);
+                intent.putExtra("userKey", userKey);
+                startActivity(intent);
+            }
+        });
+
         if (user == null) getUserInfo();
-        if (maxPollId == 0) getPollCount();
-        getRandomPoll();
+        if (!pollsGot) getPolls();
 
         // TODO rastgele anket kısmı yapılacak
 

@@ -1,9 +1,7 @@
 package com.ygznsl.noskurt.oyla.entity;
 
 import java.io.Serializable;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Locale;
 
 public final class User extends Entity implements Serializable {
@@ -12,14 +10,6 @@ public final class User extends Entity implements Serializable {
 
     private String bdate, email, gender, name;
     private int id, city;
-
-    public Date getBirthDate() throws ParseException {
-        return DATE_FORMAT.parse(bdate);
-    }
-
-    public void setBirthDate(Date birthDate){
-        bdate = DATE_FORMAT.format(birthDate);
-    }
 
     public String getBdate() {
         return bdate;

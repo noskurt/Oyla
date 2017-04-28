@@ -2,9 +2,13 @@
     <string name="app_name">Oyla</string>
     <string name="hint_txtEmailSignIn">E-posta Adresi</string>
     <string name="hint_txtPasswordSignIn">Şifre</string>
+    <string name="hint_txtPasswordAgainSignIn">Şifre (Tekrar)</string>
     <string name="hint_txtNameRegister">Kullanıcı Adı</string>
     <string name="hint_txtBirthDateRegister">Doğum Tarihi</string>
     <string name="hint_city">Şehir</string>
+    <string name="hint_password">Şifre</string>
+    <string name="hint_passwordNew">Yeni Şifre</string>
+    <string name="hint_passwordNewAgain">Yeni Şifre (Tekrar)</string>
     <string name="text_gender">Cinsiyet: </string>
     <string name="text_btnSignIn">Giriş Yap</string>
     <string name="text_btnRegister">Kayıt Ol</string>
@@ -16,10 +20,18 @@
     <string name="text_btnAccount">Hesabım</string>
     <string name="text_btnBrowsePolls">Anketlere Göz At</string>
     <string name="text_btnCreatePoll">Anket Yayınla</string>
+    <string name="text_btnUpdate">Tercihleri Güncelle</string>
+    <string name="text_btnMyPolls">Yayınladıklarım</string>
+    <string name="text_btnMyVotes">Oyladıklarım</string>
+    <string name="text_btnLogout">Çıkış Yap</string>
+    <string name="text_btnChangePassword">Şifreyi Değiştir</string>
     <string name="text_welcome"> olarak giriş yaptınız</string>
     <string name="text_pollCount1">Toplamda </string>
     <string name="text_pollCount2"> anket yayında</string>
     <string name="text_createPoll">Hemen bir anket oluşturun!</string>
     <string name="text_randomPoll">Bunu oyladınız mı?</string>
+    <string name="text_emailAddress">E-posta Adresiniz: </string>
+    <string name="text_birthDate">Doğum tarihiniz: </string>
+    <string name="text_cityAccount">Şehriniz: </string>
 
 </resources>

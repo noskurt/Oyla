@@ -16,30 +16,6 @@ public final class Poll extends Entity implements Serializable {
     private String pdate, title, url, genders;
     private final List<Option> options = new LinkedList<>();
 
-    public char getGenderSpecified(){
-        return genders.charAt(0);
-    }
-
-    public void setGenderSpecified(char gender){
-        genders = "" + gender;
-    }
-
-    public boolean isMultiple(){
-        return mult == 1;
-    }
-
-    public void setMultiple(boolean multiple){
-        mult = multiple ? 1 : 0;
-    }
-
-    public Date getPublishDate() throws ParseException {
-        return DATE_FORMAT.parse(pdate);
-    }
-
-    public void setPublishDate(Date publishDate) {
-        pdate = DATE_FORMAT.format(publishDate);
-    }
-
     @Override
     public int getId() {
         return id;
@@ -118,7 +94,6 @@ public final class Poll extends Entity implements Serializable {
         Poll poll = (Poll) o;
 
         return id == poll.id;
-
     }
 
     @Override

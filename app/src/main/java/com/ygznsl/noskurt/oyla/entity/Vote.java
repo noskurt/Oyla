@@ -13,14 +13,6 @@ public final class Vote implements Serializable {
     private int u, o;
     private String vd;
 
-    public Date getVoteDate() throws ParseException {
-        return DATE_FORMAT.parse(vd);
-    }
-
-    public void setVoteDate(Date voteDate){
-        vd = DATE_FORMAT.format(voteDate);
-    }
-
     public int getU() {
         return u;
     }

@@ -134,17 +134,11 @@ public class RegisterActivity extends AppCompatActivity {
             protected Boolean doInBackground(InputStream... ınputStreams) {
                 try (InputStreamReader isr = new InputStreamReader(getAssets().open("city.json"), Charset.forName("utf-8"))){
                     try (JsonReader reader = new JsonReader(isr)){
-                        final City[] array = new Gson().fromJson(reader, City[].class);
+                        final List<City> list = City.getCities(RegisterActivity.this);
+                        if (list == null) return false;
                         cities.clear();
-                        cities.addAll(Arrays.asList(array));
-                        Collections.sort(cities, new Comparator<City>() {
-                            @Override
-                            public int compare(City c1, City c2) {
-                                final Collator collator = Collator.getInstance(locale);
-                                return collator.compare(c1.getName(), c2.getName());
-                            }
-                        });
-                        return (gotCities = true);
+                        cities.addAll(list);
+                        return true;
                     }
                 } catch (IOException ex) {
                     Log.e("getCities.task", ex.getMessage());
@@ -282,7 +276,6 @@ public class RegisterActivity extends AppCompatActivity {
             spinnerCityRegister.requestFocus();
             return;
         }
-
         new AsyncTask<String, Integer, Boolean>() {
             @Override
             protected void onPreExecute() {
@@ -290,14 +283,8 @@ public class RegisterActivity extends AppCompatActivity {
             }
 
             @Override
-            protected void onPostExecute(Boolean aBoolean) {
-                hideProgressBar();
-            }
-
-            @Override
             protected Boolean doInBackground(String... strings) {
                 try {
-                    Thread.sleep(1000);
                     auth.createUserWithEmailAndPassword(email, password)
                             .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                                 @Override
@@ -327,6 +314,7 @@ public class RegisterActivity extends AppCompatActivity {
                     return true;
                 } catch (Exception ex) {
                     Log.e("register.doInBackground", ex.getMessage());
+                    hideProgressBar();
                     return false;
                 }
             }
