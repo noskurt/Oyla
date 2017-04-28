@@ -8,64 +8,189 @@
     android:orientation="vertical"
     tools:context="com.ygznsl.noskurt.oyla.MainActivity">
 
-    <TextView
-        android:id="@+id/welcomeTitle"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="HOŞ GELDİN"
-        android:textAlignment="center"
-        android:textSize="25sp" />
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="5dp"
+        android:orientation="vertical" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:orientation="horizontal" >
+
+            <ProgressBar
+                android:id="@+id/pbUserNameMain"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginEnd="10dp" />
+
+            <TextView
+                android:id="@+id/txtUserNameMain"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:visibility="gone"
+                android:textSize="10pt"
+                android:textColor="@android:color/black" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="10pt"
+                android:textColor="@android:color/black"
+                android:text="@string/text_welcome" />
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btnAccountMain"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/text_btnAccount" />
+
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:orientation="vertical" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="10pt"
+                android:textColor="@android:color/black"
+                android:text="@string/text_pollCount1" />
+
+            <ProgressBar
+                android:id="@+id/pbPollCountMain"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp" />
+
+            <TextView
+                android:id="@+id/txtPollCountMain"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:visibility="gone"
+                android:textSize="10pt"
+                android:textColor="@android:color/black" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="10pt"
+                android:textColor="@android:color/black"
+                android:text="@string/text_pollCount2" />
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btnBrowsePollsMain"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/text_btnBrowsePolls" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:orientation="vertical" >
 
         <TextView
-            android:id="@+id/pollCountTextView"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="123231 adet anket yayında!"
-            android:textAlignment="center" />
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:textSize="10pt"
+            android:textColor="@android:color/black"
+            android:text="@string/text_createPoll" />
 
         <Button
-            android:id="@+id/browsePollButton"
+            android:id="@+id/btnCreatePollMain"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="ANKETLERE GÖZAT" />
+            android:text="@string/text_btnCreatePoll" />
 
     </LinearLayout>
 
-    <Button
-        android:id="@+id/publishPollButton"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="ANKET YAYINLA" />
+        android:layout_height="match_parent"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:orientation="vertical" >
 
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:src="@drawable/logo" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/accountButton"
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/txtRandomPollMain"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="0.5"
-            android:text="HESABIM" />
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:textSize="10pt"
+            android:textColor="@android:color/black"
+            android:layout_alignParentStart="true"
+            android:text="@string/text_randomPoll" />
 
-        <Button
-            android:id="@+id/exitAccountButton"
+        <ProgressBar
+            android:id="@+id/pbRandomPollMain"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_below="@+id/txtRandomPollMain"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp" />
+
+        <LinearLayout
+            android:id="@+id/llRandomPollMain"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.5"
-            android:text="ÇIKIŞ" />
+            android:layout_height="match_parent"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:visibility="gone"
+            android:orientation="horizontal" >
 
-    </LinearLayout>
+        </LinearLayout>
+
+    </RelativeLayout>
 
 </LinearLayout>

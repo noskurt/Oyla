@@ -13,6 +13,13 @@
     <string name="text_btnRadioFemale">Kadın</string>
     <string name="text_city">Şehir: </string>
     <string name="text_btnCancel">İptal</string>
-
+    <string name="text_btnAccount">Hesabım</string>
+    <string name="text_btnBrowsePolls">Anketlere Göz At</string>
+    <string name="text_btnCreatePoll">Anket Yayınla</string>
+    <string name="text_welcome"> olarak giriş yaptınız</string>
+    <string name="text_pollCount1">Toplamda </string>
+    <string name="text_pollCount2"> anket yayında</string>
+    <string name="text_createPoll">Hemen bir anket oluşturun!</string>
+    <string name="text_randomPoll">Bunu oyladınız mı?</string>
 
 </resources>

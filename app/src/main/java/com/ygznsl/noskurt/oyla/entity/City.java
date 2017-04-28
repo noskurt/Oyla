@@ -7,13 +7,6 @@ public final class City extends Entity implements Serializable {
     private int id;
     private String name;
 
-    public City() {}
-
-    public City(int id, String name) {
-        this.id = id;
-        this.name = name;
-    }
-
     @Override
     public int getId() {
         return id;

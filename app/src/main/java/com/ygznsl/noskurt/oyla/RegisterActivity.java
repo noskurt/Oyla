@@ -13,6 +13,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -32,26 +33,28 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
 import com.ygznsl.noskurt.oyla.entity.City;
+import com.ygznsl.noskurt.oyla.entity.User;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
+import java.text.Collator;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
 public class RegisterActivity extends AppCompatActivity {
-
-    // Yağız
 
     private final FirebaseAuth auth = FirebaseAuth.getInstance();
     private final DatabaseReference db = FirebaseDatabase.getInstance().getReference();
@@ -60,13 +63,12 @@ public class RegisterActivity extends AppCompatActivity {
     private final Locale locale = new Locale("tr", "TR");
     private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", locale);
     private boolean gotCities = false;
+    private int userMaxId = 0;
 
     private ProgressBar pbRegister;
     private LinearLayout registerLayout;
     private RadioGroup radioGrpRegister;
     private Spinner spinnerCityRegister;
-
-    // Yağız
 
     private TextInputLayout emailLayout;
     private TextInputLayout pwLayout;
@@ -84,7 +86,7 @@ public class RegisterActivity extends AppCompatActivity {
         db.child("user").addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                userNames.add(dataSnapshot.child("name").getValue().toString());
+                userNames.add(dataSnapshot.child("name").getValue(String.class));
             }
 
             @Override
@@ -100,6 +102,18 @@ public class RegisterActivity extends AppCompatActivity {
             public void onCancelled(DatabaseError databaseError) {
                 Log.e("constructor.firebase", databaseError.getMessage());
             }
+        });
+        db.child("user").orderByChild("id").limitToLast(1).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot ds : dataSnapshot.getChildren()){
+                    userMaxId = ds.child("id").getValue(Integer.class);
+                }
+                Log.w("userMaxId", "userMaxId: " + userMaxId);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {}
         });
     }
 
@@ -118,11 +132,18 @@ public class RegisterActivity extends AppCompatActivity {
 
             @Override
             protected Boolean doInBackground(InputStream... ınputStreams) {
-                try (InputStreamReader isr = new InputStreamReader(getAssets().open("state.json"), Charset.forName("utf-8"))){
+                try (InputStreamReader isr = new InputStreamReader(getAssets().open("city.json"), Charset.forName("utf-8"))){
                     try (JsonReader reader = new JsonReader(isr)){
                         final City[] array = new Gson().fromJson(reader, City[].class);
                         cities.clear();
                         cities.addAll(Arrays.asList(array));
+                        Collections.sort(cities, new Comparator<City>() {
+                            @Override
+                            public int compare(City c1, City c2) {
+                                final Collator collator = Collator.getInstance(locale);
+                                return collator.compare(c1.getName(), c2.getName());
+                            }
+                        });
                         return (gotCities = true);
                     }
                 } catch (IOException ex) {
@@ -198,11 +219,9 @@ public class RegisterActivity extends AppCompatActivity {
             }
         });
 
-        if (!gotCities) {
+        while (!gotCities){
             try {
-                if (!getCities()){
-                    getCities();
-                }
+                gotCities = getCities();
             } catch (InterruptedException | ExecutionException ex) {
                 Log.e("onCreate", ex.getMessage());
             }
@@ -234,6 +253,11 @@ public class RegisterActivity extends AppCompatActivity {
         pwLayout.setErrorEnabled(false);
         pwAgainLayout.setErrorEnabled(false);
         final String username = txtNameRegister.getText().toString();
+        if (username.isEmpty()){
+            nameLayout.setError("Geçerli bir kullanıcı adı girin.");
+            nameLayout.requestFocus();
+            return;
+        }
         if (userNames.contains(username)){
             nameLayout.setError("Bu ada sahip bir kullanıcı zaten bulunuyor.");
             nameLayout.requestFocus();
@@ -252,7 +276,7 @@ public class RegisterActivity extends AppCompatActivity {
             Toast.makeText(this, "Cinsiyet kısmını boş bırakamazsınız.", Toast.LENGTH_SHORT).show();
             return;
         }
-        final Object city = spinnerCityRegister.getSelectedItem();
+        final City city = (City) spinnerCityRegister.getSelectedItem();
         if (city == null){
             Toast.makeText(this, "Yaşadığınız şehri seçmelisiniz.", Toast.LENGTH_SHORT).show();
             spinnerCityRegister.requestFocus();
@@ -279,15 +303,16 @@ public class RegisterActivity extends AppCompatActivity {
                                 @Override
                                 public void onComplete(@NonNull Task<AuthResult> task) {
                                     if (task.getResult().getUser() != null){
-                                        final DatabaseReference pushed = db.child("user").push();
+                                        final User user = new User();
+                                        user.setId(++userMaxId);
+                                        user.setEmail(email);
+                                        user.setName(username);
+                                        user.setBdate(birthDateStr);
+                                        user.setCity(city.getId());
+                                        user.setGender(radioBtnId == R.id.btnRadioMaleRegister ? "E" : "K");
 
-                                        pushed.child("birthDate").setValue(birthDateStr);
-                                        pushed.child("email").setValue(email);
-                                        pushed.child("name").setValue(username);
-                                        pushed.child("gender").setValue(
-                                                radioBtnId == R.id.btnRadioMaleRegister ? "E" : "K"
-                                        );
-                                        pushed.child("city").setValue(((City)city).getId());
+                                        final DatabaseReference pushed = db.child("user").push();
+                                        pushed.setValue(user);
 
                                         auth.signInWithEmailAndPassword(email, password)
                                                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
@@ -338,7 +363,6 @@ public class RegisterActivity extends AppCompatActivity {
         finish();
     }
 
-
     @Override
     public void onBackPressed() {
         super.onBackPressed();
@@ -347,4 +371,5 @@ public class RegisterActivity extends AppCompatActivity {
         startActivity(intent);
         finish();
     }
+
 }
