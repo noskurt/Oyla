@@ -72,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void getPolls(){
+        db.child("poll").keepSynced(true);
         db.child("poll").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {

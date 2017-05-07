@@ -28,6 +28,7 @@ import com.google.firebase.auth.FirebaseUser;
 public class SplashActivity extends AppCompatActivity {
 
     private final FirebaseAuth auth = FirebaseAuth.getInstance();
+    private boolean openingTaskExecuted = false;
 
     private ProgressBar pbSignIn;
     private EditText txtEmailSignIn;
@@ -35,6 +36,28 @@ public class SplashActivity extends AppCompatActivity {
     private LinearLayout signInLayout;
     private TextInputLayout emailLayout;
     private TextInputLayout pwLayout;
+
+    private void openingTask(){
+        final AsyncTask<FirebaseAuth, Integer, FirebaseUser> task = new AsyncTask<FirebaseAuth, Integer, FirebaseUser>() {
+            private FirebaseUser user = null;
+
+            @Override
+            protected FirebaseUser doInBackground(FirebaseAuth... firebaseAuths) {
+                user = auth.getCurrentUser();
+                try { Thread.sleep(1500); }
+                catch (InterruptedException ex) { Log.e("task.doInBackground", ex.getMessage()); }
+                if (user != null) logIn();
+                openingTaskExecuted = true;
+                return user;
+            }
+
+            @Override
+            protected void onPostExecute(FirebaseUser firebaseUser) {
+                if (user == null) hideProgressBar();
+            }
+        };
+        task.execute();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -148,24 +171,7 @@ public class SplashActivity extends AppCompatActivity {
             }
         });
 
-        final AsyncTask<FirebaseAuth, Integer, FirebaseUser> task = new AsyncTask<FirebaseAuth, Integer, FirebaseUser>() {
-            private FirebaseUser user = null;
-
-            @Override
-            protected FirebaseUser doInBackground(FirebaseAuth... firebaseAuths) {
-                user = auth.getCurrentUser();
-                try { Thread.sleep(1500); }
-                catch (InterruptedException ex) { Log.e("task.doInBackground", ex.getMessage()); }
-                if (user != null) logIn();
-                return user;
-            }
-
-            @Override
-            protected void onPostExecute(FirebaseUser firebaseUser) {
-                if (user == null) hideProgressBar();
-            }
-        };
-        task.execute();
+        if (!openingTaskExecuted) openingTask();
     }
 
     private boolean validateEmail(String email) {

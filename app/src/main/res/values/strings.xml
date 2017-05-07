@@ -31,6 +31,7 @@
     <string name="text_createPoll">Hemen bir anket oluşturun!</string>
     <string name="text_randomPoll">Bunu oyladınız mı?</string>
     <string name="text_emailAddress">E-posta Adresiniz: </string>
+    <string name="text_userName">Kullanıcı Adınız: </string>
     <string name="text_birthDate">Doğum tarihiniz: </string>
     <string name="text_cityAccount">Şehriniz: </string>
 

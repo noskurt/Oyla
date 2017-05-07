@@ -1,20 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context="com.ygznsl.noskurt.oyla.AccountActivity">
-
-    <ProgressBar
-        android:id="@+id/pbUpdatePasswordAccount"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:visibility="gone" />
 
     <ScrollView
         android:id="@+id/mainLayoutAccount"
@@ -40,6 +31,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
+                    android:layout_alignParentStart="true"
                     android:orientation="horizontal" >
 
                     <TextView
@@ -65,10 +57,42 @@
                 </RelativeLayout>
 
                 <RelativeLayout
+                    android:id="@+id/rlUserName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:layout_below="@+id/rlEmail"
+                    android:orientation="horizontal"
+                    android:descendantFocusability="beforeDescendants"
+                    android:focusableInTouchMode="true" >
+
+                    <TextView
+                        android:id="@+id/txtUserNameLabelAccount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp"
+                        android:layout_alignParentStart="true"
+                        android:layout_centerVertical="true"
+                        android:text="@string/text_userName"
+                        android:textSize="8pt"
+                        android:textColor="@android:color/black" />
+
+                    <EditText
+                        android:id="@+id/txtUserNameAccount"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp"
+                        android:layout_toEndOf="@+id/txtUserNameLabelAccount"
+                        android:textSize="8pt"
+                        android:textColor="@android:color/black" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
                     android:id="@+id/rlBirthDate"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/rlEmail"
+                    android:layout_below="@+id/rlUserName"
                     android:layout_margin="10dp"
                     android:orientation="horizontal" >
 
@@ -125,7 +149,7 @@
 
                 <Button
                     android:id="@+id/btnUpdateAccount"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/text_btnUpdate"
                     android:layout_margin="10dp"
@@ -154,55 +178,6 @@
                     android:layout_height="wrap_content"
                     android:text="@string/text_btnMyVotes"
                     android:layout_weight="0.5" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/llResetPassword"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:orientation="horizontal" >
-
-                <android.support.design.widget.TextInputLayout
-                    android:id="@+id/tilPasswordNewAccount"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="10dp"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="5dp"
-                    android:layout_weight="0.5"
-                    app:passwordToggleEnabled="true" >
-
-                    <EditText
-                        android:id="@+id/txtPasswordNewAccount"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="@string/hint_passwordNew"
-                        android:inputType="textPassword" />
-
-                </android.support.design.widget.TextInputLayout>
-
-                <android.support.design.widget.TextInputLayout
-                    android:id="@+id/tilPasswordNewAgainAccount"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="10dp"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="5dp"
-                    android:layout_weight="0.5"
-                    app:passwordToggleEnabled="true" >
-
-                    <EditText
-                        android:id="@+id/txtPasswordNewAgainAccount"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="@string/hint_passwordNewAgain"
-                        android:inputType="textPassword" />
-
-                </android.support.design.widget.TextInputLayout>
 
             </LinearLayout>
 

@@ -15,6 +15,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.Spinner;
@@ -25,6 +26,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -44,13 +46,15 @@ public class AccountActivity extends AppCompatActivity {
     private List<City> cities = Collections.synchronizedList(new LinkedList<City>());
     private DatabaseReference db = FirebaseDatabase.getInstance().getReference();
     private FirebaseAuth auth = FirebaseAuth.getInstance();
+    private FirebaseUser currentUser;
     private final Locale locale = new Locale("tr", "TR");
+    private boolean guiInitialized = false;
     private boolean gotCities = false;
     private User user = null;
     private String userKey;
 
-    private ScrollView mainLayoutAccount;
     private TextView txtEmailAccount;
+    private TextView txtUserNameAccount;
     private TextView txtBirthDateAccount;
     private Spinner spinnerCityAccount;
     private Button btnUpdateAccount;
@@ -58,68 +62,24 @@ public class AccountActivity extends AppCompatActivity {
     private Button btnMyVotesAccount;
     private Button btnChangePasswordAccount;
     private Button btnLogoutAccount;
-    private TextInputLayout tilPasswordNewAccount;
-    private TextInputLayout tilPasswordNewAgainAccount;
-    private EditText txtPasswordNewAccount;
-    private EditText txtPasswordNewAgainAccount;
-    private ProgressBar pbUpdatePasswordAccount;
 
-    private void getCities(){
-        cities.clear();
-        cities.addAll(City.getCities(this));
-        spinnerCityAccount.setAdapter(new ArrayAdapter<>(AccountActivity.this, android.R.layout.simple_spinner_dropdown_item, cities));
-        gotCities = true;
-    }
+    private AlertDialog dialogPasswordUpdate;
+    private View viewPasswordUpdate;
+    private ProgressBar pbPasswordUpdate;
+    private ScrollView llResetPassword;
+    private TextInputLayout tilPasswordUpdate;
+    private TextInputLayout tilPasswordNewUpdate;
+    private TextInputLayout tilPasswordNewAgainUpdate;
+    private EditText txtPasswordUpdate;
+    private EditText txtPasswordNewUpdate;
+    private EditText txtPasswordNewAgainUpdate;
 
-    private void putValues(){
-        setTitle(String.format("%s - %s", getResources().getString(R.string.app_name), user.getName()));
-        int index = 0;
-        for (int i = 0; i < cities.size(); i++){
-            if (cities.get(i).getId() == user.getCity()){
-                index = i;
-                break;
-            }
-        }
-        txtEmailAccount.setText(user.getEmail());
-        txtBirthDateAccount.setText(user.getBdate());
-        spinnerCityAccount.setSelection(index);
-    }
+    private void initializeGui(){
+        currentUser = auth.getCurrentUser();
+        if (currentUser == null) finish();
 
-    private void updatePassword(){
-        if (!txtPasswordNewAccount.getText().toString().equals(txtPasswordNewAgainAccount.getText().toString())){
-            tilPasswordNewAccount.setError("Şifreler uyuşmuyor.");
-            tilPasswordNewAgainAccount.setError("Şifreler uyuşmuyor.");
-            txtPasswordNewAccount.requestFocus();
-            return;
-        }
-        tilPasswordNewAccount.setErrorEnabled(false);
-        tilPasswordNewAgainAccount.setErrorEnabled(false);
-        pbUpdatePasswordAccount.setVisibility(View.VISIBLE);
-        mainLayoutAccount.setVisibility(View.GONE);
-        auth.getCurrentUser().updatePassword(txtPasswordNewAccount.getText().toString())
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()){
-                            Toast.makeText(AccountActivity.this, "Şifreniz başarıyla değiştirildi!", Toast.LENGTH_LONG).show();
-                        } else {
-                            Toast.makeText(AccountActivity.this, "Şifreniz değiştirilemedi!\r\nLütfen daha sonra tekrar deneyin:\r\n" + task.getException().getMessage(), Toast.LENGTH_LONG).show();
-                        }
-                        txtPasswordNewAccount.setText("");
-                        txtPasswordNewAgainAccount.setText("");
-                        pbUpdatePasswordAccount.setVisibility(View.GONE);
-                        mainLayoutAccount.setVisibility(View.VISIBLE);
-                    }
-                });
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_account);
-
-        mainLayoutAccount = (ScrollView) findViewById(R.id.mainLayoutAccount);
         txtEmailAccount = (TextView) findViewById(R.id.txtEmailAccount);
+        txtUserNameAccount = (EditText) findViewById(R.id.txtUserNameAccount);
         txtBirthDateAccount = (TextView) findViewById(R.id.txtBirthDateAccount);
         spinnerCityAccount = (Spinner) findViewById(R.id.spinnerCityAccount);
         btnUpdateAccount = (Button) findViewById(R.id.btnUpdateAccount);
@@ -128,20 +88,32 @@ public class AccountActivity extends AppCompatActivity {
         btnChangePasswordAccount = (Button) findViewById(R.id.btnChangePasswordAccount);
         btnLogoutAccount = (Button) findViewById(R.id.btnLogoutAccount);
 
-        tilPasswordNewAccount = (TextInputLayout) findViewById(R.id.tilPasswordNewAccount);
-        tilPasswordNewAgainAccount = (TextInputLayout) findViewById(R.id.tilPasswordNewAgainAccount);
-        txtPasswordNewAccount = (EditText) findViewById(R.id.txtPasswordNewAccount);
-        txtPasswordNewAgainAccount = (EditText) findViewById(R.id.txtPasswordNewAgainAccount);
-        pbUpdatePasswordAccount = (ProgressBar) findViewById(R.id.pbUpdatePasswordAccount);
+        viewPasswordUpdate = LayoutInflater.from(this).inflate(R.layout.layout_password_update, null);
+        pbPasswordUpdate = (ProgressBar) viewPasswordUpdate.findViewById(R.id.pbPasswordUpdate);
+        llResetPassword = (ScrollView) viewPasswordUpdate.findViewById(R.id.llResetPassword);
+        tilPasswordUpdate = (TextInputLayout) viewPasswordUpdate.findViewById(R.id.tilPasswordUpdate);
+        tilPasswordNewUpdate = (TextInputLayout) viewPasswordUpdate.findViewById(R.id.tilPasswordNewUpdate);
+        tilPasswordNewAgainUpdate = (TextInputLayout) viewPasswordUpdate.findViewById(R.id.tilPasswordNewAgainUpdate);
+        txtPasswordUpdate = (EditText) viewPasswordUpdate.findViewById(R.id.txtPasswordUpdate);
+        txtPasswordNewUpdate = (EditText) viewPasswordUpdate.findViewById(R.id.txtPasswordNewUpdate);
+        txtPasswordNewAgainUpdate = (EditText) viewPasswordUpdate.findViewById(R.id.txtPasswordNewAgainUpdate);
 
-        final DatePickerDialog.OnDateSetListener listener = new DatePickerDialog.OnDateSetListener() {
-            @Override
-            public void onDateSet(DatePicker datePicker, int year, int monthOfYear, int dayOfMonth) {
-                final Calendar calendar = Calendar.getInstance(locale);
-                calendar.set(year, monthOfYear, dayOfMonth);
-                txtBirthDateAccount.setText(User.DATE_FORMAT.format(calendar.getTime()));
-            }
-        };
+        dialogPasswordUpdate = new AlertDialog.Builder(AccountActivity.this)
+                .setView(viewPasswordUpdate)
+                .setTitle(getString(R.string.text_btnChangePassword))
+                .setPositiveButton("Değiştir", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        updatePassword();
+                    }
+                })
+                .setNegativeButton("İptal", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.cancel();
+                    }
+                })
+                .create();
 
         txtBirthDateAccount.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -149,7 +121,14 @@ public class AccountActivity extends AppCompatActivity {
                 final Calendar calendar = Calendar.getInstance(locale);
                 final DatePickerDialog dialog = new DatePickerDialog(
                         AccountActivity.this,
-                        listener,
+                        new DatePickerDialog.OnDateSetListener() {
+                            @Override
+                            public void onDateSet(DatePicker datePicker, int year, int monthOfYear, int dayOfMonth) {
+                                final Calendar calendar = Calendar.getInstance(locale);
+                                calendar.set(year, monthOfYear, dayOfMonth);
+                                txtBirthDateAccount.setText(User.DATE_FORMAT.format(calendar.getTime()));
+                            }
+                        },
                         calendar.get(Calendar.YEAR),
                         calendar.get(Calendar.MONTH),
                         calendar.get(Calendar.DAY_OF_MONTH)
@@ -161,7 +140,7 @@ public class AccountActivity extends AppCompatActivity {
         btnChangePasswordAccount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                updatePassword();
+                dialogPasswordUpdate.show();
             }
         });
 
@@ -180,19 +159,40 @@ public class AccountActivity extends AppCompatActivity {
             }
         });
 
+        btnUpdateAccount.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                updateUserInfo();
+            }
+        });
+
+        btnMyPollsAccount.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // TODO
+            }
+        });
+
+        btnMyVotesAccount.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // TODO
+            }
+        });
+
         if (!gotCities) getCities();
 
         user = (User) getIntent().getExtras().getSerializable("user");
         userKey = getIntent().getExtras().getString("userKey");
 
         if (user == null){
-            db.child("user").orderByChild("email").equalTo(auth.getCurrentUser().getEmail()).addListenerForSingleValueEvent(new ValueEventListener() {
+            db.child("user").orderByChild("email").equalTo(currentUser.getEmail()).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     for (DataSnapshot ds : dataSnapshot.getChildren()){
                         user = ds.getValue(User.class);
                         userKey = ds.getKey();
-                        putValues();
+                        if (guiInitialized) putValues();
                     }
                 }
 
@@ -200,6 +200,81 @@ public class AccountActivity extends AppCompatActivity {
                 public void onCancelled(DatabaseError databaseError) {}
             });
         } else {
+            if (guiInitialized) putValues();
+        }
+
+        guiInitialized = true;
+    }
+
+    private void getCities(){
+        cities.clear();
+        cities.addAll(City.getCities(this));
+        spinnerCityAccount.setAdapter(new ArrayAdapter<>(AccountActivity.this, android.R.layout.simple_spinner_dropdown_item, cities));
+        gotCities = true;
+    }
+
+    private void putValues(){
+        //setTitle(String.format("%s - %s", getResources().getString(R.string.app_name), user.getName()));
+        int index = 0;
+        for (int i = 0; i < cities.size(); i++){
+            if (cities.get(i).getId() == user.getCity()){
+                index = i;
+                break;
+            }
+        }
+        txtEmailAccount.setText(user.getEmail());
+        txtUserNameAccount.setText(user.getName());
+        txtBirthDateAccount.setText(user.getBdate());
+        spinnerCityAccount.setSelection(index);
+    }
+
+    private void updatePassword(){
+        if (!txtPasswordNewUpdate.getText().toString().equals(txtPasswordNewAgainUpdate.getText().toString())){
+            tilPasswordNewUpdate.setError("Şifreler uyuşmuyor.");
+            tilPasswordNewAgainUpdate.setError("Şifreler uyuşmuyor.");
+            txtPasswordNewUpdate.requestFocus();
+            return;
+        }
+        tilPasswordNewUpdate.setErrorEnabled(false);
+        tilPasswordNewAgainUpdate.setErrorEnabled(false);
+        pbPasswordUpdate.setVisibility(View.VISIBLE);
+        llResetPassword.setVisibility(View.GONE);
+        currentUser.updatePassword(txtPasswordNewUpdate.getText().toString())
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()){
+                            Toast.makeText(AccountActivity.this, "Şifreniz başarıyla değiştirildi!", Toast.LENGTH_LONG).show();
+                        } else {
+                            Toast.makeText(AccountActivity.this, "Şifreniz değiştirilemedi!\r\nLütfen daha sonra tekrar deneyin:\r\n" + task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                        }
+                        txtPasswordNewUpdate.setText("");
+                        txtPasswordNewAgainUpdate.setText("");
+                        pbPasswordUpdate.setVisibility(View.GONE);
+                        llResetPassword.setVisibility(View.VISIBLE);
+                    }
+                });
+    }
+
+    private void updateUserInfo(){
+        final String name = txtUserNameAccount.getText().toString();
+        final String bdate = txtBirthDateAccount.getText().toString();
+        final int city = ((City) spinnerCityAccount.getSelectedItem()).getId();
+
+        final StringBuilder str = new StringBuilder()
+                .append("Yeni isim: ").append(name).append("\r\n")
+                .append("Yeni doğum tarihi: ").append(bdate).append("\r\n")
+                .append("Yeni şehir: ").append(city).append("\r\n");
+
+        Toast.makeText(this, str.toString().trim(), Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_account);
+        if (!guiInitialized){
+            initializeGui();
             putValues();
         }
     }
