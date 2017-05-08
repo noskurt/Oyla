@@ -88,15 +88,15 @@ public class AccountActivity extends AppCompatActivity {
         btnChangePasswordAccount = (Button) findViewById(R.id.btnChangePasswordAccount);
         btnLogoutAccount = (Button) findViewById(R.id.btnLogoutAccount);
 
-        viewPasswordUpdate = LayoutInflater.from(this).inflate(R.layout.layout_password_update, null);
-        pbPasswordUpdate = (ProgressBar) viewPasswordUpdate.findViewById(R.id.pbPasswordUpdate);
-        llResetPassword = (ScrollView) viewPasswordUpdate.findViewById(R.id.llResetPassword);
-        tilPasswordUpdate = (TextInputLayout) viewPasswordUpdate.findViewById(R.id.tilPasswordUpdate);
-        tilPasswordNewUpdate = (TextInputLayout) viewPasswordUpdate.findViewById(R.id.tilPasswordNewUpdate);
-        tilPasswordNewAgainUpdate = (TextInputLayout) viewPasswordUpdate.findViewById(R.id.tilPasswordNewAgainUpdate);
-        txtPasswordUpdate = (EditText) viewPasswordUpdate.findViewById(R.id.txtPasswordUpdate);
-        txtPasswordNewUpdate = (EditText) viewPasswordUpdate.findViewById(R.id.txtPasswordNewUpdate);
-        txtPasswordNewAgainUpdate = (EditText) viewPasswordUpdate.findViewById(R.id.txtPasswordNewAgainUpdate);
+//        viewPasswordUpdate = LayoutInflater.from(this).inflate(R.layout.layout_password_update, null);
+//        pbPasswordUpdate = (ProgressBar) viewPasswordUpdate.findViewById(R.id.pbPasswordUpdate);
+//        llResetPassword = (ScrollView) viewPasswordUpdate.findViewById(R.id.llResetPassword);
+//        tilPasswordUpdate = (TextInputLayout) viewPasswordUpdate.findViewById(R.id.tilPasswordUpdate);
+//        tilPasswordNewUpdate = (TextInputLayout) viewPasswordUpdate.findViewById(R.id.tilPasswordNewUpdate);
+//        tilPasswordNewAgainUpdate = (TextInputLayout) viewPasswordUpdate.findViewById(R.id.tilPasswordNewAgainUpdate);
+//        txtPasswordUpdate = (EditText) viewPasswordUpdate.findViewById(R.id.txtPasswordUpdate);
+//        txtPasswordNewUpdate = (EditText) viewPasswordUpdate.findViewById(R.id.txtPasswordNewUpdate);
+//        txtPasswordNewAgainUpdate = (EditText) viewPasswordUpdate.findViewById(R.id.txtPasswordNewAgainUpdate);
 
         dialogPasswordUpdate = new AlertDialog.Builder(AccountActivity.this)
                 .setView(viewPasswordUpdate)
