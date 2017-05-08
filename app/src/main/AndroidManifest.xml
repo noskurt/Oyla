@@ -25,7 +25,8 @@
             android:name=".RegisterActivity"
             android:label="Kayıt Ol" />
         <activity android:name=".AccountActivity" />
-        <activity android:name=".PollListActivity"></activity>
+        <activity android:name=".PollListActivity" />
+        <activity android:name=".PollActivity"></activity>
     </application>
 
 </manifest>

@@ -9,13 +9,13 @@ import android.support.v4.content.IntentCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.Spinner;
@@ -23,8 +23,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -37,9 +37,13 @@ import com.ygznsl.noskurt.oyla.entity.User;
 
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Exchanger;
+import java.util.concurrent.Semaphore;
 
 public class AccountActivity extends AppCompatActivity {
 
@@ -64,13 +68,8 @@ public class AccountActivity extends AppCompatActivity {
     private Button btnLogoutAccount;
 
     private AlertDialog dialogPasswordUpdate;
-    private View viewPasswordUpdate;
     private ProgressBar pbPasswordUpdate;
     private ScrollView llResetPassword;
-    private TextInputLayout tilPasswordUpdate;
-    private TextInputLayout tilPasswordNewUpdate;
-    private TextInputLayout tilPasswordNewAgainUpdate;
-    private EditText txtPasswordUpdate;
     private EditText txtPasswordNewUpdate;
     private EditText txtPasswordNewAgainUpdate;
 
@@ -88,32 +87,60 @@ public class AccountActivity extends AppCompatActivity {
         btnChangePasswordAccount = (Button) findViewById(R.id.btnChangePasswordAccount);
         btnLogoutAccount = (Button) findViewById(R.id.btnLogoutAccount);
 
-//        viewPasswordUpdate = LayoutInflater.from(this).inflate(R.layout.layout_password_update, null);
-//        pbPasswordUpdate = (ProgressBar) viewPasswordUpdate.findViewById(R.id.pbPasswordUpdate);
-//        llResetPassword = (ScrollView) viewPasswordUpdate.findViewById(R.id.llResetPassword);
-//        tilPasswordUpdate = (TextInputLayout) viewPasswordUpdate.findViewById(R.id.tilPasswordUpdate);
-//        tilPasswordNewUpdate = (TextInputLayout) viewPasswordUpdate.findViewById(R.id.tilPasswordNewUpdate);
-//        tilPasswordNewAgainUpdate = (TextInputLayout) viewPasswordUpdate.findViewById(R.id.tilPasswordNewAgainUpdate);
-//        txtPasswordUpdate = (EditText) viewPasswordUpdate.findViewById(R.id.txtPasswordUpdate);
-//        txtPasswordNewUpdate = (EditText) viewPasswordUpdate.findViewById(R.id.txtPasswordNewUpdate);
-//        txtPasswordNewAgainUpdate = (EditText) viewPasswordUpdate.findViewById(R.id.txtPasswordNewAgainUpdate);
+        final View viewPasswordUpdate = LayoutInflater.from(this).inflate(R.layout.layout_password_update, null);
+        pbPasswordUpdate = (ProgressBar) viewPasswordUpdate.findViewById(R.id.pbPasswordUpdate);
+        llResetPassword = (ScrollView) viewPasswordUpdate.findViewById(R.id.llResetPassword);
+        txtPasswordNewUpdate = (EditText) viewPasswordUpdate.findViewById(R.id.txtPasswordNewUpdate);
+        txtPasswordNewAgainUpdate = (EditText) viewPasswordUpdate.findViewById(R.id.txtPasswordNewAgainUpdate);
 
         dialogPasswordUpdate = new AlertDialog.Builder(AccountActivity.this)
                 .setView(viewPasswordUpdate)
                 .setTitle(getString(R.string.text_btnChangePassword))
-                .setPositiveButton("Değiştir", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        updatePassword();
-                    }
-                })
+                .setPositiveButton("Değiştir", null)
                 .setNegativeButton("İptal", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        dialogInterface.cancel();
+                        dialogInterface.dismiss();
                     }
                 })
                 .create();
+
+        dialogPasswordUpdate.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(final DialogInterface dialogInterface) {
+                final Button button = ((AlertDialog) dialogInterface).getButton(AlertDialog.BUTTON_POSITIVE);
+                button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        try {
+                            if (!txtPasswordNewUpdate.getText().toString().equals(txtPasswordNewAgainUpdate.getText().toString())){
+                                Toast.makeText(AccountActivity.this, "Şifreler uyuşmuyor.", Toast.LENGTH_LONG).show();
+                                txtPasswordNewUpdate.requestFocus();
+                                return;
+                            }
+                            pbPasswordUpdate.setVisibility(View.VISIBLE);
+                            llResetPassword.setVisibility(View.GONE);
+                            currentUser.updatePassword(txtPasswordNewUpdate.getText().toString())
+                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            pbPasswordUpdate.setVisibility(View.GONE);
+                                            llResetPassword.setVisibility(View.VISIBLE);
+                                            if (task.isSuccessful()){
+                                                Toast.makeText(AccountActivity.this, "Şifreniz başarıyla değiştirildi!", Toast.LENGTH_LONG).show();
+                                                dialogInterface.dismiss();
+                                            } else {
+                                                Toast.makeText(AccountActivity.this, "Şifreniz değiştirilemedi!\r\nŞifrenizi değiştirmek için lütfen tekrar giriş yapın.", Toast.LENGTH_LONG).show();
+                                            }
+                                        }
+                                    });
+                        } catch (Exception ex) {
+                            Log.e("dialogPasswordUpdate", ex.getMessage());
+                        }
+                    }
+                });
+            }
+        });
 
         txtBirthDateAccount.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -228,45 +255,29 @@ public class AccountActivity extends AppCompatActivity {
         spinnerCityAccount.setSelection(index);
     }
 
-    private void updatePassword(){
-        if (!txtPasswordNewUpdate.getText().toString().equals(txtPasswordNewAgainUpdate.getText().toString())){
-            tilPasswordNewUpdate.setError("Şifreler uyuşmuyor.");
-            tilPasswordNewAgainUpdate.setError("Şifreler uyuşmuyor.");
-            txtPasswordNewUpdate.requestFocus();
-            return;
-        }
-        tilPasswordNewUpdate.setErrorEnabled(false);
-        tilPasswordNewAgainUpdate.setErrorEnabled(false);
-        pbPasswordUpdate.setVisibility(View.VISIBLE);
-        llResetPassword.setVisibility(View.GONE);
-        currentUser.updatePassword(txtPasswordNewUpdate.getText().toString())
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()){
-                            Toast.makeText(AccountActivity.this, "Şifreniz başarıyla değiştirildi!", Toast.LENGTH_LONG).show();
-                        } else {
-                            Toast.makeText(AccountActivity.this, "Şifreniz değiştirilemedi!\r\nLütfen daha sonra tekrar deneyin:\r\n" + task.getException().getMessage(), Toast.LENGTH_LONG).show();
-                        }
-                        txtPasswordNewUpdate.setText("");
-                        txtPasswordNewAgainUpdate.setText("");
-                        pbPasswordUpdate.setVisibility(View.GONE);
-                        llResetPassword.setVisibility(View.VISIBLE);
-                    }
-                });
-    }
-
     private void updateUserInfo(){
-        final String name = txtUserNameAccount.getText().toString();
-        final String bdate = txtBirthDateAccount.getText().toString();
-        final int city = ((City) spinnerCityAccount.getSelectedItem()).getId();
+        if (user != null){
+            final String name = txtUserNameAccount.getText().toString();
+            final String bdate = txtBirthDateAccount.getText().toString();
+            final int city = ((City) spinnerCityAccount.getSelectedItem()).getId();
 
-        final StringBuilder str = new StringBuilder()
-                .append("Yeni isim: ").append(name).append("\r\n")
-                .append("Yeni doğum tarihi: ").append(bdate).append("\r\n")
-                .append("Yeni şehir: ").append(city).append("\r\n");
+            user.setName(name);
+            user.setBdate(bdate);
+            user.setCity(city);
 
-        Toast.makeText(this, str.toString().trim(), Toast.LENGTH_LONG).show();
+            final HashMap<String, Object> map = new HashMap<>();
+            map.put(userKey, user);
+            db.child("user").updateChildren(map, new DatabaseReference.CompletionListener() {
+                @Override
+                public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                    if (databaseError == null){
+                        Toast.makeText(AccountActivity.this, "Tercihler başarıyla güncellendi.", Toast.LENGTH_LONG).show();
+                    } else {
+                        Toast.makeText(AccountActivity.this, "Tercihler güncellenemedi:\r\n" + databaseError.getMessage(), Toast.LENGTH_LONG).show();
+                    }
+                }
+            });
+        }
     }
 
     @Override

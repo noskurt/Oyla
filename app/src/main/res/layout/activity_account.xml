@@ -51,6 +51,7 @@
                         android:layout_height="wrap_content"
                         android:layout_margin="10dp"
                         android:layout_toEndOf="@+id/txtEmailLabelAccount"
+                        android:layout_centerVertical="true"
                         android:textSize="8pt"
                         android:textColor="@android:color/black" />
 
@@ -185,7 +186,8 @@
                 android:id="@+id/llPasswordAndLogout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
                 android:orientation="horizontal" >
 
                 <Button
