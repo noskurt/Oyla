@@ -83,22 +83,6 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
-    private void getOptions(){
-        db.child("option").keepSynced(true);
-        db.child("option").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot ds : dataSnapshot.getChildren()){
-                    options.add(ds.getValue(Option.class));
-                }
-                optionsGot = true;
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {}
-        });
-    }
-
     private void getPolls(){
         db.child("poll").keepSynced(true);
         db.child("poll").addValueEventListener(new ValueEventListener() {
@@ -130,6 +114,22 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private void getOptions(){
+        db.child("option").keepSynced(true);
+        db.child("option").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot ds : dataSnapshot.getChildren()){
+                    options.add(ds.getValue(Option.class));
+                }
+                optionsGot = true;
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {}
+        });
+    }
+
     private void selectRandomPoll() {
         Poll randomPoll;
         do {
@@ -143,6 +143,7 @@ public class MainActivity extends AppCompatActivity {
         final TextView txtPollOptionsPollView = (TextView) view.findViewById(R.id.txtPollOptionsPollView);
         final ImageView imgPollGenderPollView = (ImageView) view.findViewById(R.id.imgPollGenderPollView);
 
+        final Poll p = randomPoll;
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -150,6 +151,7 @@ public class MainActivity extends AppCompatActivity {
                 intent.putExtra("user", user);
                 intent.putExtra("userKey", userKey);
                 intent.putExtra("polls", (Serializable) polls);
+                intent.putExtra("poll", p);
                 if (optionsGot) intent.putExtra("options", (Serializable) options);
                 startActivity(intent);
             }
@@ -230,6 +232,7 @@ public class MainActivity extends AppCompatActivity {
                 intent.putExtra("user", user);
                 intent.putExtra("userKey", userKey);
                 intent.putExtra("polls", (Serializable) polls);
+                if (optionsGot) intent.putExtra("options", (Serializable) options);
                 startActivity(intent);
             }
         });
@@ -237,14 +240,24 @@ public class MainActivity extends AppCompatActivity {
         btnBrowsePollsMain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // TODO
+                final Intent intent = new Intent(MainActivity.this, PollListActivity.class);
+                intent.putExtra("user", user);
+                intent.putExtra("userKey", userKey);
+                intent.putExtra("polls", (Serializable) polls);
+                if (optionsGot) intent.putExtra("options", (Serializable) options);
+                startActivity(intent);
             }
         });
 
         btnCreatePollMain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // TODO
+                /*final Intent intent = new Intent(MainActivity.this, CreatePollActivity.class);
+                intent.putExtra("user", user);
+                intent.putExtra("userKey", userKey);
+                intent.putExtra("polls", (Serializable) polls);
+                if (optionsGot) intent.putExtra("options", (Serializable) options);
+                startActivity(intent);*/
             }
         });
 

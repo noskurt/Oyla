@@ -42,7 +42,6 @@
                 android:textColor="@android:color/black"
                 android:textSize="10pt"
                 android:textAlignment="center"
-                android:text="BAŞLIK"
                 android:textStyle="bold" />
 
             <TextView
@@ -51,7 +50,6 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/txtPollTitlePollView"
                 android:textSize="10pt"
-                android:text="SEÇENEKLER"
                 android:textColor="@android:color/black" />
 
         </RelativeLayout>
@@ -69,7 +67,6 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="0.4"
                 android:textSize="10pt"
-                android:text="TARİH"
                 android:textColor="@android:color/black" />
 
             <TextView
@@ -79,7 +76,6 @@
                 android:layout_weight="0.6"
                 android:textAlignment="textEnd"
                 android:textSize="10pt"
-                android:text="KULLANICI"
                 android:textColor="@android:color/black" />
 
         </LinearLayout>

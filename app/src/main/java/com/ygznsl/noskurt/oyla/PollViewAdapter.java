@@ -2,17 +2,16 @@ package com.ygznsl.noskurt.oyla;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.ygznsl.noskurt.oyla.entity.Option;
@@ -24,16 +23,18 @@ import java.util.List;
 
 public class PollViewAdapter extends RecyclerView.Adapter<PollViewAdapter.CustomViewHolder> {
 
-    private List<Poll> pollItemList;
-    private Context context;
+    private final List<Poll> polls;
+    private final List<Option> options;
+    private final Context context;
 
-    public PollViewAdapter(Context context, List<Poll> pollItemList) {
-        this.pollItemList = pollItemList;
+    public PollViewAdapter(Context context, List<Poll> polls, List<Option> options) {
+        this.polls = polls;
+        this.options = options;
         this.context = context;
     }
 
     public List<Poll> getPolls() {
-        return pollItemList;
+        return polls;
     }
 
     public Context getContext() {
@@ -42,19 +43,55 @@ public class PollViewAdapter extends RecyclerView.Adapter<PollViewAdapter.Custom
 
     @Override
     public CustomViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new CustomViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.card_view_poll_list, null));
+        return new CustomViewHolder(LayoutInflater.from(context).inflate(R.layout.card_view_poll_list, null));
     }
 
-    /**
-     *  Item den veri çekip veriyi görsel
-     *  elemanlara ekleme işemi de burada oluyor
-     */
     @Override
     public void onBindViewHolder(final CustomViewHolder holder, int position) {
-        final Poll poll = pollItemList.get(position);
+        final Poll poll = polls.get(position);
+        final DatabaseReference db = FirebaseDatabase.getInstance().getReference();
+
+        db.child("user").orderByChild("id").equalTo(poll.getUser())
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        for (DataSnapshot ds : dataSnapshot.getChildren()){
+                            holder.txtPollUserPollView.setText(ds.getValue(User.class).getName());
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {}
+                });
+
+        if (options == null){
+            db.child("option").orderByChild("poll").equalTo(poll.getId())
+                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            final StringBuilder str = new StringBuilder();
+                            for (DataSnapshot ds : dataSnapshot.getChildren()){
+                                str.append("\"").append(ds.getValue(Option.class).getTitle()).append("\", ");
+                            }
+                            final String options = "[" + str.toString().trim().substring(0, str.toString().trim().length() - 1) + "]";
+                            holder.txtPollOptionsPollView.setText(options.length() <= 50 ? options : options.substring(0, 48) + "...");
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {}
+                    });
+        } else {
+            final StringBuilder str = new StringBuilder();
+            for (Option o : options){
+                if (o.getPoll() == poll.getId()){
+                    str.append("\"").append(o.getTitle()).append("\", ");
+                }
+            }
+            final String options = "[" + str.toString().trim().substring(0, str.toString().trim().length() - 1) + "]";
+            holder.txtPollOptionsPollView.setText(options.length() <= 50 ? options : options.substring(0, 48) + "...");
+        }
 
         holder.txtPollTitlePollView.setText(poll.getTitle());
-        holder.txtPollUserPollView.setText(poll.getUser());
         try {
             holder.txtPollPublishDatePollView.setText(User.DATE_FORMAT.format(Poll.DATE_FORMAT.parse(poll.getPdate())));
         } catch (ParseException ex) {
@@ -69,37 +106,38 @@ public class PollViewAdapter extends RecyclerView.Adapter<PollViewAdapter.Custom
                                 R.drawable.gender_female
                         )
         );
-
-        FirebaseDatabase.getInstance().getReference().child("option").orderByChild("poll").equalTo(poll.getId())
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        final StringBuilder str = new StringBuilder();
-                        for (DataSnapshot ds : dataSnapshot.getChildren()){
-                            str.append("\"").append(ds.getValue(Option.class).getTitle()).append("\", ");
-                        }
-                        final String options = "[" + str.toString().trim().substring(0, str.toString().trim().length() - 1) + "]";
-                        holder.txtPollOptionsPollView.setText(options.length() <= 50 ? options : options.substring(0, 48) + "...");
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {}
-                });
     }
 
     @Override
     public int getItemCount() {
-        return (null != pollItemList ? pollItemList.size() : 0);
+        return (null != polls ? polls.size() : 0);
     }
 
     public void clear() {
-        pollItemList.clear();
+        polls.clear();
+        notifyDataSetChanged();
+    }
+
+    public void add(Poll poll) {
+        polls.add(poll);
         notifyDataSetChanged();
     }
 
     public void addAll(List<Poll> list) {
-        pollItemList.addAll(list);
+        polls.addAll(list);
         notifyDataSetChanged();
+    }
+
+    public boolean remove(Poll poll){
+        final boolean tmp = polls.remove(poll);
+        if (tmp) notifyDataSetChanged();
+        return tmp;
+    }
+
+    public Poll removeAt(int index){
+        final Poll tmp = polls.remove(index);
+        notifyDataSetChanged();
+        return tmp;
     }
 
     /**
@@ -108,7 +146,6 @@ public class PollViewAdapter extends RecyclerView.Adapter<PollViewAdapter.Custom
      */
     class CustomViewHolder extends RecyclerView.ViewHolder {
 
-        final RelativeLayout rlMainPollView;
         final TextView txtPollTitlePollView;
         final TextView txtPollPublishDatePollView;
         final TextView txtPollUserPollView;
@@ -117,7 +154,6 @@ public class PollViewAdapter extends RecyclerView.Adapter<PollViewAdapter.Custom
 
         public CustomViewHolder(View view) {
             super(view);
-            rlMainPollView = (RelativeLayout) view.findViewById(R.id.rlMainPollView);
             txtPollTitlePollView = (TextView) view.findViewById(R.id.txtPollTitlePollView);
             txtPollPublishDatePollView = (TextView) view.findViewById(R.id.txtPollPublishDatePollView);
             txtPollUserPollView = (TextView) view.findViewById(R.id.txtPollUserPollView);
