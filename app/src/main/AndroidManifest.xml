@@ -27,7 +27,8 @@
         <activity android:name=".AccountActivity" />
         <activity android:name=".PollListActivity" />
         <activity android:name=".PollActivity" />
-        <activity android:name=".CreatePollActivity"></activity>
+        <activity android:name=".CreatePollActivity" />
+        <activity android:name=".PollAnalyticsActivity"></activity>
     </application>
 
 </manifest>

@@ -186,6 +186,8 @@ public class PollActivity extends AppCompatActivity {
         btnStatsPoll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Intent intent = new Intent(PollActivity.this, PollAnalyticsActivity.class);
+                startActivity(intent);
                 // TODO istatistikler activty gönder
             }
         });
