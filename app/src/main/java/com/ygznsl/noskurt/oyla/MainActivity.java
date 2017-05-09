@@ -252,12 +252,12 @@ public class MainActivity extends AppCompatActivity {
         btnCreatePollMain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                /*final Intent intent = new Intent(MainActivity.this, CreatePollActivity.class);
+                final Intent intent = new Intent(MainActivity.this, CreatePollActivity.class);
                 intent.putExtra("user", user);
                 intent.putExtra("userKey", userKey);
                 intent.putExtra("polls", (Serializable) polls);
                 if (optionsGot) intent.putExtra("options", (Serializable) options);
-                startActivity(intent);*/
+                startActivity(intent);
             }
         });
 

@@ -36,4 +36,11 @@
     <string name="text_birthDate">Doğum tarihiniz: </string>
     <string name="text_cityAccount">Şehriniz: </string>
 
+    <string-array name="gender_array">
+        <item>Hangi cinsiyetler oy verebilir</item>
+        <item>Kadın</item>
+        <item>Erkek</item>
+        <item>Herkes</item>
+    </string-array>
+
 </resources>

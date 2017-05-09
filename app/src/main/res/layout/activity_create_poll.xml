@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.ygznsl.noskurt.oyla.CreatePollActivity">
+
+    <EditText
+        android:id="@+id/etxtQuestionCreate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Sorunuzu buraya yazınız..." />
+
+    <Spinner
+        android:id="@+id/spinnerGenderCreate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/etxtQuestionCreate"
+        android:entries="@array/gender_array">
+
+    </Spinner>
+
+    <CheckBox
+        android:id="@+id/checkboxMultiCreate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/spinnerGenderCreate"
+        android:text="Çoklu seçenekler olsun" />
+
+    <TextView
+        android:id="@+id/dumpText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/checkboxMultiCreate"
+        android:text="Cevaplar" />
+
+    <ScrollView
+        android:id="@+id/dumpScroll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/dumpText">
+
+        <LinearLayout
+            android:id="@+id/llOptionsCreate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <RelativeLayout
+        android:id="@+id/dumpLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/dumpScroll"
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/btnAddCreate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="CEVAP EKLE" />
+
+        <Button
+            android:id="@+id/btnSubmitCreate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/btnAddCreate"
+            android:text="ANKETİ OLUŞTUR" />
+    </RelativeLayout>
+
+</RelativeLayout>
