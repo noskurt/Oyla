@@ -14,6 +14,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.ygznsl.noskurt.oyla.entity.Category;
 import com.ygznsl.noskurt.oyla.entity.Option;
 import com.ygznsl.noskurt.oyla.entity.Poll;
 import com.ygznsl.noskurt.oyla.entity.User;
@@ -23,6 +24,7 @@ import java.util.List;
 
 public class PollViewAdapter extends RecyclerView.Adapter<PollViewAdapter.CustomViewHolder> {
 
+    private final List<Category> categories;
     private final List<Poll> polls;
     private final List<Option> options;
     private final Context context;
@@ -31,6 +33,7 @@ public class PollViewAdapter extends RecyclerView.Adapter<PollViewAdapter.Custom
         this.polls = polls;
         this.options = options;
         this.context = context;
+        categories = Category.getCategories(context);
     }
 
     public List<Poll> getPolls() {
@@ -50,19 +53,6 @@ public class PollViewAdapter extends RecyclerView.Adapter<PollViewAdapter.Custom
     public void onBindViewHolder(final CustomViewHolder holder, int position) {
         final Poll poll = polls.get(position);
         final DatabaseReference db = FirebaseDatabase.getInstance().getReference();
-
-        db.child("user").orderByChild("id").equalTo(poll.getUser())
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        for (DataSnapshot ds : dataSnapshot.getChildren()){
-                            holder.txtPollUserPollView.setText(ds.getValue(User.class).getName());
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {}
-                });
 
         if (options == null){
             db.child("option").orderByChild("poll").equalTo(poll.getId())
@@ -96,6 +86,13 @@ public class PollViewAdapter extends RecyclerView.Adapter<PollViewAdapter.Custom
             holder.txtPollPublishDatePollView.setText(User.DATE_FORMAT.format(Poll.DATE_FORMAT.parse(poll.getPdate())));
         } catch (ParseException ex) {
             holder.txtPollPublishDatePollView.setText(poll.getPdate());
+        }
+
+        for (Category c : categories){
+            if (c.getId() == poll.getCategory()){
+                holder.txtPollCategoryPollView.setText(c.getName());
+                break;
+            }
         }
 
         holder.imgPollGenderPollView.setImageResource(
@@ -148,7 +145,7 @@ public class PollViewAdapter extends RecyclerView.Adapter<PollViewAdapter.Custom
 
         final TextView txtPollTitlePollView;
         final TextView txtPollPublishDatePollView;
-        final TextView txtPollUserPollView;
+        final TextView txtPollCategoryPollView;
         final TextView txtPollOptionsPollView;
         final ImageView imgPollGenderPollView;
 
@@ -156,7 +153,7 @@ public class PollViewAdapter extends RecyclerView.Adapter<PollViewAdapter.Custom
             super(view);
             txtPollTitlePollView = (TextView) view.findViewById(R.id.txtPollTitlePollView);
             txtPollPublishDatePollView = (TextView) view.findViewById(R.id.txtPollPublishDatePollView);
-            txtPollUserPollView = (TextView) view.findViewById(R.id.txtPollUserPollView);
+            txtPollCategoryPollView = (TextView) view.findViewById(R.id.txtPollCategoryPollView);
             txtPollOptionsPollView = (TextView) view.findViewById(R.id.txtPollOptionsPollView);
             imgPollGenderPollView = (ImageView) view.findViewById(R.id.imgPollGenderPollView);
         }

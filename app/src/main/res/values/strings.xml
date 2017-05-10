@@ -26,6 +26,8 @@
     <string name="text_btnMyVotes">Oyladıklarım</string>
     <string name="text_btnLogout">Çıkış Yap</string>
     <string name="text_btnChangePassword">Şifreyi Değiştir</string>
+    <string name="text_btnVote">Oyla</string>
+    <string name="text_btnShowStats">İstatistikleri Görüntüle</string>
     <string name="text_welcome"> olarak giriş yaptınız</string>
     <string name="text_pollCount1">Toplamda </string>
     <string name="text_pollCount2"> anket yayında</string>
@@ -35,6 +37,10 @@
     <string name="text_userName">Kullanıcı Adınız: </string>
     <string name="text_birthDate">Doğum tarihiniz: </string>
     <string name="text_cityAccount">Şehriniz: </string>
+    <string name="text_pollUserPoll"> tarafından</string>
+    <string name="text_pollPublishDatePoll"> tarihinde yayınlandı</string>
+    <string name="text_pollStatsPoll"> kez oylandı</string>
+    <string name="text_category">Kategori: </string>
 
     <string-array name="gender_array">
         <item>Hangi cinsiyetler oy verebilir</item>

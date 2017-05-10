@@ -21,6 +21,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.ygznsl.noskurt.oyla.entity.Option;
 import com.ygznsl.noskurt.oyla.entity.Poll;
 import com.ygznsl.noskurt.oyla.entity.User;
+import com.ygznsl.noskurt.oyla.entity.VoteCollection;
 import com.ygznsl.noskurt.oyla.helper.Nullable;
 
 import java.io.Serializable;
@@ -54,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView txtPollCountMain;
 
     public MainActivity(){
+        VoteCollection.retrieve();
         db.child("poll").keepSynced(true);
         getUserInfo();
         getPolls();
@@ -139,7 +141,7 @@ public class MainActivity extends AppCompatActivity {
         final View view = LayoutInflater.from(MainActivity.this).inflate(R.layout.card_view_poll_list, null);
         final TextView txtPollTitlePollView = (TextView) view.findViewById(R.id.txtPollTitlePollView);
         final TextView txtPollPublishDatePollView = (TextView) view.findViewById(R.id.txtPollPublishDatePollView);
-        final TextView txtPollUserPollView = (TextView) view.findViewById(R.id.txtPollUserPollView);
+        //final TextView txtPollUserPollView = (TextView) view.findViewById(R.id.txtPollUserPollView);
         final TextView txtPollOptionsPollView = (TextView) view.findViewById(R.id.txtPollOptionsPollView);
         final ImageView imgPollGenderPollView = (ImageView) view.findViewById(R.id.imgPollGenderPollView);
 
@@ -152,12 +154,20 @@ public class MainActivity extends AppCompatActivity {
                 intent.putExtra("userKey", userKey);
                 intent.putExtra("polls", (Serializable) polls);
                 intent.putExtra("poll", p);
-                if (optionsGot) intent.putExtra("options", (Serializable) options);
+                if (optionsGot){
+                    final List<Option> list = new LinkedList<>();
+                    for (Option o : options){
+                        if (o.getPoll() == p.getId()){
+                            list.add(o);
+                        }
+                    }
+                    intent.putExtra("options", (Serializable) list);
+                }
                 startActivity(intent);
             }
         });
 
-        db.child("user").orderByChild("id").equalTo(randomPoll.getUser())
+        /*db.child("user").orderByChild("id").equalTo(randomPoll.getUser())
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
@@ -168,7 +178,7 @@ public class MainActivity extends AppCompatActivity {
 
                     @Override
                     public void onCancelled(DatabaseError databaseError) {}
-                });
+                });*/
 
         txtPollTitlePollView.setText(randomPoll.getTitle());
         txtPollPublishDatePollView.setText(User.DATE_FORMAT.format(tryParseDate(Poll.DATE_FORMAT, randomPoll.getPdate(), new Date())));

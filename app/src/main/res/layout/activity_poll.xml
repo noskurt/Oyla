@@ -14,6 +14,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_margin="10dp"
             android:orientation="vertical" >
 
             <LinearLayout
@@ -27,8 +28,8 @@
                     android:layout_height="wrap_content"
                     android:drawablePadding="10dp"
                     android:drawableStart="@drawable/gender_both"
-                    android:text="BAŞLIK"
-                    android:textSize="10pt"
+                    android:textColor="@android:color/black"
+                    android:textSize="12pt"
                     android:textStyle="bold" />
 
             </LinearLayout>
@@ -36,25 +37,30 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
                 android:orientation="horizontal">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Kategori: " />
+                    android:textColor="@android:color/black"
+                    android:textSize="9pt"
+                    android:text="@string/text_category" />
 
                 <TextView
                     android:id="@+id/txtCategoryPoll"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="KATEGORİ"
+                    android:textColor="@android:color/black"
+                    android:textSize="9pt"
                     android:textAlignment="textEnd" />
 
             </LinearLayout>
 
             <ScrollView
                 android:layout_width="match_parent"
-                android:layout_height="300dp">
+                android:layout_height="250dp">
 
                 <LinearLayout
                     android:id="@+id/llOptionsPoll"
@@ -66,31 +72,131 @@
 
             </ScrollView>
 
-            <TextView
-                android:id="@+id/txtInfoPoll"
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Emre BOZKURT tarafından\n10/05/2017 tarihinde oluşturuldu"
-                android:textAlignment="center" />
+                android:orientation="horizontal" >
 
-            <TextView
-                android:id="@+id/txtStatsPoll"
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_centerHorizontal="true" >
+
+                    <ProgressBar
+                        android:id="@+id/pbPollUserPoll"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:layout_marginEnd="10dp" />
+
+                    <TextView
+                        android:id="@+id/txtPollUserPoll"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@android:color/black"
+                        android:textSize="9pt"
+                        android:layout_marginEnd="10dp"
+                        android:textAlignment="center"
+                        android:visibility="gone" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@android:color/black"
+                        android:textSize="9pt"
+                        android:text="@string/text_pollUserPoll" />
+
+                </LinearLayout>
+
+            </RelativeLayout>
+
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="15000 kişi oyladı"
-                android:textAlignment="center" />
+                android:orientation="horizontal" >
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_centerHorizontal="true" >
+
+                    <ProgressBar
+                        android:id="@+id/pbPollPublishDatePoll"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:layout_marginEnd="10dp" />
+
+                    <TextView
+                        android:id="@+id/txtPollPublishDatePoll"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@android:color/black"
+                        android:textSize="9pt"
+                        android:layout_marginEnd="10dp"
+                        android:textAlignment="center"
+                        android:visibility="gone" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@android:color/black"
+                        android:textSize="9pt"
+                        android:text="@string/text_pollPublishDatePoll" />
+
+                </LinearLayout>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" >
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_centerHorizontal="true" >
+
+                    <ProgressBar
+                        android:id="@+id/pbPollStatsPoll"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:layout_marginEnd="10dp" />
+
+                    <TextView
+                        android:id="@+id/txtPollStatsPoll"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@android:color/black"
+                        android:textSize="9pt"
+                        android:layout_marginEnd="10dp"
+                        android:textAlignment="center"
+                        android:visibility="gone" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@android:color/black"
+                        android:textSize="9pt"
+                        android:text="@string/text_pollStatsPoll" />
+
+                </LinearLayout>
+
+            </RelativeLayout>
 
             <Button
                 android:id="@+id/btnVotePoll"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="OYLA" />
+                android:text="@string/text_btnVote" />
 
             <Button
                 android:id="@+id/btnStatsPoll"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="İSTATİSTİKLERİ GÖRÜNTÜLE" />
+                android:text="@string/text_btnShowStats" />
 
         </LinearLayout>
 

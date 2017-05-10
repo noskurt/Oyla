@@ -1,6 +1,7 @@
 package com.ygznsl.noskurt.oyla;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -8,6 +9,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
@@ -32,6 +34,7 @@ public class SplashActivity extends AppCompatActivity {
 
     private final FirebaseAuth auth = FirebaseAuth.getInstance();
     private boolean openingTaskExecuted = false;
+    private boolean guiInitialized = false;
 
     private ProgressBar pbSignIn;
     private EditText txtEmailSignIn;
@@ -40,40 +43,7 @@ public class SplashActivity extends AppCompatActivity {
     private TextInputLayout emailLayout;
     private TextInputLayout pwLayout;
 
-    private void openingTask() {
-        final AsyncTask<FirebaseAuth, Integer, FirebaseUser> task = new AsyncTask<FirebaseAuth, Integer, FirebaseUser>() {
-            private FirebaseUser user = null;
-
-            @Override
-            protected FirebaseUser doInBackground(FirebaseAuth... firebaseAuths) {
-                user = auth.getCurrentUser();
-                try {
-                    Thread.sleep(1500);
-                } catch (InterruptedException ex) {
-                    Log.e("task.doInBackground", ex.getMessage());
-                }
-                if (user != null) logIn();
-                openingTaskExecuted = true;
-                return user;
-            }
-
-            @Override
-            protected void onPostExecute(FirebaseUser firebaseUser) {
-                if (user == null) hideProgressBar();
-            }
-        };
-        task.execute();
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_splash);
-
-        if (!isOnline())
-            Toast.makeText(SplashActivity.this, "İnternet erişimi gerekmektedir!", Toast.LENGTH_LONG).show();
-
-
+    private void initializeGui(){
         final Button btnSignIn = (Button) findViewById(R.id.btnSignIn);
         final Button btnRegister = (Button) findViewById(R.id.btnRegister);
         final TextView btnSignInAnonymously = (TextView) findViewById(R.id.btnSignInAnonymously);
@@ -187,6 +157,56 @@ public class SplashActivity extends AppCompatActivity {
             }
         });
 
+        guiInitialized = true;
+    }
+
+    private void openingTask() {
+        final AsyncTask<FirebaseAuth, Integer, FirebaseUser> task = new AsyncTask<FirebaseAuth, Integer, FirebaseUser>() {
+            private FirebaseUser user = null;
+
+            @Override
+            protected FirebaseUser doInBackground(FirebaseAuth... firebaseAuths) {
+                user = auth.getCurrentUser();
+                try {
+                    Thread.sleep(1500);
+                } catch (InterruptedException ex) {
+                    Log.e("task.doInBackground", ex.getMessage());
+                }
+                if (!isOnline()){
+                    //Toast.makeText(SplashActivity.this, "İnternet erişimi gerekmektedir!", Toast.LENGTH_LONG).show();
+                    final AlertDialog dialog = new AlertDialog.Builder(SplashActivity.this)
+                            .setTitle("İnternet bağlantısı")
+                            .setMessage("Uygulamanın çalışabilmesi için internet bağlantısı gerekmektedir.\r\n" +
+                                    "Lütfen internet bağlantınızı kontrol edip uygulamayı tekrar çalıştırın.")
+                            .setPositiveButton("Anladım", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    dialogInterface.dismiss();
+                                }
+                            })
+                            .create();
+                    dialog.show();
+                    SplashActivity.this.finish();
+                    return user;
+                }
+                if (user != null) logIn();
+                openingTaskExecuted = true;
+                return user;
+            }
+
+            @Override
+            protected void onPostExecute(FirebaseUser firebaseUser) {
+                if (user == null) hideProgressBar();
+            }
+        };
+        task.execute();
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_splash);
+        if (!guiInitialized) initializeGui();
         if (!openingTaskExecuted) openingTask();
     }
 
@@ -229,8 +249,8 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     public boolean isOnline() {
-        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        final ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        final NetworkInfo netInfo = cm.getActiveNetworkInfo();
         return netInfo != null && netInfo.isConnectedOrConnecting();
     }
 

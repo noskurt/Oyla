@@ -20,6 +20,7 @@ import com.ygznsl.noskurt.oyla.entity.Poll;
 import com.ygznsl.noskurt.oyla.entity.User;
 
 import java.io.Serializable;
+import java.util.LinkedList;
 import java.util.List;
 
 public class PollListActivity extends AppCompatActivity {
@@ -83,7 +84,15 @@ public class PollListActivity extends AppCompatActivity {
                 intent.putExtra("userKey", userKey);
                 intent.putExtra("polls", (Serializable) polls);
                 intent.putExtra("poll", poll);
-                if (optionsGot) intent.putExtra("options", (Serializable) options);
+                if (optionsGot){
+                    final List<Option> list = new LinkedList<Option>();
+                    for (Option o : options){
+                        if (o.getPoll() == poll.getId()){
+                            list.add(o);
+                        }
+                    }
+                    intent.putExtra("options", (Serializable) list);
+                }
                 startActivity(intent);
             }
 
