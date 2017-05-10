@@ -4,4 +4,10 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
     <color name="logoColor">#F27C61</color>
+
+    <color name="kulerColor1">#468966</color>
+    <color name="kulerColor2">#FFF0A5</color>
+    <color name="kulerColor3">#FFB03B</color>
+    <color name="kulerColor4">#B64926</color>
+    <color name="kulerColor5">#8E2800</color>
 </resources>

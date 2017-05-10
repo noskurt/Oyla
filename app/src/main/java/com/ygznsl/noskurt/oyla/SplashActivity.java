@@ -1,6 +1,9 @@
 package com.ygznsl.noskurt.oyla;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -37,15 +40,18 @@ public class SplashActivity extends AppCompatActivity {
     private TextInputLayout emailLayout;
     private TextInputLayout pwLayout;
 
-    private void openingTask(){
+    private void openingTask() {
         final AsyncTask<FirebaseAuth, Integer, FirebaseUser> task = new AsyncTask<FirebaseAuth, Integer, FirebaseUser>() {
             private FirebaseUser user = null;
 
             @Override
             protected FirebaseUser doInBackground(FirebaseAuth... firebaseAuths) {
                 user = auth.getCurrentUser();
-                try { Thread.sleep(1500); }
-                catch (InterruptedException ex) { Log.e("task.doInBackground", ex.getMessage()); }
+                try {
+                    Thread.sleep(1500);
+                } catch (InterruptedException ex) {
+                    Log.e("task.doInBackground", ex.getMessage());
+                }
                 if (user != null) logIn();
                 openingTaskExecuted = true;
                 return user;
@@ -63,6 +69,10 @@ public class SplashActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
+
+        if (!isOnline())
+            Toast.makeText(SplashActivity.this, "İnternet erişimi gerekmektedir!", Toast.LENGTH_LONG).show();
+
 
         final Button btnSignIn = (Button) findViewById(R.id.btnSignIn);
         final Button btnRegister = (Button) findViewById(R.id.btnRegister);
@@ -100,12 +110,15 @@ public class SplashActivity extends AppCompatActivity {
 
                     @Override
                     protected Boolean doInBackground(String... strings) {
-                        try { Thread.sleep(1000); }
-                        catch (InterruptedException ex) { Log.e("signIn.doInBackground", ex.getMessage()); }
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException ex) {
+                            Log.e("signIn.doInBackground", ex.getMessage());
+                        }
                         auth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
-                                if (task.isSuccessful()){
+                                if (task.isSuccessful()) {
                                     logIn();
                                 } else {
                                     final Class c = task.getException().getClass();
@@ -153,8 +166,11 @@ public class SplashActivity extends AppCompatActivity {
 
                     @Override
                     protected Boolean doInBackground(String... strings) {
-                        try { Thread.sleep(1000); }
-                        catch (InterruptedException ex) { Log.e("signInAn.doInBackground", ex.getMessage()); }
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException ex) {
+                            Log.e("signInAn.doInBackground", ex.getMessage());
+                        }
                         auth.signInAnonymously().addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
@@ -194,22 +210,28 @@ public class SplashActivity extends AppCompatActivity {
         return true;
     }
 
-    private void showProgressBar(){
+    private void showProgressBar() {
         if (pbSignIn == null || signInLayout == null) return;
         pbSignIn.setVisibility(View.VISIBLE);
         signInLayout.setVisibility(View.GONE);
     }
 
-    private void hideProgressBar(){
+    private void hideProgressBar() {
         if (pbSignIn == null || signInLayout == null) return;
         pbSignIn.setVisibility(View.GONE);
         signInLayout.setVisibility(View.VISIBLE);
     }
 
-    private void logIn(){
+    private void logIn() {
         final Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
         finish();
+    }
+
+    public boolean isOnline() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        return netInfo != null && netInfo.isConnectedOrConnecting();
     }
 
     @Override
