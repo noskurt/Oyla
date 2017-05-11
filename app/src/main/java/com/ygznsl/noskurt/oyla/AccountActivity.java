@@ -3,12 +3,11 @@ package com.ygznsl.noskurt.oyla;
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.TextInputLayout;
 import android.support.v4.content.IntentCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,38 +23,42 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.ygznsl.noskurt.oyla.entity.City;
+import com.ygznsl.noskurt.oyla.entity.Entity;
+import com.ygznsl.noskurt.oyla.entity.Option;
+import com.ygznsl.noskurt.oyla.entity.Poll;
 import com.ygznsl.noskurt.oyla.entity.User;
+import com.ygznsl.noskurt.oyla.entity.Vote;
+import com.ygznsl.noskurt.oyla.helper.Function;
+import com.ygznsl.noskurt.oyla.helper.Lists;
 
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.Exchanger;
-import java.util.concurrent.Semaphore;
+import java.util.Set;
+import java.util.TreeSet;
 
 public class AccountActivity extends AppCompatActivity {
 
-    private List<City> cities = Collections.synchronizedList(new LinkedList<City>());
     private DatabaseReference db = FirebaseDatabase.getInstance().getReference();
     private FirebaseAuth auth = FirebaseAuth.getInstance();
-    private FirebaseUser currentUser;
     private final Locale locale = new Locale("tr", "TR");
+    private final Lists myPolls = new Lists();
+    private final Lists myVotes = new Lists();
     private boolean guiInitialized = false;
-    private boolean gotCities = false;
+    private boolean anonymous;
+    private FirebaseUser currentUser;
+    private List<City> cities;
     private User user = null;
     private String userKey;
+    private Lists lists;
 
     private TextView txtEmailAccount;
     private TextView txtUserNameAccount;
@@ -73,9 +76,61 @@ public class AccountActivity extends AppCompatActivity {
     private EditText txtPasswordNewUpdate;
     private EditText txtPasswordNewAgainUpdate;
 
+    private void calculateMyPolls(){
+        final List<Poll> list = new LinkedList<>();
+        for (Poll p : lists.POLLS){
+            if (p.getUser() == user.getId()){
+                list.add(p);
+            }
+        }
+
+        myPolls.USERS = lists.USERS;
+        myPolls.VOTES = lists.VOTES;
+        myPolls.OPTIONS = lists.OPTIONS;
+        myPolls.POLLS = list;
+
+        btnMyPollsAccount.setEnabled(!myPolls.POLLS.isEmpty());
+    }
+
+    private void calculateMyVotes(){
+        final Set<Integer> optionIds = new TreeSet<>();
+        for (Vote v : lists.VOTES){
+            if (v.getU() == user.getId()){
+                optionIds.add(v.getO());
+            }
+        }
+
+        final Set<Integer> pollIds = new TreeSet<>();
+        for (Option o : lists.OPTIONS){
+            if (optionIds.contains(o.getId())){
+                pollIds.add(o.getPoll());
+            }
+        }
+
+        final List<Poll> listPolls = new LinkedList<>();
+        for (Poll p : lists.POLLS){
+            if (pollIds.contains(p.getId())){
+                listPolls.add(p);
+            }
+        }
+
+        myVotes.USERS = lists.USERS;
+        myVotes.VOTES = lists.VOTES;
+        myVotes.OPTIONS = lists.OPTIONS;
+        myVotes.POLLS = listPolls;
+
+        btnMyVotesAccount.setEnabled(!myVotes.POLLS.isEmpty());
+    }
+
     private void initializeGui(){
         currentUser = auth.getCurrentUser();
         if (currentUser == null) finish();
+
+        final Bundle extras = getIntent().getExtras();
+        user = (User) extras.getSerializable("user");
+        userKey = extras.getString("userKey");
+        anonymous = extras.getBoolean("anonymous");
+        lists = (Lists) extras.getSerializable("lists");
 
         txtEmailAccount = (TextView) findViewById(R.id.txtEmailAccount);
         txtUserNameAccount = (EditText) findViewById(R.id.txtUserNameAccount);
@@ -87,11 +142,28 @@ public class AccountActivity extends AppCompatActivity {
         btnChangePasswordAccount = (Button) findViewById(R.id.btnChangePasswordAccount);
         btnLogoutAccount = (Button) findViewById(R.id.btnLogoutAccount);
 
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                calculateMyPolls();
+            }
+        }).start();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                calculateMyVotes();
+            }
+        }).start();
+
         final View viewPasswordUpdate = LayoutInflater.from(this).inflate(R.layout.layout_password_update, null);
         pbPasswordUpdate = (ProgressBar) viewPasswordUpdate.findViewById(R.id.pbPasswordUpdate);
         llResetPassword = (ScrollView) viewPasswordUpdate.findViewById(R.id.llResetPassword);
         txtPasswordNewUpdate = (EditText) viewPasswordUpdate.findViewById(R.id.txtPasswordNewUpdate);
         txtPasswordNewAgainUpdate = (EditText) viewPasswordUpdate.findViewById(R.id.txtPasswordNewAgainUpdate);
+
+        cities = City.getCities(this).get();
+        spinnerCityAccount.setAdapter(new ArrayAdapter<>(AccountActivity.this, android.R.layout.simple_spinner_dropdown_item, cities));
 
         dialogPasswordUpdate = new AlertDialog.Builder(AccountActivity.this)
                 .setView(viewPasswordUpdate)
@@ -196,63 +268,48 @@ public class AccountActivity extends AppCompatActivity {
         btnMyPollsAccount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // TODO
+                final Intent intent = new Intent(AccountActivity.this, PollListActivity.class);
+                intent.putExtra("user", user);
+                intent.putExtra("userKey", userKey);
+                intent.putExtra("anonymous", anonymous);
+                intent.putExtra("lists", myPolls);
+                startActivity(intent);
             }
         });
 
         btnMyVotesAccount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // TODO
+
+                final Intent intent = new Intent(AccountActivity.this, PollListActivity.class);
+                intent.putExtra("user", user);
+                intent.putExtra("userKey", userKey);
+                intent.putExtra("anonymous", anonymous);
+                intent.putExtra("lists", myVotes);
+                startActivity(intent);
             }
         });
 
-        if (!gotCities) getCities();
-
-        user = (User) getIntent().getExtras().getSerializable("user");
-        userKey = getIntent().getExtras().getString("userKey");
-
-        if (user == null){
-            db.child("user").orderByChild("email").equalTo(currentUser.getEmail()).addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    for (DataSnapshot ds : dataSnapshot.getChildren()){
-                        user = ds.getValue(User.class);
-                        userKey = ds.getKey();
-                        if (guiInitialized) putValues();
-                    }
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {}
-            });
-        } else {
-            if (guiInitialized) putValues();
+        if (anonymous){
+            btnMyVotesAccount.setEnabled(false);
+            btnMyPollsAccount.setEnabled(false);
+            btnUpdateAccount.setEnabled(false);
+            btnChangePasswordAccount.setEnabled(false);
+            txtBirthDateAccount.setEnabled(false);
+            spinnerCityAccount.setEnabled(false);
         }
+
+        txtEmailAccount.setText(anonymous ? "Anonim" : user.getEmail());
+        txtUserNameAccount.setText(anonymous ? "Anonim" : user.getName());
+        txtBirthDateAccount.setText(anonymous ? "Anonim" : user.getBdate());
+        spinnerCityAccount.setSelection(anonymous ? 0 : Entity.findIndexMatches(cities, new Function<City, Integer>() {
+            @Override
+            public Integer apply(City in) {
+                return in.getId();
+            }
+        }, user.getCity()));
 
         guiInitialized = true;
-    }
-
-    private void getCities(){
-        cities.clear();
-        cities.addAll(City.getCities(this));
-        spinnerCityAccount.setAdapter(new ArrayAdapter<>(AccountActivity.this, android.R.layout.simple_spinner_dropdown_item, cities));
-        gotCities = true;
-    }
-
-    private void putValues(){
-        //setTitle(String.format("%s - %s", getResources().getString(R.string.app_name), user.getName()));
-        int index = 0;
-        for (int i = 0; i < cities.size(); i++){
-            if (cities.get(i).getId() == user.getCity()){
-                index = i;
-                break;
-            }
-        }
-        txtEmailAccount.setText(user.getEmail());
-        txtUserNameAccount.setText(user.getName());
-        txtBirthDateAccount.setText(user.getBdate());
-        spinnerCityAccount.setSelection(index);
     }
 
     private void updateUserInfo(){
@@ -284,10 +341,7 @@ public class AccountActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_account);
-        if (!guiInitialized){
-            initializeGui();
-            putValues();
-        }
+        if (!guiInitialized) initializeGui();
     }
 
 }

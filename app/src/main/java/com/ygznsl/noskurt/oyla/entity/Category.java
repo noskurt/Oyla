@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
+import com.ygznsl.noskurt.oyla.helper.Nullable;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -57,17 +58,17 @@ public final class Category extends Entity implements Serializable {
         return name;
     }
 
-    public static List<Category> getCategories(Context context){
+    public static Nullable<List<Category>> getCategories(Context context){
         final List<Category> categories = new LinkedList<>();
         try (InputStreamReader isr = new InputStreamReader(context.getAssets().open("category.json"), Charset.forName("utf-8"))){
             try (JsonReader reader = new JsonReader(isr)){
                 final Category[] array = new Gson().fromJson(reader, Category[].class);
                 categories.addAll(Arrays.asList(array));
-                return categories;
+                return new Nullable<>(categories);
             }
         } catch (IOException ex) {
             Log.e("City.getCities", ex.getMessage());
-            return null;
+            return new Nullable<>();
         }
     }
 

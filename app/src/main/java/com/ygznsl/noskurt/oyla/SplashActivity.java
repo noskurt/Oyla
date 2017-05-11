@@ -89,7 +89,7 @@ public class SplashActivity extends AppCompatActivity {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if (task.isSuccessful()) {
-                                    logIn();
+                                    logIn(false);
                                 } else {
                                     final Class c = task.getException().getClass();
                                     runOnUiThread(new Runnable() {
@@ -145,7 +145,7 @@ public class SplashActivity extends AppCompatActivity {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 try {
-                                    if (task.getResult().getUser() != null) logIn();
+                                    if (task.getResult().getUser() != null) logIn(true);
                                 } catch (Exception ex) {
                                     Toast.makeText(SplashActivity.this, "Giriş başarısız oldu.", Toast.LENGTH_LONG).show();
                                 }
@@ -189,7 +189,7 @@ public class SplashActivity extends AppCompatActivity {
                     SplashActivity.this.finish();
                     return user;
                 }
-                if (user != null) logIn();
+                if (user != null) logIn(false);
                 openingTaskExecuted = true;
                 return user;
             }
@@ -242,8 +242,9 @@ public class SplashActivity extends AppCompatActivity {
         signInLayout.setVisibility(View.VISIBLE);
     }
 
-    private void logIn() {
+    private void logIn(boolean anonymous) {
         final Intent intent = new Intent(this, MainActivity.class);
+        intent.putExtra("anonymous", anonymous);
         startActivity(intent);
         finish();
     }

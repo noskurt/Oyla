@@ -33,7 +33,7 @@ public class PollViewAdapter extends RecyclerView.Adapter<PollViewAdapter.Custom
         this.polls = polls;
         this.options = options;
         this.context = context;
-        categories = Category.getCategories(context);
+        categories = Category.getCategories(context).get();
     }
 
     public List<Poll> getPolls() {

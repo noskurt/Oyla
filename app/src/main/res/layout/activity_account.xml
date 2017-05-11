@@ -171,14 +171,16 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/text_btnMyPolls"
-                    android:layout_weight="0.5" />
+                    android:layout_weight="0.5"
+                    android:enabled="false" />
 
                 <Button
                     android:id="@+id/btnMyVotesAccount"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/text_btnMyVotes"
-                    android:layout_weight="0.5" />
+                    android:layout_weight="0.5"
+                    android:enabled="false" />
 
             </LinearLayout>
 

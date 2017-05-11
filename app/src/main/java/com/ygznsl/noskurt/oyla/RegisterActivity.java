@@ -134,7 +134,7 @@ public class RegisterActivity extends AppCompatActivity {
             protected Boolean doInBackground(InputStream... ınputStreams) {
                 try (InputStreamReader isr = new InputStreamReader(getAssets().open("city.json"), Charset.forName("utf-8"))){
                     try (JsonReader reader = new JsonReader(isr)){
-                        final List<City> list = City.getCities(RegisterActivity.this);
+                        final List<City> list = City.getCities(RegisterActivity.this).get();
                         if (list == null) return false;
                         cities.clear();
                         cities.addAll(list);
