@@ -1,34 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/kulerColor2"
     android:orientation="vertical"
     tools:context="com.ygznsl.noskurt.oyla.SplashActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
+        android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" >
+        android:orientation="vertical">
 
         <ImageView
             android:id="@+id/imgLogo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:src="@drawable/logo"
             android:contentDescription="@string/app_name"
+            android:src="@drawable/logo"
             android:textAlignment="center" />
 
         <ProgressBar
             android:id="@+id/pbSignIn"
             android:layout_width="75dp"
             android:layout_height="75dp"
-            android:layout_margin="20dp"
             android:layout_gravity="center_horizontal"
+            android:layout_margin="20dp"
             android:visibility="visible" />
 
         <LinearLayout
@@ -38,7 +38,7 @@
             android:layout_marginEnd="50dp"
             android:layout_marginStart="50dp"
             android:orientation="vertical"
-            android:visibility="gone" >
+            android:visibility="gone">
 
             <ScrollView
                 android:layout_width="match_parent"
@@ -81,21 +81,27 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal" >
+                        android:orientation="horizontal">
 
                         <Button
                             android:id="@+id/btnRegister"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:layout_marginEnd="2dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/btn_colored1"
                             android:text="@string/text_btnRegister"
-                            android:layout_weight="1" />
+                            android:textColor="@color/kulerColor2" />
 
                         <Button
                             android:id="@+id/btnSignIn"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:layout_marginStart="2dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/btn_colored2"
                             android:text="@string/text_btnSignIn"
-                            android:layout_weight="1"/>
+                            android:textColor="@color/kulerColor2" />
 
                     </LinearLayout>
 
@@ -103,12 +109,12 @@
                         android:id="@+id/btnSignInAnonymously"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
                         android:layout_marginTop="15dp"
-                        android:textColor="@android:color/holo_blue_dark"
-                        android:textStyle="italic"
-                        android:textSize="10pt"
                         android:text="@string/text_btnSignInAnonymously"
-                        android:layout_gravity="center_horizontal" />
+                        android:textColor="@android:color/holo_blue_dark"
+                        android:textSize="10pt"
+                        android:textStyle="italic" />
 
                 </LinearLayout>
 
