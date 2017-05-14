@@ -6,32 +6,31 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.ygznsl.noskurt.oyla.entity.Category;
+import com.ygznsl.noskurt.oyla.entity.Entity;
 import com.ygznsl.noskurt.oyla.entity.Option;
 import com.ygznsl.noskurt.oyla.entity.Poll;
 import com.ygznsl.noskurt.oyla.entity.User;
+import com.ygznsl.noskurt.oyla.helper.Function;
+import com.ygznsl.noskurt.oyla.helper.OylaDatabase;
 
 import java.text.ParseException;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class PollViewAdapter extends RecyclerView.Adapter<PollViewAdapter.CustomViewHolder> {
 
     private final List<Category> categories;
     private final List<Poll> polls;
-    private final List<Option> options;
+    private final OylaDatabase oyla;
     private final Context context;
 
-    public PollViewAdapter(Context context, List<Poll> polls, List<Option> options) {
+    public PollViewAdapter(Context context, List<Poll> polls, OylaDatabase oyla) {
         this.polls = polls;
-        this.options = options;
+        this.oyla = oyla;
         this.context = context;
         categories = Category.getCategories(context).get();
     }
@@ -52,34 +51,15 @@ public class PollViewAdapter extends RecyclerView.Adapter<PollViewAdapter.Custom
     @Override
     public void onBindViewHolder(final CustomViewHolder holder, int position) {
         final Poll poll = polls.get(position);
-        final DatabaseReference db = FirebaseDatabase.getInstance().getReference();
 
-        if (options == null){
-            db.child("option").orderByChild("poll").equalTo(poll.getId())
-                    .addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            final StringBuilder str = new StringBuilder();
-                            for (DataSnapshot ds : dataSnapshot.getChildren()){
-                                str.append("\"").append(ds.getValue(Option.class).getTitle()).append("\", ");
-                            }
-                            final String options = "[" + str.toString().trim().substring(0, str.toString().trim().length() - 1) + "]";
-                            holder.txtPollOptionsPollView.setText(options.length() <= 50 ? options : options.substring(0, 48) + "...");
-                        }
-
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {}
-                    });
-        } else {
-            final StringBuilder str = new StringBuilder();
-            for (Option o : options){
-                if (o.getPoll() == poll.getId()){
-                    str.append("\"").append(o.getTitle()).append("\", ");
-                }
+        final StringBuilder str = new StringBuilder();
+        for (Option o : oyla.getOptions()){
+            if (o.getPoll() == poll.getId()){
+                str.append("\"").append(o.getTitle()).append("\", ");
             }
-            final String options = "[" + str.toString().trim().substring(0, str.toString().trim().length() - 1) + "]";
-            holder.txtPollOptionsPollView.setText(options.length() <= 50 ? options : options.substring(0, 48) + "...");
         }
+        final String options = "[" + str.toString().trim().substring(0, str.toString().trim().length() - 1) + "]";
+        holder.txtPollOptionsPollView.setText(options.length() <= 50 ? options : options.substring(0, 48) + "...");
 
         holder.txtPollTitlePollView.setText(poll.getTitle());
         try {
@@ -88,12 +68,12 @@ public class PollViewAdapter extends RecyclerView.Adapter<PollViewAdapter.Custom
             holder.txtPollPublishDatePollView.setText(poll.getPdate());
         }
 
-        for (Category c : categories){
-            if (c.getId() == poll.getCategory()){
-                holder.txtPollCategoryPollView.setText(c.getName());
-                break;
+        holder.txtPollCategoryPollView.setText(Entity.findById(categories, poll.getCategory()).orElse(new Function<Category, String>() {
+            @Override
+            public String apply(Category in) {
+                return in.getName();
             }
-        }
+        }, ""));
 
         holder.imgPollGenderPollView.setImageResource(
                 poll.getGenders().equals("B") ?
@@ -137,10 +117,11 @@ public class PollViewAdapter extends RecyclerView.Adapter<PollViewAdapter.Custom
         return tmp;
     }
 
-    /**
-     * findView işlemleri burda oluyor gerekli olanlar
-     * burda eklenmesi lazım
-     */
+    public void sort(Comparator<Poll> comparator){
+        Collections.sort(polls, comparator);
+        notifyDataSetChanged();
+    }
+
     class CustomViewHolder extends RecyclerView.ViewHolder {
 
         final TextView txtPollTitlePollView;

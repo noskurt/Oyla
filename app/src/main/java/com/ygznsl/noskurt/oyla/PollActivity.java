@@ -2,8 +2,8 @@ package com.ygznsl.noskurt.oyla;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -13,8 +13,9 @@ import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.ygznsl.noskurt.oyla.entity.Category;
@@ -23,23 +24,29 @@ import com.ygznsl.noskurt.oyla.entity.Option;
 import com.ygznsl.noskurt.oyla.entity.Poll;
 import com.ygznsl.noskurt.oyla.entity.User;
 import com.ygznsl.noskurt.oyla.entity.Vote;
+import com.ygznsl.noskurt.oyla.helper.Consumer;
 import com.ygznsl.noskurt.oyla.helper.Function;
-import com.ygznsl.noskurt.oyla.helper.Lists;
+import com.ygznsl.noskurt.oyla.helper.OylaDatabase;
+import com.ygznsl.noskurt.oyla.helper.Predicate;
 
+import java.text.Collator;
 import java.text.ParseException;
-import java.util.ArrayList;
 
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 
 public class PollActivity extends AppCompatActivity {
 
-    private final DatabaseReference db = FirebaseDatabase.getInstance().getReference();
+    private final Locale locale = new Locale("tr", "TR");
     private boolean guiInitialized = false;
     private boolean anonymous;
     private List<Category> categories;
-    private Lists lists;
     private User user;
-    private String userKey;
     private Poll poll;
 
     private LinearLayout llOptionsPoll;
@@ -49,21 +56,36 @@ public class PollActivity extends AppCompatActivity {
     private TextView txtPollUserPoll;
     private TextView txtPollPublishDatePoll;
     private TextView txtPollStatsPoll;
+    private TextView txtUserAlreadyVotedPoll;
+    private TextView txtUserCannotVotePoll;
     private ProgressBar pbPollUserPoll;
     private ProgressBar pbPollPublishDatePoll;
     private ProgressBar pbPollStatsPoll;
     private Button btnVotePoll;
     private Button btnStatsPoll;
 
-    private void initializeGui() {
+    private void showStats(){
+        final Intent intent = new Intent(this, PollAnalyticsActivity.class);
+        intent.putExtra("poll", poll);
+        startActivity(intent);
+    }
+
+    private void initializeGui(final OylaDatabase oyla) {
         categories = Category.getCategories(this).get();
 
         final Bundle extras = getIntent().getExtras();
-        userKey = extras.getString("userKey");
         user = (User) extras.getSerializable("user");
         anonymous = extras.getBoolean("anonymous");
         poll = (Poll) extras.getSerializable("poll");
-        lists = (Lists) extras.getSerializable("lists");
+
+        final List<Option> options = oyla.optionsOfPoll(poll);
+        Collections.sort(options, new Comparator<Option>() {
+            @Override
+            public int compare(Option o1, Option o2) {
+                final Collator collator = Collator.getInstance(locale);
+                return collator.compare(o1.getTitle(), o2.getTitle());
+            }
+        });
 
         llOptionsPoll = (LinearLayout) findViewById(R.id.llOptionsPoll);
         imgPollGenderPoll = (ImageView) findViewById(R.id.imgPollGenderPoll);
@@ -72,6 +94,8 @@ public class PollActivity extends AppCompatActivity {
         txtPollUserPoll = (TextView) findViewById(R.id.txtPollUserPoll);
         txtPollPublishDatePoll = (TextView) findViewById(R.id.txtPollPublishDatePoll);
         txtPollStatsPoll = (TextView) findViewById(R.id.txtPollStatsPoll);
+        txtUserAlreadyVotedPoll = (TextView) findViewById(R.id.txtUserAlreadyVotedPoll);
+        txtUserCannotVotePoll = (TextView) findViewById(R.id.txtUserCannotVotePoll);
         pbPollUserPoll = (ProgressBar) findViewById(R.id.pbPollUserPoll);
         pbPollPublishDatePoll = (ProgressBar) findViewById(R.id.pbPollPublishDatePoll);
         pbPollStatsPoll = (ProgressBar) findViewById(R.id.pbPollStatsPoll);
@@ -88,24 +112,24 @@ public class PollActivity extends AppCompatActivity {
                         )
         );
 
-        txtCategoryPoll.setText(Entity.findMatches(categories, new Function<Category, Integer>() {
+        txtCategoryPoll.setText(Entity.findMatches(categories, new Predicate<Category>() {
             @Override
-            public Integer apply(Category in) {
-                return in.getId();
+            public boolean test(Category in) {
+                return in.getId() == poll.getCategory();
             }
-        }, poll.getCategory()).orElse(new Function<Category, String>() {
+        }).orElse(new Function<Category, String>() {
             @Override
             public String apply(Category in) {
                 return in.getName();
             }
         }, ""));
 
-        txtPollUserPoll.setText(Entity.findMatches(lists.USERS, new Function<User, Integer>() {
+        txtPollUserPoll.setText(Entity.findMatches(oyla.getUsers(), new Predicate<User>() {
             @Override
-            public Integer apply(User in) {
-                return in.getId();
+            public boolean test(User in) {
+                return in.getId() == poll.getUser();
             }
-        }, poll.getUser()).orElse(new Function<User, String>() {
+        }).orElse(new Function<User, String>() {
             @Override
             public String apply(User in) {
                 return in.getName();
@@ -119,37 +143,22 @@ public class PollActivity extends AppCompatActivity {
             txtPollPublishDatePoll.setText(User.DATE_FORMAT.format(Poll.DATE_FORMAT.parse(poll.getPdate())));
         } catch (ParseException ex) {
             txtPollPublishDatePoll.setText(poll.getPdate());
+        } finally {
+            txtPollPublishDatePoll.setVisibility(View.VISIBLE);
+            pbPollPublishDatePoll.setVisibility(View.GONE);
         }
-        txtPollPublishDatePoll.setVisibility(View.VISIBLE);
-        pbPollPublishDatePoll.setVisibility(View.GONE);
 
-        final int minOptionId = lists.OPTIONS.get(0).getId();
-        final int maxOptionId = lists.OPTIONS.get(lists.OPTIONS.size() - 1).getId();
-
-        txtPollStatsPoll.setText(String.valueOf(Entity.findAllRangeMatches(lists.VOTES, new Function<Vote, Integer>() {
-            @Override
-            public Integer apply(Vote in) {
-                return in.getO();
-            }
-        }, minOptionId, maxOptionId).size()));
+        txtPollStatsPoll.setText(String.valueOf(oyla.votesOfPoll(poll).size()));
         txtPollStatsPoll.setVisibility(View.VISIBLE);
         pbPollStatsPoll.setVisibility(View.GONE);
 
-        /**
-         * Bu çekbakslarla radio butonları tutmak için
-         * liste oluşturmak durumunda kaldım. Radio grup
-         * bir işe yaramıyor içinden hangini seçtiğimi
-         * tespit edemiyorum mecbur liste yaptım. Altta
-         * da döngüye sokup kimi seçtiğmi tespit ediyorum.
-         * Tespit ederken TAG kullandım içine Firebaseden
-         * gelen ID yi koydum hadi eyv :)
-         */
+        final List<CheckBox> checkBoxes = new LinkedList<>();
+        final List<RadioButton> radioButtons = new LinkedList<>();
 
-        final ArrayList<CheckBox> checkBoxes = new ArrayList<>();
-        final ArrayList<RadioButton> radioButtons = new ArrayList<>();
+        llOptionsPoll.removeAllViews();
 
         if (poll.getMult() == 1) {
-            for (Option o : lists.OPTIONS) {
+            for (Option o : options) {
                 final CheckBox checkBox = new CheckBox(this);
                 checkBox.setText(o.getTitle());
                 checkBox.setTag(o.getId());
@@ -158,7 +167,7 @@ public class PollActivity extends AppCompatActivity {
             }
         } else {
             final RadioGroup radioGroup = new RadioGroup(this);
-            for (Option o : lists.OPTIONS) {
+            for (Option o : options) {
                 final RadioButton radioButton = new RadioButton(this);
                 radioButton.setText(o.getTitle());
                 radioButton.setTag(o.getId());
@@ -172,13 +181,62 @@ public class PollActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (poll.getMult() == 1) {
-                    for (CheckBox c : checkBoxes) {
-                        Toast.makeText(PollActivity.this, c.isChecked() + " " + c.getTag(), Toast.LENGTH_SHORT).show();
+                    final List<Integer> optionIds = Entity.findAllMatches(checkBoxes, new Predicate<CheckBox>() {
+                        @Override
+                        public boolean test(CheckBox in) {
+                            return in.isChecked();
+                        }
+                    }, new Function<CheckBox, Integer>() {
+                        @Override
+                        public Integer apply(CheckBox in) {
+                            return (Integer) in.getTag();
+                        }
+                    });
+                    if (!optionIds.isEmpty()) btnVotePoll.setEnabled(false);
+                    for (int oid : optionIds){
+                        final Vote vote = new Vote();
+                        vote.setO(oid);
+                        vote.setU(user.getId());
+                        vote.setVd(Vote.DATE_FORMAT.format(Calendar.getInstance(locale).getTime()));
+
+                        final DatabaseReference pushed = Entity.getDatabase().getReference().child("vote").push();
+                        pushed.setValue(vote).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()){
+                                    oyla.addVote(vote);
+                                }
+                            }
+                        });
                     }
+                    btnVotePoll.setEnabled(true);
+                    showStats();
                 } else {
-                    for (RadioButton r : radioButtons) {
-                        Toast.makeText(PollActivity.this, r.isChecked() + " " + r.getTag(), Toast.LENGTH_SHORT).show();
-                    }
+                    Entity.findMatches(radioButtons, new Predicate<RadioButton>() {
+                        @Override
+                        public boolean test(RadioButton in) {
+                            return in.isChecked();
+                        }
+                    }).operate(new Consumer<RadioButton>() {
+                        @Override
+                        public void accept(RadioButton in) {
+                            final Vote vote = new Vote();
+                            vote.setU(user.getId());
+                            vote.setO((Integer) in.getTag());
+                            vote.setVd(Vote.DATE_FORMAT.format(Calendar.getInstance(locale).getTime()));
+
+                            final DatabaseReference pushed = Entity.getDatabase().getReference().child("vote").push();
+                            pushed.setValue(vote).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()){
+                                        oyla.addVote(vote);
+                                        showStats();
+                                    }
+                                }
+                            });
+                        }
+                    });
                 }
             }
         });
@@ -186,11 +244,51 @@ public class PollActivity extends AppCompatActivity {
         btnStatsPoll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(PollActivity.this, PollAnalyticsActivity.class);
-                startActivity(intent);
-                // TODO istatistikler activty gönder
+                showStats();
             }
         });
+
+        if (anonymous) {
+            txtUserCannotVotePoll.setVisibility(View.VISIBLE);
+            btnVotePoll.setEnabled(false);
+        }
+
+        if (!anonymous && oyla.hasUserVotedPoll(user, poll)){
+            final List<Integer> votedOptionIds = Entity.map(oyla.optionsUserVoted(user, poll), new Function<Option, Integer>() {
+                @Override
+                public Integer apply(Option in) {
+                    return in.getId();
+                }
+            });
+
+            if (poll.getMult() == 1){
+                for (CheckBox cb : checkBoxes){
+                    cb.setEnabled(false);
+                    if (votedOptionIds.contains(cb.getTag())){
+                        cb.setChecked(true);
+                    }
+                }
+            } else {
+                for (RadioButton rb : radioButtons){
+                    rb.setEnabled(false);
+                    if (votedOptionIds.contains(rb.getTag())){
+                        rb.setChecked(true);
+                    }
+                }
+            }
+
+            txtUserAlreadyVotedPoll.setVisibility(View.VISIBLE);
+            btnVotePoll.setEnabled(false);
+        } else {
+            txtUserAlreadyVotedPoll.setVisibility(View.GONE);
+        }
+
+        if (!anonymous && !poll.getGenders().equals("B")){
+            if (!poll.getGenders().equals(user.getGender())){
+                btnVotePoll.setEnabled(false);
+                txtUserCannotVotePoll.setVisibility(View.VISIBLE);
+            }
+        }
 
         guiInitialized = true;
     }
@@ -199,7 +297,15 @@ public class PollActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_poll);
-        if (!guiInitialized) initializeGui();
+        final OylaDatabase oyla = ((MyApplication) getApplication()).oyla();
+        if (!guiInitialized) initializeGui(oyla);
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        final OylaDatabase oyla = ((MyApplication) getApplication()).oyla();
+        initializeGui(oyla);
     }
 
 }

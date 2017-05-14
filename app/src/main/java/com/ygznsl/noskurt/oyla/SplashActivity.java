@@ -3,6 +3,7 @@ package com.ygznsl.noskurt.oyla;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -81,14 +82,17 @@ public class SplashActivity extends AppCompatActivity {
                     @Override
                     protected Boolean doInBackground(String... strings) {
                         try {
-                            Thread.sleep(1000);
+                            Thread.sleep(1000L);
                         } catch (InterruptedException ex) {
                             Log.e("signIn.doInBackground", ex.getMessage());
                         }
                         auth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
-                                if (task.isSuccessful()) {
+                                if (task.isSuccessful()) {final SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+                                    final SharedPreferences.Editor editor = sharedPref.edit();
+                                    editor.putBoolean("anonymous", false);
+                                    editor.apply();
                                     logIn(false);
                                 } else {
                                     final Class c = task.getException().getClass();
@@ -137,17 +141,23 @@ public class SplashActivity extends AppCompatActivity {
                     @Override
                     protected Boolean doInBackground(String... strings) {
                         try {
-                            Thread.sleep(1000);
+                            Thread.sleep(1000L);
                         } catch (InterruptedException ex) {
                             Log.e("signInAn.doInBackground", ex.getMessage());
                         }
                         auth.signInAnonymously().addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
-                                try {
-                                    if (task.getResult().getUser() != null) logIn(true);
-                                } catch (Exception ex) {
-                                    Toast.makeText(SplashActivity.this, "Giriş başarısız oldu.", Toast.LENGTH_LONG).show();
+                                if (task.isSuccessful()){
+                                    final SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+                                    final SharedPreferences.Editor editor = sharedPref.edit();
+                                    editor.putBoolean("anonymous", true);
+                                    editor.apply();
+                                    logIn(true);
+                                } else {
+                                    Toast.makeText(SplashActivity.this,
+                                            ("Giriş başarısız oldu: \r\n" + (task.getException() == null ? "" : task.getException().getMessage())).trim(),
+                                            Toast.LENGTH_LONG).show();
                                 }
                             }
                         });
@@ -161,6 +171,28 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     private void openingTask() {
+        final boolean internetStatus = isOnline();
+        if (!internetStatus){
+            final AlertDialog dialog = new AlertDialog.Builder(SplashActivity.this)
+                    .setTitle("İnternet bağlantısı")
+                    .setMessage("Uygulamanın çalışabilmesi için internet bağlantısı gerekmektedir.\r\n" +
+                            "Lütfen internet bağlantınızı kontrol edip uygulamayı tekrar çalıştırın.")
+                    .setPositiveButton("Anladım", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialogInterface.dismiss();
+                            SplashActivity.this.finish();
+                        }
+                    })
+                    .setNeutralButton("İnternet Ayarları", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            // TODO kullanıcıyı internet ayarlarına yönlendir
+                        }
+                    })
+                    .create();
+            dialog.show();
+        }
         final AsyncTask<FirebaseAuth, Integer, FirebaseUser> task = new AsyncTask<FirebaseAuth, Integer, FirebaseUser>() {
             private FirebaseUser user = null;
 
@@ -172,24 +204,11 @@ public class SplashActivity extends AppCompatActivity {
                 } catch (InterruptedException ex) {
                     Log.e("task.doInBackground", ex.getMessage());
                 }
-                if (!isOnline()){
-                    //Toast.makeText(SplashActivity.this, "İnternet erişimi gerekmektedir!", Toast.LENGTH_LONG).show();
-                    final AlertDialog dialog = new AlertDialog.Builder(SplashActivity.this)
-                            .setTitle("İnternet bağlantısı")
-                            .setMessage("Uygulamanın çalışabilmesi için internet bağlantısı gerekmektedir.\r\n" +
-                                    "Lütfen internet bağlantınızı kontrol edip uygulamayı tekrar çalıştırın.")
-                            .setPositiveButton("Anladım", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    dialogInterface.dismiss();
-                                }
-                            })
-                            .create();
-                    dialog.show();
-                    SplashActivity.this.finish();
-                    return user;
+                if (user != null){
+                    final SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+                    final boolean anonymous = sharedPref.getBoolean("anonymous", true);
+                    logIn(anonymous);
                 }
-                if (user != null) logIn(false);
                 openingTaskExecuted = true;
                 return user;
             }
@@ -199,7 +218,7 @@ public class SplashActivity extends AppCompatActivity {
                 if (user == null) hideProgressBar();
             }
         };
-        task.execute();
+        if (internetStatus) task.execute();
     }
 
     @Override

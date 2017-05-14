@@ -1,9 +1,9 @@
 package com.ygznsl.noskurt.oyla;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -16,7 +16,6 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.ygznsl.noskurt.oyla.entity.Category;
@@ -26,28 +25,21 @@ import com.ygznsl.noskurt.oyla.entity.Poll;
 import com.ygznsl.noskurt.oyla.entity.User;
 import com.ygznsl.noskurt.oyla.entity.Vote;
 import com.ygznsl.noskurt.oyla.helper.Function;
-import com.ygznsl.noskurt.oyla.helper.Lists;
 import com.ygznsl.noskurt.oyla.helper.Nullable;
+import com.ygznsl.noskurt.oyla.helper.OylaDatabase;
 
+import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
-import java.util.LinkedList;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Random;
 
 import static android.view.View.GONE;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements Serializable, View.OnClickListener {
 
-    private final DatabaseReference db = FirebaseDatabase.getInstance().getReference();
-    private final List<Option> options = Collections.synchronizedList(new LinkedList<Option>());
-    private final List<User> users = Collections.synchronizedList(new LinkedList<User>());
-    private final List<Poll> polls = Collections.synchronizedList(new LinkedList<Poll>());
-    private final List<Vote> votes = Collections.synchronizedList(new LinkedList<Vote>());
-    private final FirebaseAuth auth = FirebaseAuth.getInstance();
+    private transient final FirebaseAuth auth = FirebaseAuth.getInstance();
     private boolean guiInitialized = false;
     private boolean pollsGot = false;
     private List<Category> categories;
@@ -56,93 +48,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private String userKey;
     private boolean anonymous;
 
-    private RelativeLayout llRandomPollMain;
-    private ProgressBar pbUserNameMain;
-    private ProgressBar pbPollCountMain;
-    private ProgressBar pbRandomPollMain;
-    private TextView txtUserNameMain;
-    private TextView txtPollCountMain;
-    private TextView txtPollTitleMain;
-    private TextView txtPollPublishDateMain;
-    private TextView txtPollCategoryMain;
-    private ImageView imgPollGenderMain;
+    private transient RelativeLayout llRandomPollMain;
+    private transient ProgressBar pbUserNameMain;
+    private transient ProgressBar pbPollCountMain;
+    private transient ProgressBar pbRandomPollMain;
+    private transient TextView txtUserNameMain;
+    private transient TextView txtPollCountMain;
+    private transient TextView txtPollTitleMain;
+    private transient TextView txtPollPublishDateMain;
+    private transient TextView txtPollCategoryMain;
+    private transient ImageView imgPollGenderMain;
 
-    public MainActivity(){
-        getPolls();
-        getUsers();
-        getOptions();
-        getVotes();
-    }
-
-    private void getPolls(){
-        db.child("poll").keepSynced(true);
-        db.child("poll").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(final DataSnapshot dataSnapshot) {
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        for (DataSnapshot ds : dataSnapshot.getChildren()){
-                            final Poll poll = ds.getValue(Poll.class);
-                            if (!polls.contains(poll)){
-                                polls.add(poll);
-                            }
-                        }
-                        Collections.sort(polls, new Comparator<Poll>() {
-                            @Override
-                            public int compare(Poll p1, Poll p2) {
-                                return Integer.valueOf(p2.getId()).compareTo(p1.getId());
-                            }
-                        });
-
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (txtPollCountMain != null){
-                                    txtPollCountMain.setText(String.valueOf(polls.size()));
-                                    txtPollCountMain.setVisibility(View.VISIBLE);
-                                }
-                                if (pbPollCountMain != null){
-                                    pbPollCountMain.setVisibility(GONE);
-                                }
-                                pollsGot = true;
-                                selectRandomPoll();
-                            }
-                        });
-
-                    }
-                }, "getPolls.onDataChange").start();
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {}
-        });
-        db.child("poll").addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {}
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {}
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-                final Poll poll = dataSnapshot.getValue(Poll.class);
-                polls.remove(poll);
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {}
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.e("poll.cancelled", databaseError.getMessage());
-            }
-        });
-    }
-
-    private void getUsers(){
-        db.child("user").keepSynced(true);
-        db.child("user").addValueEventListener(new ValueEventListener() {
+    private void getUsers(final OylaDatabase oyla){
+        Entity.getDatabase().getReference().child("user").keepSynced(true);
+        Entity.getDatabase().getReference().child("user").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(final DataSnapshot dataSnapshot) {
                 final Nullable<FirebaseUser> currentUser = new Nullable<>(auth.getCurrentUser());
@@ -158,10 +77,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         for (DataSnapshot ds : dataSnapshot.getChildren()){
                             final User u = ds.getValue(User.class);
                             final String key = ds.getKey();
-                            if (!users.contains(u)){
-                                users.add(u);
-                            }
-                            if (u.getEmail().equals(currentUser.orElse(mapper, ""))){
+                            oyla.getUsers().add(u);
+                            if (!anonymous && u.getEmail().equals(currentUser.orElse(mapper, ""))){
                                 user = u;
                                 userKey = key;
 
@@ -180,11 +97,30 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                             }
                         }
-                        Collections.sort(users, new Comparator<User>() {
+                        oyla.sortUsersByIdAsc();
+                        Entity.getDatabase().getReference().child("user").addChildEventListener(new ChildEventListener() {
                             @Override
-                            public int compare(User u1, User u2) {
-                                return Integer.valueOf(u1.getId()).compareTo(u2.getId());
+                            public void onChildAdded(DataSnapshot dataSnapshot, String previousChildName) {
+                                oyla.addUser(dataSnapshot.getValue(User.class));
                             }
+
+                            @Override
+                            public void onChildChanged(DataSnapshot dataSnapshot, String previousChildName) {
+                                final User user = dataSnapshot.getValue(User.class);
+                                oyla.removeUser(user);
+                                oyla.addUser(user);
+                            }
+
+                            @Override
+                            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                                oyla.removeUser(dataSnapshot.getValue(User.class));
+                            }
+
+                            @Override
+                            public void onChildMoved(DataSnapshot dataSnapshot, String previousChildName) {}
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {}
                         });
                     }
                 }, "getUsers.onDataChange").start();
@@ -193,89 +129,129 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onCancelled(DatabaseError databaseError) {}
         });
-        db.child("user").addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {}
+    }
 
+    private void getPolls(final OylaDatabase oyla){
+        Entity.getDatabase().getReference().child("poll").keepSynced(true);
+        Entity.getDatabase().getReference().child("poll").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {}
+            public void onDataChange(final DataSnapshot dataSnapshot) {
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        for (DataSnapshot ds : dataSnapshot.getChildren()){
+                            final Poll poll = ds.getValue(Poll.class);
+                            oyla.getPolls().add(poll);
+                        }
+                        oyla.sortPollsByIdDesc();
 
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-                final User user = dataSnapshot.getValue(User.class);
-                users.remove(user);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (txtPollCountMain != null){
+                                    txtPollCountMain.setText(String.valueOf(oyla.getPolls().size()));
+                                    txtPollCountMain.setVisibility(View.VISIBLE);
+                                }
+                                if (pbPollCountMain != null){
+                                    pbPollCountMain.setVisibility(GONE);
+                                }
+                                pollsGot = true;
+                                selectRandomPoll();
+                            }
+                        });
+
+                        Entity.getDatabase().getReference().child("poll").addChildEventListener(new ChildEventListener() {
+                            @Override
+                            public void onChildAdded(DataSnapshot dataSnapshot, String previousChildName) {
+                                oyla.getPolls().add(dataSnapshot.getValue(Poll.class));
+                            }
+
+                            @Override
+                            public void onChildChanged(DataSnapshot dataSnapshot, String previousChildName) {
+                                final Poll poll = dataSnapshot.getValue(Poll.class);
+                                oyla.removePoll(poll);
+                                oyla.addPoll(poll);
+                            }
+
+                            @Override
+                            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                                oyla.getPolls().remove(dataSnapshot.getValue(Poll.class));
+                            }
+
+                            @Override
+                            public void onChildMoved(DataSnapshot dataSnapshot, String previousChildName) {}
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {}
+                        });
+                    }
+                }, "getPolls.onDataChange").start();
             }
 
             @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {}
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.e("user.cancelled", databaseError.getMessage());
-            }
+            public void onCancelled(DatabaseError databaseError) {}
         });
     }
 
-    private void getOptions(){
-        db.child("option").keepSynced(true);
-        db.child("option").addChildEventListener(new ChildEventListener() {
+    private void getOptions(final OylaDatabase oyla){
+        Entity.getDatabase().getReference().child("option").keepSynced(true);
+        Entity.getDatabase().getReference().child("option").addChildEventListener(new ChildEventListener() {
             @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                final Option option = dataSnapshot.getValue(Option.class);
-                options.add(option);
+            public void onChildAdded(DataSnapshot dataSnapshot, String previousChildName) {
+                oyla.addOption(dataSnapshot.getValue(Option.class));
             }
 
             @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {}
+            public void onChildChanged(DataSnapshot dataSnapshot, String previousChildName) {
+                final Option option = dataSnapshot.getValue(Option.class);
+                oyla.removeOption(option);
+                oyla.addOption(option);
+            }
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
-                final Option option = dataSnapshot.getValue(Option.class);
-                options.remove(option);
+                oyla.removeOption(dataSnapshot.getValue(Option.class));
             }
 
             @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {}
+            public void onChildMoved(DataSnapshot dataSnapshot, String previousChildName) {}
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.e("option.cancelled", databaseError.getMessage());
-            }
+            public void onCancelled(DatabaseError databaseError) {}
         });
     }
 
-    private void getVotes(){
-        db.child("vote").keepSynced(true);
-        db.child("vote").addChildEventListener(new ChildEventListener() {
+    private void getVotes(final OylaDatabase oyla){
+        Entity.getDatabase().getReference().child("vote").keepSynced(true);
+        Entity.getDatabase().getReference().child("vote").addChildEventListener(new ChildEventListener() {
             @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                final Vote vote = dataSnapshot.getValue(Vote.class);
-                votes.add(vote);
+            public void onChildAdded(DataSnapshot dataSnapshot, String previousChildName) {
+                oyla.addVote(dataSnapshot.getValue(Vote.class));
             }
 
             @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {}
+            public void onChildChanged(DataSnapshot dataSnapshot, String previousChildName) {
+                final Vote vote = dataSnapshot.getValue(Vote.class);
+                oyla.removeVote(vote);
+                oyla.addVote(vote);
+            }
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
-                final Vote vote = dataSnapshot.getValue(Vote.class);
-                votes.remove(vote);
+                oyla.removeVote(dataSnapshot.getValue(Vote.class));
             }
 
             @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {}
+            public void onChildMoved(DataSnapshot dataSnapshot, String previousChildName) {}
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.e("vote.cancelled", databaseError.getMessage());
-            }
+            public void onCancelled(DatabaseError databaseError) {}
         });
     }
 
     private void selectRandomPoll() {
-        do {
-            randomPoll = polls.get(new Random().nextInt(polls.size()));
-        } while (!randomPoll.getGenders().equals("B"));
+        final OylaDatabase oyla = ((MyApplication) getApplication()).oyla();
+        randomPoll = oyla.randomPollForUser(user);
 
         txtPollTitleMain.setText(randomPoll.getTitle());
         txtPollPublishDateMain.setText(User.DATE_FORMAT.format(tryParseDate(Poll.DATE_FORMAT, randomPoll.getPdate(), new Date())));
@@ -288,20 +264,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         )
         );
 
-        for (Category c : categories){
-            if (c.getId() == randomPoll.getCategory()){
-                txtPollCategoryMain.setText(c.getName());
-                break;
+        txtPollCategoryMain.setText(Entity.findById(categories, randomPoll.getCategory()).orElse(new Function<Category, String>() {
+            @Override
+            public String apply(Category in) {
+                return in.getName();
             }
-        }
+        }, ""));
 
         pbRandomPollMain.setVisibility(GONE);
         llRandomPollMain.setVisibility(View.VISIBLE);
     }
 
-    private void initializeGui() {
+    private void initializeGui(final OylaDatabase oyla) {
         anonymous = getIntent().getExtras().getBoolean("anonymous");
         categories = Category.getCategories(this).get();
+
+        getUsers(oyla);
+        getPolls(oyla);
+        getOptions(oyla);
+        getVotes(oyla);
 
         pbUserNameMain = (ProgressBar) findViewById(R.id.pbUserNameMain);
         pbPollCountMain = (ProgressBar) findViewById(R.id.pbPollCountMain);
@@ -319,24 +300,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         final Button btnCreatePollMain = (Button) findViewById(R.id.btnCreatePollMain);
         final Button btnAccountMain = (Button) findViewById(R.id.btnAccountMain);
 
-        if (anonymous) btnCreatePollMain.setEnabled(false);
-
         llRandomPollMain.setOnClickListener(this);
 
         btnAccountMain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                final Lists lists = new Lists();
-                lists.OPTIONS = options;
-                lists.POLLS = polls;
-                lists.USERS = users;
-                lists.VOTES = votes;
-
                 final Intent intent = new Intent(MainActivity.this, AccountActivity.class);
                 intent.putExtra("user", user);
                 intent.putExtra("userKey", userKey);
                 intent.putExtra("anonymous", anonymous);
-                intent.putExtra("lists", lists);
                 startActivity(intent);
             }
         });
@@ -344,17 +316,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btnBrowsePollsMain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                final Lists lists = new Lists();
-                lists.OPTIONS = options;
-                lists.POLLS = polls;
-                lists.USERS = users;
-                lists.VOTES = votes;
-
                 final Intent intent = new Intent(MainActivity.this, PollListActivity.class);
                 intent.putExtra("user", user);
-                intent.putExtra("userKey", userKey);
                 intent.putExtra("anonymous", anonymous);
-                intent.putExtra("lists", lists);
+                intent.putExtra("scope", "all");
                 startActivity(intent);
             }
         });
@@ -362,21 +327,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btnCreatePollMain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // TODO CreatePollActivity düzenle
-                final Lists lists = new Lists();
-                lists.OPTIONS = options;
-                lists.POLLS = polls;
-                lists.USERS = users;
-                lists.VOTES = votes;
-
                 final Intent intent = new Intent(MainActivity.this, CreatePollActivity.class);
                 intent.putExtra("user", user);
-                intent.putExtra("userKey", userKey);
                 intent.putExtra("anonymous", anonymous);
-                intent.putExtra("lists", lists);
-                startActivity(intent);
+                startActivityForResult(intent, 4444);
             }
         });
+
+        if (anonymous){
+            txtUserNameMain.setText(getString(R.string.text_anonymousUser));
+            txtUserNameMain.setVisibility(View.VISIBLE);
+            pbUserNameMain.setVisibility(GONE);
+            btnCreatePollMain.setEnabled(false);
+        }
 
         guiInitialized = true;
     }
@@ -385,8 +348,39 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        if (!guiInitialized) initializeGui();
+        final OylaDatabase oyla = ((MyApplication) getApplication()).oyla();
+        if (!guiInitialized) initializeGui(oyla);
         if (pollsGot && user != null) selectRandomPoll();
+        if (guiInitialized) txtPollCountMain.setText(String.valueOf(new HashSet<>(oyla.getPolls()).size()));
+    }
+
+    @Override
+    public void onClick(View view) {
+        final Intent intent = new Intent(this, PollActivity.class);
+        intent.putExtra("user", user);
+        intent.putExtra("anonymous", anonymous);
+        intent.putExtra("poll", randomPoll);
+        startActivity(intent);
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        if (pollsGot && user != null) selectRandomPoll();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 4444 && resultCode == Activity.RESULT_OK){
+            final Poll poll = (Poll) data.getExtras().getSerializable("newPoll");
+            if (poll != null){
+                final Intent intent = new Intent(this, PollActivity.class);
+                intent.putExtra("user", user);
+                intent.putExtra("anonymous", anonymous);
+                intent.putExtra("poll", poll);
+                startActivity(intent);
+            }
+        }
     }
 
     public static Date tryParseDate(SimpleDateFormat sdf, String str, Date def){
@@ -395,30 +389,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         } catch (ParseException ex) {
             return def;
         }
-    }
-
-    @Override
-    public void onClick(View view) {
-        final List<Option> list = new LinkedList<>();
-        for (Option o : options){
-            if (o.getPoll() == randomPoll.getId()){
-                list.add(o);
-            }
-        }
-
-        final Lists lists = new Lists();
-        lists.POLLS = polls;
-        lists.USERS = users;
-        lists.VOTES = votes;
-        lists.OPTIONS = list;
-
-        final Intent intent = new Intent(this, PollActivity.class);
-        intent.putExtra("user", user);
-        intent.putExtra("userKey", userKey);
-        intent.putExtra("anonymous", anonymous);
-        intent.putExtra("poll", randomPoll);
-        intent.putExtra("lists", lists);
-        startActivity(intent);
     }
 
 }

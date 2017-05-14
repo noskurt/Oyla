@@ -8,9 +8,12 @@ import android.support.annotation.NonNull;
 import android.support.v4.content.IntentCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -27,38 +30,27 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.ygznsl.noskurt.oyla.entity.City;
 import com.ygznsl.noskurt.oyla.entity.Entity;
-import com.ygznsl.noskurt.oyla.entity.Option;
-import com.ygznsl.noskurt.oyla.entity.Poll;
 import com.ygznsl.noskurt.oyla.entity.User;
-import com.ygznsl.noskurt.oyla.entity.Vote;
-import com.ygznsl.noskurt.oyla.helper.Function;
-import com.ygznsl.noskurt.oyla.helper.Lists;
+import com.ygznsl.noskurt.oyla.helper.OylaDatabase;
+import com.ygznsl.noskurt.oyla.helper.Predicate;
 
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
-import java.util.TreeSet;
 
 public class AccountActivity extends AppCompatActivity {
 
-    private DatabaseReference db = FirebaseDatabase.getInstance().getReference();
     private FirebaseAuth auth = FirebaseAuth.getInstance();
     private final Locale locale = new Locale("tr", "TR");
-    private final Lists myPolls = new Lists();
-    private final Lists myVotes = new Lists();
     private boolean guiInitialized = false;
     private boolean anonymous;
     private FirebaseUser currentUser;
     private List<City> cities;
     private User user = null;
     private String userKey;
-    private Lists lists;
 
     private TextView txtEmailAccount;
     private TextView txtUserNameAccount;
@@ -76,53 +68,15 @@ public class AccountActivity extends AppCompatActivity {
     private EditText txtPasswordNewUpdate;
     private EditText txtPasswordNewAgainUpdate;
 
-    private void calculateMyPolls(){
-        final List<Poll> list = new LinkedList<>();
-        for (Poll p : lists.POLLS){
-            if (p.getUser() == user.getId()){
-                list.add(p);
-            }
-        }
-
-        myPolls.USERS = lists.USERS;
-        myPolls.VOTES = lists.VOTES;
-        myPolls.OPTIONS = lists.OPTIONS;
-        myPolls.POLLS = list;
-
-        btnMyPollsAccount.setEnabled(!myPolls.POLLS.isEmpty());
+    private boolean checkChanges(){
+        if (anonymous) return false;
+        if (user == null) return false;
+        return (!user.getName().equals(txtUserNameAccount.getText().toString())) ||
+                (!user.getBdate().equals(txtBirthDateAccount.getText().toString())) ||
+                (user.getCity() != ((City) spinnerCityAccount.getSelectedItem()).getId());
     }
 
-    private void calculateMyVotes(){
-        final Set<Integer> optionIds = new TreeSet<>();
-        for (Vote v : lists.VOTES){
-            if (v.getU() == user.getId()){
-                optionIds.add(v.getO());
-            }
-        }
-
-        final Set<Integer> pollIds = new TreeSet<>();
-        for (Option o : lists.OPTIONS){
-            if (optionIds.contains(o.getId())){
-                pollIds.add(o.getPoll());
-            }
-        }
-
-        final List<Poll> listPolls = new LinkedList<>();
-        for (Poll p : lists.POLLS){
-            if (pollIds.contains(p.getId())){
-                listPolls.add(p);
-            }
-        }
-
-        myVotes.USERS = lists.USERS;
-        myVotes.VOTES = lists.VOTES;
-        myVotes.OPTIONS = lists.OPTIONS;
-        myVotes.POLLS = listPolls;
-
-        btnMyVotesAccount.setEnabled(!myVotes.POLLS.isEmpty());
-    }
-
-    private void initializeGui(){
+    private void initializeGui(OylaDatabase oyla){
         currentUser = auth.getCurrentUser();
         if (currentUser == null) finish();
 
@@ -130,7 +84,19 @@ public class AccountActivity extends AppCompatActivity {
         user = (User) extras.getSerializable("user");
         userKey = extras.getString("userKey");
         anonymous = extras.getBoolean("anonymous");
-        lists = (Lists) extras.getSerializable("lists");
+
+        final TextWatcher textWatcher = new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int start, int before, int count) {}
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int start, int count, int after) {
+                btnUpdateAccount.setEnabled(checkChanges());
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {}
+        };
 
         txtEmailAccount = (TextView) findViewById(R.id.txtEmailAccount);
         txtUserNameAccount = (EditText) findViewById(R.id.txtUserNameAccount);
@@ -142,19 +108,18 @@ public class AccountActivity extends AppCompatActivity {
         btnChangePasswordAccount = (Button) findViewById(R.id.btnChangePasswordAccount);
         btnLogoutAccount = (Button) findViewById(R.id.btnLogoutAccount);
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                calculateMyPolls();
-            }
-        }).start();
+        txtUserNameAccount.addTextChangedListener(textWatcher);
+        txtBirthDateAccount.addTextChangedListener(textWatcher);
 
-        new Thread(new Runnable() {
+        spinnerCityAccount.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void run() {
-                calculateMyVotes();
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                btnUpdateAccount.setEnabled(checkChanges());
             }
-        }).start();
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {}
+        });
 
         final View viewPasswordUpdate = LayoutInflater.from(this).inflate(R.layout.layout_password_update, null);
         pbPasswordUpdate = (ProgressBar) viewPasswordUpdate.findViewById(R.id.pbPasswordUpdate);
@@ -270,9 +235,7 @@ public class AccountActivity extends AppCompatActivity {
             public void onClick(View view) {
                 final Intent intent = new Intent(AccountActivity.this, PollListActivity.class);
                 intent.putExtra("user", user);
-                intent.putExtra("userKey", userKey);
-                intent.putExtra("anonymous", anonymous);
-                intent.putExtra("lists", myPolls);
+                intent.putExtra("scope", "polls");
                 startActivity(intent);
             }
         });
@@ -280,34 +243,42 @@ public class AccountActivity extends AppCompatActivity {
         btnMyVotesAccount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 final Intent intent = new Intent(AccountActivity.this, PollListActivity.class);
                 intent.putExtra("user", user);
-                intent.putExtra("userKey", userKey);
-                intent.putExtra("anonymous", anonymous);
-                intent.putExtra("lists", myVotes);
+                intent.putExtra("scope", "votes");
                 startActivity(intent);
             }
         });
 
-        if (anonymous){
-            btnMyVotesAccount.setEnabled(false);
+        if (!anonymous && oyla.pollsUserCreated(user).isEmpty()){
             btnMyPollsAccount.setEnabled(false);
-            btnUpdateAccount.setEnabled(false);
-            btnChangePasswordAccount.setEnabled(false);
-            txtBirthDateAccount.setEnabled(false);
-            spinnerCityAccount.setEnabled(false);
         }
 
-        txtEmailAccount.setText(anonymous ? "Anonim" : user.getEmail());
-        txtUserNameAccount.setText(anonymous ? "Anonim" : user.getName());
-        txtBirthDateAccount.setText(anonymous ? "Anonim" : user.getBdate());
-        spinnerCityAccount.setSelection(anonymous ? 0 : Entity.findIndexMatches(cities, new Function<City, Integer>() {
-            @Override
-            public Integer apply(City in) {
-                return in.getId();
-            }
-        }, user.getCity()));
+        if (!anonymous && oyla.pollsUserVoted(user).isEmpty()){
+            btnMyVotesAccount.setEnabled(false);
+        }
+
+        txtEmailAccount.setText(user == null ? "Anonim" : user.getEmail());
+        txtUserNameAccount.setText(user == null ? "Anonim" : user.getName());
+        txtBirthDateAccount.setText(user == null ? "Anonim" : user.getBdate());
+
+        if (anonymous){
+            spinnerCityAccount.setSelected(false);
+            spinnerCityAccount.setEnabled(false);
+            btnUpdateAccount.setEnabled(false);
+            btnMyPollsAccount.setEnabled(false);
+            btnMyVotesAccount.setEnabled(false);
+            btnChangePasswordAccount.setEnabled(false);
+            txtUserNameAccount.setEnabled(false);
+            txtBirthDateAccount.setEnabled(false);
+        } else {
+            spinnerCityAccount.setSelection(Entity.findIndexMatches(cities, new Predicate<City>() {
+                @Override
+                public boolean test(City in) {
+                    return in.getId() == user.getCity();
+                }
+            }));
+        }
 
         guiInitialized = true;
     }
@@ -324,7 +295,7 @@ public class AccountActivity extends AppCompatActivity {
 
             final HashMap<String, Object> map = new HashMap<>();
             map.put(userKey, user);
-            db.child("user").updateChildren(map, new DatabaseReference.CompletionListener() {
+            Entity.getDatabase().getReference().child("user").updateChildren(map, new DatabaseReference.CompletionListener() {
                 @Override
                 public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
                     if (databaseError == null){
@@ -341,7 +312,8 @@ public class AccountActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_account);
-        if (!guiInitialized) initializeGui();
+        final OylaDatabase oyla = ((MyApplication) getApplication()).oyla();
+        if (!guiInitialized) initializeGui(oyla);
     }
 
 }

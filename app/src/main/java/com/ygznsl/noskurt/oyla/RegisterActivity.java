@@ -1,19 +1,16 @@
 package com.ygznsl.noskurt.oyla;
 
 import android.app.DatePickerDialog;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.text.Editable;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -32,37 +29,25 @@ import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-import com.google.gson.Gson;
-import com.google.gson.stream.JsonReader;
 import com.ygznsl.noskurt.oyla.entity.City;
+import com.ygznsl.noskurt.oyla.entity.Entity;
 import com.ygznsl.noskurt.oyla.entity.User;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.Charset;
-import java.text.Collator;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.ExecutionException;
 
 public class RegisterActivity extends AppCompatActivity {
 
     private final FirebaseAuth auth = FirebaseAuth.getInstance();
-    private final DatabaseReference db = FirebaseDatabase.getInstance().getReference();
-    private final List<City> cities = Collections.synchronizedList(new LinkedList<City>());
     private final List<String> userNames = Collections.synchronizedList(new LinkedList<String>());
     private final Locale locale = new Locale("tr", "TR");
     private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", locale);
-    private boolean gotCities = false;
+    private List<City> cities;
+    private boolean guiInitialized = false;
     private int userMaxId = 0;
 
     private ProgressBar pbRegister;
@@ -82,10 +67,12 @@ public class RegisterActivity extends AppCompatActivity {
     private EditText txtBirthDateRegister;
     private EditText txtNameRegister;
 
-    public RegisterActivity(){
-        db.child("user").addChildEventListener(new ChildEventListener() {
+    private void initializeGui(){
+        Entity.getDatabase().getReference().child("user").addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                final int id = dataSnapshot.child("id").getValue(Integer.class);
+                if (id > userMaxId) userMaxId = id;
                 userNames.add(dataSnapshot.child("name").getValue(String.class));
             }
 
@@ -103,60 +90,15 @@ public class RegisterActivity extends AppCompatActivity {
                 Log.e("constructor.firebase", databaseError.getMessage());
             }
         });
-        db.child("user").orderByChild("id").limitToLast(1).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot ds : dataSnapshot.getChildren()){
-                    userMaxId = ds.child("id").getValue(Integer.class);
-                }
-                Log.w("userMaxId", "userMaxId: " + userMaxId);
-            }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {}
-        });
-    }
-
-    private boolean getCities() throws ExecutionException, InterruptedException {
-        return new AsyncTask<InputStream, Integer, Boolean>() {
-            @Override
-            protected void onPreExecute() {
-                showProgressBar();
-            }
-
-            @Override
-            protected void onPostExecute(Boolean s) {
-                hideProgressBar();
-                spinnerCityRegister.setAdapter(new ArrayAdapter<>(RegisterActivity.this, android.R.layout.simple_spinner_dropdown_item, cities));
-            }
-
-            @Override
-            protected Boolean doInBackground(InputStream... ınputStreams) {
-                try (InputStreamReader isr = new InputStreamReader(getAssets().open("city.json"), Charset.forName("utf-8"))){
-                    try (JsonReader reader = new JsonReader(isr)){
-                        final List<City> list = City.getCities(RegisterActivity.this).get();
-                        if (list == null) return false;
-                        cities.clear();
-                        cities.addAll(list);
-                        return true;
-                    }
-                } catch (IOException ex) {
-                    Log.e("getCities.task", ex.getMessage());
-                    return false;
-                }
-            }
-        }.execute().get();
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_register);
+        cities = City.getCities(this).get();
 
         pbRegister = (ProgressBar) findViewById(R.id.pbRegister);
         registerLayout = (LinearLayout) findViewById(R.id.registerLayout);
         radioGrpRegister = (RadioGroup) findViewById(R.id.radioGrpRegister);
         spinnerCityRegister = (Spinner) findViewById(R.id.spinnerCityRegister);
+
+        spinnerCityRegister.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, cities));
 
         emailLayout = (TextInputLayout) findViewById(R.id.emailRegisterLayout);
         pwLayout = (TextInputLayout) findViewById(R.id.passwordRegisterLayout);
@@ -176,7 +118,7 @@ public class RegisterActivity extends AppCompatActivity {
         btnCancelRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(RegisterActivity.this, SplashActivity.class);
+                final Intent intent = new Intent(RegisterActivity.this, SplashActivity.class);
                 startActivity(intent);
                 finish();
             }
@@ -213,13 +155,7 @@ public class RegisterActivity extends AppCompatActivity {
             }
         });
 
-        while (!gotCities){
-            try {
-                gotCities = getCities();
-            } catch (InterruptedException | ExecutionException ex) {
-                Log.e("onCreate", ex.getMessage());
-            }
-        }
+        guiInitialized = true;
     }
 
     private void showProgressBar(){
@@ -289,7 +225,7 @@ public class RegisterActivity extends AppCompatActivity {
                             .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                                 @Override
                                 public void onComplete(@NonNull Task<AuthResult> task) {
-                                    if (task.getResult().getUser() != null){
+                                    if (task.isSuccessful()){
                                         final User user = new User();
                                         user.setId(++userMaxId);
                                         user.setEmail(email);
@@ -298,16 +234,25 @@ public class RegisterActivity extends AppCompatActivity {
                                         user.setCity(city.getId());
                                         user.setGender(radioBtnId == R.id.btnRadioMaleRegister ? "E" : "K");
 
-                                        final DatabaseReference pushed = db.child("user").push();
-                                        pushed.setValue(user);
-
-                                        auth.signInWithEmailAndPassword(email, password)
-                                                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                                                    @Override
-                                                    public void onComplete(@NonNull Task<AuthResult> task) {
-                                                        logIn();
-                                                    }
-                                                });
+                                        final DatabaseReference pushed = Entity.getDatabase().getReference().child("user").push();
+                                        pushed.setValue(user).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+                                                if (task.isSuccessful()){
+                                                    auth.signInWithEmailAndPassword(email, password)
+                                                            .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                                                                @Override
+                                                                public void onComplete(@NonNull Task<AuthResult> task) {
+                                                                    logIn();
+                                                                }
+                                                            });
+                                                }
+                                            }
+                                        });
+                                    } else {
+                                        Toast.makeText(RegisterActivity.this,
+                                                ("Kullanıcı oluşturulurken hata meydana geldi:\r\n" + (task.getException() == null ? "" : task.getException().getMessage())).trim(),
+                                                Toast.LENGTH_LONG).show();
                                     }
                                 }
                             });
@@ -352,10 +297,16 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_register);
+        if (!guiInitialized) initializeGui();
+    }
+
+    @Override
     public void onBackPressed() {
         super.onBackPressed();
-
-        Intent intent = new Intent(RegisterActivity.this, SplashActivity.class);
+        final Intent intent = new Intent(this, SplashActivity.class);
         startActivity(intent);
         finish();
     }

@@ -4,8 +4,9 @@ import java.io.Serializable;
 
 public final class Nullable<T> implements Serializable {
 
-    private T value;
+    private static final long serialVersionUID = 1L;
     private ValueChangedEvent<T> listener;
+    private T value;
 
     public Nullable(){
         this(null);
@@ -27,7 +28,7 @@ public final class Nullable<T> implements Serializable {
     public void set(T value) {
         final T tmp = this.value;
         this.value = value;
-        if (!tmp.equals(this.value) && listener != null){
+        if (this.value != null && !this.value.equals(tmp) && listener != null){
             listener.valueChanged(tmp, this.value);
         }
     }
@@ -49,7 +50,11 @@ public final class Nullable<T> implements Serializable {
     }
 
     public <R> R orElse(Function<T, R> mapper, R defaultValue){
-        return hasValue() ? mapper.apply(value) : defaultValue;
+        return hasValue() ? mapper.apply(get()) : defaultValue;
+    }
+
+    public void operate(Consumer<T> consumer){
+        if (hasValue()) consumer.accept(get());
     }
 
 }
