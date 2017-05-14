@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/kulerColor2"
     android:orientation="vertical"
     tools:context="com.ygznsl.noskurt.oyla.MainActivity">
 
@@ -15,25 +15,25 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" >
+            android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 android:layout_marginTop="10dp"
-                android:layout_marginBottom="5dp"
-                android:orientation="vertical" >
+                android:orientation="vertical">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="10dp"
                     android:layout_marginTop="5dp"
-                    android:layout_marginBottom="5dp"
-                    android:orientation="horizontal" >
+                    android:orientation="horizontal">
 
                     <ProgressBar
                         android:id="@+id/pbUserNameMain"
@@ -47,16 +47,16 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="5dp"
                         android:layout_marginRight="5dp"
-                        android:visibility="gone"
+                        android:textColor="@android:color/black"
                         android:textSize="10pt"
-                        android:textColor="@android:color/black" />
+                        android:visibility="gone" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="10pt"
+                        android:text="@string/text_welcome"
                         android:textColor="@android:color/black"
-                        android:text="@string/text_welcome" />
+                        android:textSize="10pt" />
 
                 </LinearLayout>
 
@@ -64,41 +64,43 @@
                     android:id="@+id/btnAccountMain"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/text_btnAccount" />
+                    android:background="@drawable/btn_colored2"
+                    android:text="@string/text_btnAccount"
+                    android:textColor="@color/kulerColor2" />
 
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 android:layout_marginTop="5dp"
-                android:layout_marginBottom="5dp"
-                android:orientation="vertical" >
+                android:orientation="vertical">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="10dp"
                     android:layout_marginTop="5dp"
-                    android:layout_marginBottom="5dp"
-                    android:orientation="horizontal" >
+                    android:orientation="horizontal">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="10pt"
+                        android:text="@string/text_pollCount1"
                         android:textColor="@android:color/black"
-                        android:text="@string/text_pollCount1" />
+                        android:textSize="10pt" />
 
                     <ProgressBar
                         android:id="@+id/pbPollCountMain"
                         android:layout_width="30dp"
                         android:layout_height="30dp"
-                        android:layout_marginStart="10dp"
-                        android:layout_marginEnd="10dp" />
+                        android:layout_marginEnd="10dp"
+                        android:layout_marginStart="10dp" />
 
                     <TextView
                         android:id="@+id/txtPollCountMain"
@@ -106,16 +108,16 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="5dp"
                         android:layout_marginRight="5dp"
-                        android:visibility="gone"
+                        android:textColor="@android:color/black"
                         android:textSize="10pt"
-                        android:textColor="@android:color/black" />
+                        android:visibility="gone" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="10pt"
+                        android:text="@string/text_pollCount2"
                         android:textColor="@android:color/black"
-                        android:text="@string/text_pollCount2" />
+                        android:textSize="10pt" />
 
                 </LinearLayout>
 
@@ -123,59 +125,63 @@
                     android:id="@+id/btnBrowsePollsMain"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/text_btnBrowsePolls" />
+                    android:background="@drawable/btn_colored2"
+                    android:text="@string/text_btnBrowsePolls"
+                    android:textColor="@color/kulerColor2" />
 
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 android:layout_marginTop="5dp"
-                android:layout_marginBottom="5dp"
-                android:orientation="vertical" >
+                android:orientation="vertical">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="10dp"
                     android:layout_marginTop="5dp"
-                    android:layout_marginBottom="5dp"
-                    android:textSize="10pt"
+                    android:text="@string/text_createPoll"
                     android:textColor="@android:color/black"
-                    android:text="@string/text_createPoll" />
+                    android:textSize="10pt" />
 
                 <Button
                     android:id="@+id/btnCreatePollMain"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/text_btnCreatePoll" />
+                    android:background="@drawable/btn_colored2"
+                    android:text="@string/text_btnCreatePoll"
+                    android:textColor="@color/kulerColor2" />
 
             </LinearLayout>
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_marginBottom="5dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 android:layout_marginTop="5dp"
-                android:layout_marginBottom="5dp"
-                android:orientation="vertical" >
+                android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/txtRandomPollMain"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_marginBottom="5dp"
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="10dp"
                     android:layout_marginTop="5dp"
-                    android:layout_marginBottom="5dp"
-                    android:textSize="10pt"
+                    android:text="@string/text_randomPoll"
                     android:textColor="@android:color/black"
-                    android:layout_alignParentStart="true"
-                    android:text="@string/text_randomPoll" />
+                    android:textSize="10pt" />
 
                 <ProgressBar
                     android:id="@+id/pbRandomPollMain"
@@ -184,54 +190,54 @@
                     android:layout_below="@+id/txtRandomPollMain"
                     android:layout_centerHorizontal="true"
                     android:layout_centerVertical="true"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginEnd="10dp" />
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginStart="10dp" />
 
                 <RelativeLayout
                     android:id="@+id/llRandomPollMain"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_below="@+id/txtRandomPollMain"
+                    android:layout_marginBottom="5dp"
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="10dp"
                     android:layout_marginTop="5dp"
-                    android:layout_marginBottom="5dp"
-                    android:paddingTop="10dp"
+                    android:background="@drawable/btn_colored3"
+                    android:orientation="horizontal"
                     android:paddingBottom="10dp"
-                    android:paddingStart="10dp"
                     android:paddingEnd="10dp"
-                    android:background="@android:color/holo_green_light"
-                    android:visibility="gone"
-                    android:orientation="horizontal" >
+                    android:paddingStart="10dp"
+                    android:paddingTop="10dp"
+                    android:visibility="gone">
 
                     <RelativeLayout
                         android:id="@+id/rlRandomPollImageAndTitle"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_alignParentStart="true"
-                        android:layout_alignParentTop="true" >
+                        android:layout_alignParentTop="true">
 
                         <ImageView
                             android:id="@+id/imgPollGenderMain"
                             android:layout_width="40dp"
                             android:layout_height="40dp"
-                            android:layout_centerVertical="true"
                             android:layout_alignParentStart="true"
+                            android:layout_centerVertical="true"
                             android:layout_margin="10dp"
                             android:contentDescription="@string/content_description"
-                            android:src="@drawable/gender_both"/>
+                            android:src="@drawable/gender_both" />
 
                         <TextView
                             android:id="@+id/txtPollTitleMain"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:layout_alignParentTop="true"
                             android:layout_centerVertical="true"
                             android:layout_marginBottom="10dp"
-                            android:layout_alignParentTop="true"
                             android:layout_toEndOf="@+id/imgPollGenderMain"
-                            android:textColor="@android:color/black"
-                            android:textSize="10pt"
                             android:textAlignment="center"
+                            android:textColor="@color/kulerColor2"
+                            android:textSize="10pt"
                             android:textStyle="bold" />
 
                     </RelativeLayout>
@@ -241,24 +247,24 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/rlRandomPollImageAndTitle"
-                        android:layout_marginStart="5dp"
                         android:layout_marginEnd="5dp"
+                        android:layout_marginStart="5dp"
                         android:layout_marginTop="15dp"
-                        android:textSize="10pt"
-                        android:textColor="@android:color/black" />
+                        android:textColor="@color/kulerColor2"
+                        android:textSize="10pt" />
 
                     <TextView
                         android:id="@+id/txtPollCategoryMain"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/rlRandomPollImageAndTitle"
-                        android:layout_toEndOf="@+id/txtPollPublishDateMain"
-                        android:layout_marginStart="5dp"
                         android:layout_marginEnd="5dp"
+                        android:layout_marginStart="5dp"
                         android:layout_marginTop="15dp"
+                        android:layout_toEndOf="@+id/txtPollPublishDateMain"
                         android:textAlignment="textEnd"
-                        android:textSize="10pt"
-                        android:textColor="@android:color/black" />
+                        android:textColor="@color/kulerColor2"
+                        android:textSize="10pt" />
 
                 </RelativeLayout>
 
