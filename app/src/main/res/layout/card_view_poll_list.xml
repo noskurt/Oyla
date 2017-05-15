@@ -1,73 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:cardview="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="5dp"
-    cardview:cardCornerRadius="2dp"
-    cardview:cardElevation="3dp"
+    cardview:cardCornerRadius="20dp"
+    cardview:cardElevation="5dp"
     cardview:cardUseCompatPadding="true">
 
     <RelativeLayout
         android:id="@+id/rlMainPollView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="@color/kulerColor1">
 
         <ImageView
             android:id="@+id/imgPollGenderPollView"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:layout_centerVertical="true"
             android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
             android:layout_margin="10dp"
             android:contentDescription="@string/content_description"
-            android:src="@drawable/gender_both"/>
+            android:src="@drawable/gender_both" />
 
         <RelativeLayout
             android:id="@+id/relPollView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
             android:layout_alignParentTop="true"
-            android:layout_toEndOf="@+id/imgPollGenderPollView" >
+            android:layout_margin="10dp"
+            android:layout_toEndOf="@+id/imgPollGenderPollView">
 
             <TextView
                 android:id="@+id/txtPollTitlePollView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
                 android:layout_centerVertical="true"
                 android:layout_marginBottom="10dp"
-                android:layout_alignParentTop="true"
-                android:textColor="@android:color/black"
-                android:textSize="10pt"
                 android:textAlignment="center"
+                android:textColor="@color/kulerColor2"
+                android:textSize="10pt"
                 android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/txtPollOptionsPollView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/txtPollTitlePollView"
-                android:textSize="10pt"
-                android:textColor="@android:color/black" />
+            <!--<TextView-->
+                <!--android:id="@+id/txtPollOptionsPollView"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_below="@+id/txtPollTitlePollView"-->
+                <!--android:textColor="@color/kulerColor2"-->
+                <!--android:textSize="10pt" />-->
 
         </RelativeLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
+            android:layout_below="@+id/relPollView"
             android:layout_margin="10dp"
-            android:layout_below="@+id/relPollView" >
+            android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/txtPollPublishDatePollView"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.4"
-                android:textSize="10pt"
-                android:textColor="@android:color/black" />
+                android:textColor="@color/kulerColor3"
+                android:textSize="10pt" />
 
             <TextView
                 android:id="@+id/txtPollCategoryPollView"
@@ -75,8 +75,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="0.6"
                 android:textAlignment="textEnd"
-                android:textSize="10pt"
-                android:textColor="@android:color/black" />
+                android:textColor="@color/kulerColor3"
+                android:textSize="10pt" />
 
         </LinearLayout>
 

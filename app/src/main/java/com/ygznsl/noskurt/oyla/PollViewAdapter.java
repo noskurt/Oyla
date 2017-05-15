@@ -58,8 +58,8 @@ public class PollViewAdapter extends RecyclerView.Adapter<PollViewAdapter.Custom
                 str.append("\"").append(o.getTitle()).append("\", ");
             }
         }
-        final String options = "[" + str.toString().trim().substring(0, str.toString().trim().length() - 1) + "]";
-        holder.txtPollOptionsPollView.setText(options.length() <= 50 ? options : options.substring(0, 48) + "...");
+//        final String options = "[" + str.toString().trim().substring(0, str.toString().trim().length() - 1) + "]";
+//        holder.txtPollOptionsPollView.setText(options.length() <= 50 ? options : options.substring(0, 48) + "...");
 
         holder.txtPollTitlePollView.setText(poll.getTitle());
         try {
@@ -127,7 +127,7 @@ public class PollViewAdapter extends RecyclerView.Adapter<PollViewAdapter.Custom
         final TextView txtPollTitlePollView;
         final TextView txtPollPublishDatePollView;
         final TextView txtPollCategoryPollView;
-        final TextView txtPollOptionsPollView;
+//        final TextView txtPollOptionsPollView;
         final ImageView imgPollGenderPollView;
 
         public CustomViewHolder(View view) {
@@ -135,7 +135,7 @@ public class PollViewAdapter extends RecyclerView.Adapter<PollViewAdapter.Custom
             txtPollTitlePollView = (TextView) view.findViewById(R.id.txtPollTitlePollView);
             txtPollPublishDatePollView = (TextView) view.findViewById(R.id.txtPollPublishDatePollView);
             txtPollCategoryPollView = (TextView) view.findViewById(R.id.txtPollCategoryPollView);
-            txtPollOptionsPollView = (TextView) view.findViewById(R.id.txtPollOptionsPollView);
+//            txtPollOptionsPollView = (TextView) view.findViewById(R.id.txtPollOptionsPollView);
             imgPollGenderPollView = (ImageView) view.findViewById(R.id.imgPollGenderPollView);
         }
 
