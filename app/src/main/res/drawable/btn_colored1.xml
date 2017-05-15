@@ -14,6 +14,13 @@
             <solid android:color="@color/kulerColor3" />
         </shape>
     </item>
+    <item android:state_enabled="false">
+        <shape android:shape="rectangle">
+            <corners android:radius="100dip" />
+            <stroke android:width="2dip" android:color="#77AAAAAA" />
+            <gradient android:angle="90" android:endColor="#77AAAAAA" android:startColor="#77AAAAAA" />
+        </shape>
+    </item>
     <item>
         <shape android:shape="rectangle">
             <corners android:radius="100dip" />
