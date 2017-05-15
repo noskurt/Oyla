@@ -45,12 +45,6 @@ public class SplashActivity extends AppCompatActivity {
     private TextInputLayout pwLayout;
 
     private void initializeGui(){
-        try {
-            Thread.sleep(1500);
-        } catch (InterruptedException ex) {
-            Log.e("task.doInBackground", ex.getMessage());
-        }
-
         final Button btnSignIn = (Button) findViewById(R.id.btnSignIn);
         final Button btnRegister = (Button) findViewById(R.id.btnRegister);
         final TextView btnSignInAnonymously = (TextView) findViewById(R.id.btnSignInAnonymously);
@@ -171,6 +165,7 @@ public class SplashActivity extends AppCompatActivity {
         });
 
         guiInitialized = true;
+        if (!openingTaskExecuted) openingTask();
     }
 
     private void openingTask() {
@@ -201,6 +196,11 @@ public class SplashActivity extends AppCompatActivity {
 
             @Override
             protected FirebaseUser doInBackground(FirebaseAuth... firebaseAuths) {
+                try {
+                    Thread.sleep(1500);
+                } catch (InterruptedException ex) {
+                    Log.e("task.doInBackground", ex.getMessage());
+                }
                 user = auth.getCurrentUser();
                 if (user != null){
                     final SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
@@ -269,7 +269,6 @@ public class SplashActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
         if (!guiInitialized) initializeGui();
-        if (!openingTaskExecuted) openingTask();
     }
 
     @Override
