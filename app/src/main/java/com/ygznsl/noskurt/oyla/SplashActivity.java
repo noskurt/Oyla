@@ -89,7 +89,8 @@ public class SplashActivity extends AppCompatActivity {
                         auth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
-                                if (task.isSuccessful()) {final SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+                                if (task.isSuccessful()) {
+                                    final SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
                                     final SharedPreferences.Editor editor = sharedPref.edit();
                                     editor.putBoolean("anonymous", false);
                                     editor.apply();
@@ -134,11 +135,6 @@ public class SplashActivity extends AppCompatActivity {
                     }
 
                     @Override
-                    protected void onPostExecute(Boolean aBoolean) {
-                        hideProgressBar();
-                    }
-
-                    @Override
                     protected Boolean doInBackground(String... strings) {
                         try {
                             Thread.sleep(1000L);
@@ -159,6 +155,7 @@ public class SplashActivity extends AppCompatActivity {
                                             ("Giriş başarısız oldu: \r\n" + (task.getException() == null ? "" : task.getException().getMessage())).trim(),
                                             Toast.LENGTH_LONG).show();
                                 }
+                                hideProgressBar();
                             }
                         });
                         return true;
@@ -168,6 +165,7 @@ public class SplashActivity extends AppCompatActivity {
         });
 
         guiInitialized = true;
+        if (!openingTaskExecuted) openingTask();
     }
 
     private void openingTask() {
@@ -198,12 +196,12 @@ public class SplashActivity extends AppCompatActivity {
 
             @Override
             protected FirebaseUser doInBackground(FirebaseAuth... firebaseAuths) {
-                user = auth.getCurrentUser();
                 try {
                     Thread.sleep(1500);
                 } catch (InterruptedException ex) {
                     Log.e("task.doInBackground", ex.getMessage());
                 }
+                user = auth.getCurrentUser();
                 if (user != null){
                     final SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
                     final boolean anonymous = sharedPref.getBoolean("anonymous", true);
@@ -219,14 +217,6 @@ public class SplashActivity extends AppCompatActivity {
             }
         };
         if (internetStatus) task.execute();
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_splash);
-        if (!guiInitialized) initializeGui();
-        if (!openingTaskExecuted) openingTask();
     }
 
     private boolean validateEmail(String email) {
@@ -272,6 +262,13 @@ public class SplashActivity extends AppCompatActivity {
         final ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         final NetworkInfo netInfo = cm.getActiveNetworkInfo();
         return netInfo != null && netInfo.isConnectedOrConnecting();
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_splash);
+        if (!guiInitialized) initializeGui();
     }
 
     @Override
