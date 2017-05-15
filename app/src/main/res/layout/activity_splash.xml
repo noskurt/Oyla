@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -8,120 +9,114 @@
     android:orientation="vertical"
     tools:context="com.ygznsl.noskurt.oyla.SplashActivity">
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:orientation="vertical">
 
-        <ImageView
-            android:id="@+id/imgLogo"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:contentDescription="@string/app_name"
-            android:src="@drawable/logo"
-            android:textAlignment="center" />
-
-        <ProgressBar
-            android:id="@+id/pbSignIn"
-            android:layout_width="75dp"
-            android:layout_height="75dp"
-            android:layout_gravity="center_horizontal"
-            android:layout_margin="20dp"
-            android:visibility="visible" />
-
         <LinearLayout
-            android:id="@+id/signInLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="50dp"
-            android:layout_marginStart="50dp"
-            android:orientation="vertical"
-            android:visibility="gone">
+            android:orientation="vertical">
 
-            <ScrollView
+            <ImageView
+                android:id="@+id/imgLogo"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/app_name"
+                android:src="@drawable/logo"
+                android:textAlignment="center" />
+
+            <ProgressBar
+                android:id="@+id/pbSignIn"
+                android:layout_width="75dp"
+                android:layout_height="75dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_margin="20dp"
+                android:visibility="visible" />
+
+            <LinearLayout
+                android:id="@+id/signInLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="50dp"
+                android:layout_marginStart="50dp"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/emailSignInLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <EditText
+                        android:id="@+id/txtEmailSignIn"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/hint_txtEmailSignIn"
+                        android:inputType="textEmailAddress" />
+
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/passwordSignInLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:passwordToggleEnabled="true">
+
+                    <EditText
+                        android:id="@+id/txtPasswordSignIn"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/hint_txtPasswordSignIn"
+                        android:inputType="textPassword" />
+
+                </android.support.design.widget.TextInputLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:orientation="horizontal">
 
-                    <android.support.design.widget.TextInputLayout
-                        android:id="@+id/emailSignInLayout"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                        <EditText
-                            android:id="@+id/txtEmailSignIn"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint="@string/hint_txtEmailSignIn"
-                            android:inputType="textEmailAddress" />
-
-                    </android.support.design.widget.TextInputLayout>
-
-                    <android.support.design.widget.TextInputLayout
-                        android:id="@+id/passwordSignInLayout"
+                    <Button
+                        android:id="@+id/btnRegister"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:passwordToggleEnabled="true">
+                        android:layout_marginEnd="2dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/btn_colored1"
+                        android:text="@string/text_btnRegister"
+                        android:textColor="@color/kulerColor2" />
 
-                        <EditText
-                            android:id="@+id/txtPasswordSignIn"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint="@string/hint_txtPasswordSignIn"
-                            android:inputType="textPassword" />
-
-                    </android.support.design.widget.TextInputLayout>
-
-                    <LinearLayout
+                    <Button
+                        android:id="@+id/btnSignIn"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-
-                        <Button
-                            android:id="@+id/btnRegister"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginEnd="2dp"
-                            android:layout_weight="1"
-                            android:background="@drawable/btn_colored1"
-                            android:text="@string/text_btnRegister"
-                            android:textColor="@color/kulerColor2" />
-
-                        <Button
-                            android:id="@+id/btnSignIn"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="2dp"
-                            android:layout_weight="1"
-                            android:background="@drawable/btn_colored2"
-                            android:text="@string/text_btnSignIn"
-                            android:textColor="@color/kulerColor2" />
-
-                    </LinearLayout>
-
-                    <TextView
-                        android:id="@+id/btnSignInAnonymously"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_marginTop="15dp"
-                        android:text="@string/text_btnSignInAnonymously"
-                        android:textColor="@android:color/holo_blue_dark"
-                        android:textSize="10pt"
-                        android:textStyle="italic" />
+                        android:layout_marginStart="2dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/btn_colored2"
+                        android:text="@string/text_btnSignIn"
+                        android:textColor="@color/kulerColor2" />
 
                 </LinearLayout>
 
-            </ScrollView>
+                <TextView
+                    android:id="@+id/btnSignInAnonymously"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="15dp"
+                    android:text="@string/text_btnSignInAnonymously"
+                    android:textColor="@android:color/holo_blue_dark"
+                    android:textSize="10pt"
+                    android:textStyle="italic" />
+
+            </LinearLayout>
 
         </LinearLayout>
 
-    </LinearLayout>
+    </ScrollView>
 
 </RelativeLayout>

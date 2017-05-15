@@ -3,20 +3,24 @@ package com.ygznsl.noskurt.oyla;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.content.IntentCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.ygznsl.noskurt.oyla.entity.Category;
 import com.ygznsl.noskurt.oyla.entity.Entity;
@@ -32,10 +36,8 @@ import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-
-import static android.view.View.GONE;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity implements Serializable, View.OnClickListener {
 
@@ -68,7 +70,12 @@ public class MainActivity extends AppCompatActivity implements Serializable, Vie
                 final Function<FirebaseUser, String> mapper = new Function<FirebaseUser, String>() {
                     @Override
                     public String apply(FirebaseUser in) {
-                        return in.getEmail();
+                        return new Nullable<>(in.getEmail()).orElse(new Function<String, String>() {
+                            @Override
+                            public String apply(String in) {
+                                return in.toLowerCase(Locale.ENGLISH);
+                            }
+                        }, "");
                     }
                 };
                 new Thread(new Runnable() {
@@ -77,7 +84,7 @@ public class MainActivity extends AppCompatActivity implements Serializable, Vie
                         for (DataSnapshot ds : dataSnapshot.getChildren()){
                             final User u = ds.getValue(User.class);
                             final String key = ds.getKey();
-                            oyla.getUsers().add(u);
+                            oyla.addUser(u);
                             if (!anonymous && u.getEmail().equals(currentUser.orElse(mapper, ""))){
                                 user = u;
                                 userKey = key;
@@ -90,7 +97,7 @@ public class MainActivity extends AppCompatActivity implements Serializable, Vie
                                             txtUserNameMain.setVisibility(View.VISIBLE);
                                         }
                                         if (pbUserNameMain != null){
-                                            pbUserNameMain.setVisibility(GONE);
+                                            pbUserNameMain.setVisibility(View.GONE);
                                         }
                                     }
                                 });
@@ -136,12 +143,13 @@ public class MainActivity extends AppCompatActivity implements Serializable, Vie
         Entity.getDatabase().getReference().child("poll").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(final DataSnapshot dataSnapshot) {
+                oyla.getPolls().clear();
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
                         for (DataSnapshot ds : dataSnapshot.getChildren()){
                             final Poll poll = ds.getValue(Poll.class);
-                            oyla.getPolls().add(poll);
+                            oyla.addPoll(poll);
                         }
                         oyla.sortPollsByIdDesc();
 
@@ -153,17 +161,20 @@ public class MainActivity extends AppCompatActivity implements Serializable, Vie
                                     txtPollCountMain.setVisibility(View.VISIBLE);
                                 }
                                 if (pbPollCountMain != null){
-                                    pbPollCountMain.setVisibility(GONE);
+                                    pbPollCountMain.setVisibility(View.GONE);
                                 }
                                 pollsGot = true;
-                                selectRandomPoll();
+                                selectRandomPoll(oyla);
                             }
                         });
 
                         Entity.getDatabase().getReference().child("poll").addChildEventListener(new ChildEventListener() {
                             @Override
                             public void onChildAdded(DataSnapshot dataSnapshot, String previousChildName) {
-                                oyla.getPolls().add(dataSnapshot.getValue(Poll.class));
+                                oyla.addPoll(dataSnapshot.getValue(Poll.class));
+                                if (txtPollCountMain != null){
+                                    txtPollCountMain.setText(String.valueOf(oyla.getPolls().size()));
+                                }
                             }
 
                             @Override
@@ -175,7 +186,10 @@ public class MainActivity extends AppCompatActivity implements Serializable, Vie
 
                             @Override
                             public void onChildRemoved(DataSnapshot dataSnapshot) {
-                                oyla.getPolls().remove(dataSnapshot.getValue(Poll.class));
+                                oyla.removePoll(dataSnapshot.getValue(Poll.class));
+                                if (txtPollCountMain != null){
+                                    txtPollCountMain.setText(String.valueOf(oyla.getPolls().size()));
+                                }
                             }
 
                             @Override
@@ -249,8 +263,7 @@ public class MainActivity extends AppCompatActivity implements Serializable, Vie
         });
     }
 
-    private void selectRandomPoll() {
-        final OylaDatabase oyla = ((MyApplication) getApplication()).oyla();
+    private void selectRandomPoll(final OylaDatabase oyla) {
         randomPoll = oyla.randomPollForUser(user);
 
         txtPollTitleMain.setText(randomPoll.getTitle());
@@ -271,7 +284,7 @@ public class MainActivity extends AppCompatActivity implements Serializable, Vie
             }
         }, ""));
 
-        pbRandomPollMain.setVisibility(GONE);
+        pbRandomPollMain.setVisibility(View.GONE);
         llRandomPollMain.setVisibility(View.VISIBLE);
     }
 
@@ -337,8 +350,9 @@ public class MainActivity extends AppCompatActivity implements Serializable, Vie
         if (anonymous){
             txtUserNameMain.setText(getString(R.string.text_anonymousUser));
             txtUserNameMain.setVisibility(View.VISIBLE);
-            pbUserNameMain.setVisibility(GONE);
+            pbUserNameMain.setVisibility(View.GONE);
             btnCreatePollMain.setEnabled(false);
+            btnAccountMain.setEnabled(false);
         }
 
         guiInitialized = true;
@@ -350,8 +364,7 @@ public class MainActivity extends AppCompatActivity implements Serializable, Vie
         setContentView(R.layout.activity_main);
         final OylaDatabase oyla = ((MyApplication) getApplication()).oyla();
         if (!guiInitialized) initializeGui(oyla);
-        if (pollsGot && user != null) selectRandomPoll();
-        if (guiInitialized) txtPollCountMain.setText(String.valueOf(new HashSet<>(oyla.getPolls()).size()));
+        if (pollsGot && user != null) selectRandomPoll(oyla);
     }
 
     @Override
@@ -366,7 +379,9 @@ public class MainActivity extends AppCompatActivity implements Serializable, Vie
     @Override
     protected void onRestart() {
         super.onRestart();
-        if (pollsGot && user != null) selectRandomPoll();
+        final OylaDatabase oyla = ((MyApplication) getApplication()).oyla();
+        if (pollsGot && user != null) selectRandomPoll(oyla);
+        if (guiInitialized) txtPollCountMain.setText(String.valueOf(oyla.getPolls().size()));
     }
 
     @Override
@@ -380,6 +395,32 @@ public class MainActivity extends AppCompatActivity implements Serializable, Vie
                 intent.putExtra("poll", poll);
                 startActivity(intent);
             }
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        final MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main_activity_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menuLogOut:{
+                try {
+                    auth.signOut();
+                    final Intent intent = new Intent(this, SplashActivity.class);
+                    startActivity(intent);
+                    finish();
+                } catch (Exception ex) {
+                    Toast.makeText(this, "Çıkış yapılırken bir hata meydana geldi:\r\n" + ex.getMessage(), Toast.LENGTH_LONG).show();
+                }
+                return true;
+            }
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 
