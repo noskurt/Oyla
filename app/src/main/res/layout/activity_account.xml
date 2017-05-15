@@ -32,6 +32,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentStart="true"
                     android:layout_margin="10dp"
+                    android:background="@drawable/border_1"
                     android:orientation="horizontal">
 
                     <TextView
@@ -49,9 +50,9 @@
                         android:id="@+id/txtEmailAccount"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
                         android:layout_centerVertical="true"
                         android:layout_margin="10dp"
-                        android:layout_toEndOf="@+id/txtEmailLabelAccount"
                         android:textColor="@android:color/black"
                         android:textSize="8pt" />
 
@@ -63,6 +64,7 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/rlEmail"
                     android:layout_margin="10dp"
+                    android:background="@drawable/border_1"
                     android:descendantFocusability="beforeDescendants"
                     android:focusableInTouchMode="true"
                     android:orientation="horizontal">
@@ -82,8 +84,8 @@
                         android:id="@+id/txtUserNameAccount"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
                         android:layout_margin="10dp"
-                        android:layout_toEndOf="@+id/txtUserNameLabelAccount"
                         android:textColor="@android:color/black"
                         android:textSize="8pt" />
 
@@ -95,6 +97,7 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/rlUserName"
                     android:layout_margin="10dp"
+                    android:background="@drawable/border_1"
                     android:orientation="horizontal">
 
                     <TextView
@@ -112,8 +115,8 @@
                         android:id="@+id/txtBirthDateAccount"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
                         android:layout_margin="10dp"
-                        android:layout_toEndOf="@+id/txtBirthDateLabelAccount"
                         android:focusable="false"
                         android:textColor="@android:color/black"
                         android:textSize="8pt" />
@@ -126,6 +129,7 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/rlBirthDate"
                     android:layout_margin="10dp"
+                    android:background="@drawable/border_1"
                     android:orientation="horizontal">
 
                     <TextView
@@ -143,8 +147,8 @@
                         android:id="@+id/spinnerCityAccount"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_toEndOf="@+id/txtCityLabelAccount" />
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true" />
 
                 </RelativeLayout>
 
