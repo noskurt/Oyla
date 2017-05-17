@@ -1,6 +1,8 @@
 package com.ygznsl.noskurt.oyla;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.content.IntentCompat;
@@ -61,7 +63,7 @@ public class MainActivity extends AppCompatActivity implements Serializable, Vie
     private transient TextView txtPollCategoryMain;
     private transient ImageView imgPollGenderMain;
 
-    private void getUsers(final OylaDatabase oyla){
+    private void getUsers(final OylaDatabase oyla) {
         Entity.getDatabase().getReference().child("user").keepSynced(true);
         Entity.getDatabase().getReference().child("user").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -81,22 +83,22 @@ public class MainActivity extends AppCompatActivity implements Serializable, Vie
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        for (DataSnapshot ds : dataSnapshot.getChildren()){
+                        for (DataSnapshot ds : dataSnapshot.getChildren()) {
                             final User u = ds.getValue(User.class);
                             final String key = ds.getKey();
                             oyla.addUser(u);
-                            if (!anonymous && u.getEmail().equals(currentUser.orElse(mapper, ""))){
+                            if (!anonymous && u.getEmail().equals(currentUser.orElse(mapper, ""))) {
                                 user = u;
                                 userKey = key;
 
                                 runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        if (txtUserNameMain != null){
+                                        if (txtUserNameMain != null) {
                                             txtUserNameMain.setText(user.getName());
                                             txtUserNameMain.setVisibility(View.VISIBLE);
                                         }
-                                        if (pbUserNameMain != null){
+                                        if (pbUserNameMain != null) {
                                             pbUserNameMain.setVisibility(View.GONE);
                                         }
                                     }
@@ -124,21 +126,24 @@ public class MainActivity extends AppCompatActivity implements Serializable, Vie
                             }
 
                             @Override
-                            public void onChildMoved(DataSnapshot dataSnapshot, String previousChildName) {}
+                            public void onChildMoved(DataSnapshot dataSnapshot, String previousChildName) {
+                            }
 
                             @Override
-                            public void onCancelled(DatabaseError databaseError) {}
+                            public void onCancelled(DatabaseError databaseError) {
+                            }
                         });
                     }
                 }, "getUsers.onDataChange").start();
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {}
+            public void onCancelled(DatabaseError databaseError) {
+            }
         });
     }
 
-    private void getPolls(final OylaDatabase oyla){
+    private void getPolls(final OylaDatabase oyla) {
         Entity.getDatabase().getReference().child("poll").keepSynced(true);
         Entity.getDatabase().getReference().child("poll").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -147,7 +152,7 @@ public class MainActivity extends AppCompatActivity implements Serializable, Vie
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        for (DataSnapshot ds : dataSnapshot.getChildren()){
+                        for (DataSnapshot ds : dataSnapshot.getChildren()) {
                             final Poll poll = ds.getValue(Poll.class);
                             oyla.addPoll(poll);
                         }
@@ -156,11 +161,11 @@ public class MainActivity extends AppCompatActivity implements Serializable, Vie
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                if (txtPollCountMain != null){
+                                if (txtPollCountMain != null) {
                                     txtPollCountMain.setText(String.valueOf(oyla.getPolls().size()));
                                     txtPollCountMain.setVisibility(View.VISIBLE);
                                 }
-                                if (pbPollCountMain != null){
+                                if (pbPollCountMain != null) {
                                     pbPollCountMain.setVisibility(View.GONE);
                                 }
                                 pollsGot = true;
@@ -172,7 +177,7 @@ public class MainActivity extends AppCompatActivity implements Serializable, Vie
                             @Override
                             public void onChildAdded(DataSnapshot dataSnapshot, String previousChildName) {
                                 oyla.addPoll(dataSnapshot.getValue(Poll.class));
-                                if (txtPollCountMain != null){
+                                if (txtPollCountMain != null) {
                                     txtPollCountMain.setText(String.valueOf(oyla.getPolls().size()));
                                 }
                             }
@@ -187,27 +192,30 @@ public class MainActivity extends AppCompatActivity implements Serializable, Vie
                             @Override
                             public void onChildRemoved(DataSnapshot dataSnapshot) {
                                 oyla.removePoll(dataSnapshot.getValue(Poll.class));
-                                if (txtPollCountMain != null){
+                                if (txtPollCountMain != null) {
                                     txtPollCountMain.setText(String.valueOf(oyla.getPolls().size()));
                                 }
                             }
 
                             @Override
-                            public void onChildMoved(DataSnapshot dataSnapshot, String previousChildName) {}
+                            public void onChildMoved(DataSnapshot dataSnapshot, String previousChildName) {
+                            }
 
                             @Override
-                            public void onCancelled(DatabaseError databaseError) {}
+                            public void onCancelled(DatabaseError databaseError) {
+                            }
                         });
                     }
                 }, "getPolls.onDataChange").start();
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {}
+            public void onCancelled(DatabaseError databaseError) {
+            }
         });
     }
 
-    private void getOptions(final OylaDatabase oyla){
+    private void getOptions(final OylaDatabase oyla) {
         Entity.getDatabase().getReference().child("option").keepSynced(true);
         Entity.getDatabase().getReference().child("option").addChildEventListener(new ChildEventListener() {
             @Override
@@ -228,14 +236,16 @@ public class MainActivity extends AppCompatActivity implements Serializable, Vie
             }
 
             @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String previousChildName) {}
+            public void onChildMoved(DataSnapshot dataSnapshot, String previousChildName) {
+            }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {}
+            public void onCancelled(DatabaseError databaseError) {
+            }
         });
     }
 
-    private void getVotes(final OylaDatabase oyla){
+    private void getVotes(final OylaDatabase oyla) {
         Entity.getDatabase().getReference().child("vote").keepSynced(true);
         Entity.getDatabase().getReference().child("vote").addChildEventListener(new ChildEventListener() {
             @Override
@@ -256,10 +266,12 @@ public class MainActivity extends AppCompatActivity implements Serializable, Vie
             }
 
             @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String previousChildName) {}
+            public void onChildMoved(DataSnapshot dataSnapshot, String previousChildName) {
+            }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {}
+            public void onCancelled(DatabaseError databaseError) {
+            }
         });
     }
 
@@ -347,7 +359,7 @@ public class MainActivity extends AppCompatActivity implements Serializable, Vie
             }
         });
 
-        if (anonymous){
+        if (anonymous) {
             txtUserNameMain.setText(getString(R.string.text_anonymousUser));
             txtUserNameMain.setVisibility(View.VISIBLE);
             pbUserNameMain.setVisibility(View.GONE);
@@ -386,9 +398,9 @@ public class MainActivity extends AppCompatActivity implements Serializable, Vie
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == 4444 && resultCode == Activity.RESULT_OK){
+        if (requestCode == 4444 && resultCode == Activity.RESULT_OK) {
             final Poll poll = (Poll) data.getExtras().getSerializable("newPoll");
-            if (poll != null){
+            if (poll != null) {
                 final Intent intent = new Intent(this, PollActivity.class);
                 intent.putExtra("user", user);
                 intent.putExtra("anonymous", anonymous);
@@ -407,24 +419,34 @@ public class MainActivity extends AppCompatActivity implements Serializable, Vie
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.menuLogOut:{
-                try {
-                    auth.signOut();
-                    final Intent intent = new Intent(this, SplashActivity.class);
-                    startActivity(intent);
-                    finish();
-                } catch (Exception ex) {
-                    Toast.makeText(this, "Çıkış yapılırken bir hata meydana geldi:\r\n" + ex.getMessage(), Toast.LENGTH_LONG).show();
-                }
-                return true;
-            }
-            default:
-                return super.onOptionsItemSelected(item);
-        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(this)
+                .setTitle("Çıkış Yapıyorsunuz!")
+                .setMessage("Çıkış yapmak istediğinize emin misiniz?")
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        try {
+                            auth.signOut();
+                            final Intent intent = new Intent(MainActivity.this, SplashActivity.class);
+                            startActivity(intent);
+                            finish();
+                        } catch (Exception ex) {
+                            Toast.makeText(MainActivity.this, "Çıkış yapılırken bir hata meydana geldi:\r\n" + ex.getMessage(), Toast.LENGTH_LONG).show();
+                        }
+                    }
+                })
+                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // İPTAL İŞLEMİ
+                    }
+                })
+                .setIcon(android.R.drawable.ic_dialog_alert);
+
+        builder.create().show();
+
+        return super.onOptionsItemSelected(item);
     }
 
-    public static Date tryParseDate(SimpleDateFormat sdf, String str, Date def){
+    public static Date tryParseDate(SimpleDateFormat sdf, String str, Date def) {
         try {
             return sdf.parse(str);
         } catch (ParseException ex) {
