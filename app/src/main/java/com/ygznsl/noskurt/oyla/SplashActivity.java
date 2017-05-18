@@ -44,7 +44,7 @@ public class SplashActivity extends AppCompatActivity {
     private TextInputLayout emailLayout;
     private TextInputLayout pwLayout;
 
-    private void initializeGui(){
+    private void initializeGui() {
         final Button btnSignIn = (Button) findViewById(R.id.btnSignIn);
         final Button btnRegister = (Button) findViewById(R.id.btnRegister);
         final TextView btnSignInAnonymously = (TextView) findViewById(R.id.btnSignInAnonymously);
@@ -144,7 +144,7 @@ public class SplashActivity extends AppCompatActivity {
                         auth.signInAnonymously().addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
-                                if (task.isSuccessful()){
+                                if (task.isSuccessful()) {
                                     final SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
                                     final SharedPreferences.Editor editor = sharedPref.edit();
                                     editor.putBoolean("anonymous", true);
@@ -170,7 +170,7 @@ public class SplashActivity extends AppCompatActivity {
 
     private void openingTask() {
         final boolean internetStatus = isOnline();
-        if (!internetStatus){
+        if (!internetStatus) {
             final AlertDialog dialog = new AlertDialog.Builder(SplashActivity.this)
                     .setTitle("İnternet bağlantısı")
                     .setMessage("Uygulamanın çalışabilmesi için internet bağlantısı gerekmektedir.\r\n" +
@@ -185,7 +185,7 @@ public class SplashActivity extends AppCompatActivity {
                     .setNeutralButton("İnternet Ayarları", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            // TODO kullanıcıyı internet ayarlarına yönlendir
+                            startActivity(new Intent(android.provider.Settings.ACTION_WIRELESS_SETTINGS));
                         }
                     })
                     .create();
@@ -202,7 +202,7 @@ public class SplashActivity extends AppCompatActivity {
                     Log.e("task.doInBackground", ex.getMessage());
                 }
                 user = auth.getCurrentUser();
-                if (user != null){
+                if (user != null) {
                     final SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
                     final boolean anonymous = sharedPref.getBoolean("anonymous", true);
                     logIn(anonymous);
