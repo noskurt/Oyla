@@ -1,7 +1,5 @@
 package com.ygznsl.noskurt.oyla;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -13,7 +11,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import com.ygznsl.noskurt.oyla.entity.Poll;
 import com.ygznsl.noskurt.oyla.entity.User;
@@ -21,6 +18,7 @@ import com.ygznsl.noskurt.oyla.helper.Function;
 import com.ygznsl.noskurt.oyla.helper.Nullable;
 import com.ygznsl.noskurt.oyla.helper.OylaDatabase;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -42,6 +40,15 @@ public class PollListActivity extends AppCompatActivity {
         anonymous = extras.getBoolean("anonymous");
         final Nullable<String> scope = new Nullable<>(extras.getString("scope"));
 
+        setTitle(scope.orElse(new Function<String, String>() {
+            @Override
+            public String apply(String in) {
+                if (in.equals("polls")) return "Oyla - Yayınladıklarım";
+                if (in.equals("votes")) return "Oyla - Oyladıklarım";
+                return "Oyla - Anketler";
+            }
+        }, "Oyla"));
+
         rvPollList = (RecyclerView) findViewById(R.id.rvPollList);
         rvPollList.setLayoutManager(new LinearLayoutManager(this));
         pbPollList = (ProgressBar) findViewById(R.id.pbPollList);
@@ -57,6 +64,8 @@ public class PollListActivity extends AppCompatActivity {
                     }
                 }, oyla.getPolls())
         ));
+
+        Collections.shuffle(polls);
 
         adapter = new PollViewAdapter(this, polls, oyla);
         rvPollList.setAdapter(adapter);

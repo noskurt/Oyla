@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">Oyla</string>
     <string name="content_description">Cinsiyet</string>
+    <string name="content_descriptionLeft">Sol</string>
+    <string name="content_descriptionRight">Sağ</string>
     <string name="hint_txtEmailSignIn">E-posta Adresi</string>
     <string name="hint_txtPasswordSignIn">Şifre</string>
     <string name="hint_txtPasswordAgainSignIn">Şifre (Tekrar)</string>
@@ -38,9 +40,9 @@
     <string name="text_userName">Kullanıcı Adı: </string>
     <string name="text_birthDate">Doğum Tarihi: </string>
     <string name="text_cityAccount">Şehir: </string>
-    <string name="text_pollUserPoll"> tarafından</string>
-    <string name="text_pollPublishDatePoll"> tarihinde yayınlandı</string>
-    <string name="text_pollStatsPoll"> kez oylandı</string>
+    <string name="text_pollUserPoll"> tarafından,</string>
+    <string name="text_pollPublishDatePoll"> tarihinde yayınlandı.</string>
+    <string name="text_pollStatsPoll"> kez oylandı.</string>
     <string name="text_category">Kategori: </string>
     <string name="text_pollGenderSpecify">Kimler bu ankete oy verebilir?</string>
     <string name="text_pollGenderMale">Erkekler</string>
@@ -51,7 +53,15 @@
     <string name="text_btnAddPollOption">Seçenek Ekle</string>
     <string name="text_btnPollCreate">Anketi Yayınla</string>
     <string name="text_btnDeletePollOptionCreate">Sil</string>
-    <string name="text_userAlreadyVoted">Bu anketi daha önce oylamışsınız</string>
-    <string name="text_userCannotVote">Bu anketi oylayamazsınız</string>
+    <string name="text_userAlreadyVoted">Bu anketi daha önce oylamışsınız!</string>
+    <string name="text_userCannotVote">Bu anket sadece %s özeldir!</string>
+    <string name="text_anonymousUserCannotVote">Anonim olarak giriş yaptığınız için\nbu anketi oylayamazsınız!</string>
     <string name="text_anonymousUser">Anonim</string>
+    <string name="text_voteCount">Oy Sayıları</string>
+    <string name="text_detailedAnalysis">Detaylı Analiz</string>
+    <string name="text_accordingToGender">Cinsiyete Göre</string>
+    <string name="text_accordingToAge">Yaşa Göre</string>
+    <string name="text_accordingToCity">Yaşanılan\nŞehre Göre</string>
+    <string name="text_btnDetailedAnalysis">Detaylı Analizi Görüntüle</string>
+    <string name="text_userCannotSeeDetailedAnalysis">Anonim olarak giriş yaptığınız için\ndetaylı analizi görüntüleyemezsiniz!</string>
 </resources>

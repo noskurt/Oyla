@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RadioButton
+        android:id="@+id/radioVoteCount"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/radioVoteCount">
+
+        <ProgressBar
+            android:id="@+id/pbVoteCount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@android:style/Widget.ProgressBar.Horizontal" />
+
+        <TextView
+            android:id="@+id/txtVoteCount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="8pt"
+            android:textColor="@android:color/black"
+            android:textAlignment="textEnd"
+            android:background="#00000000"
+            android:layout_alignStart="@id/pbVoteCount"
+            android:layout_alignTop="@id/pbVoteCount"
+            android:layout_alignEnd="@id/pbVoteCount"
+            android:layout_alignBottom="@id/pbVoteCount" />
+
+    </RelativeLayout>
+
+</RelativeLayout>

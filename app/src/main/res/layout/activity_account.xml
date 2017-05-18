@@ -145,8 +145,9 @@
 
                     <Spinner
                         android:id="@+id/spinnerCityAccount"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_toEndOf="@+id/txtCityLabelAccount"
                         android:layout_alignParentEnd="true"
                         android:layout_centerVertical="true" />
 
@@ -200,6 +201,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="10dp"
                 android:layout_marginStart="10dp"
+                android:layout_marginBottom="10dp"
                 android:orientation="horizontal">
 
                 <Button

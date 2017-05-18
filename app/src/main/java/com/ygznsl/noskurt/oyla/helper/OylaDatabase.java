@@ -13,33 +13,42 @@ import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 public final class OylaDatabase implements Serializable {
 
-    private final List<User> users = Collections.synchronizedList(new LinkedList<User>());
+    /*private final List<User> users = Collections.synchronizedList(new LinkedList<User>());
     private final List<Poll> polls = Collections.synchronizedList(new LinkedList<Poll>());
-    private final List<Option> options = Collections.synchronizedList(new LinkedList<Option>());
+    private final List<Option> options = Collections.synchronizedList(new LinkedList<Option>());*/
     private final List<Vote> votes = Collections.synchronizedList(new LinkedList<Vote>());
 
+    private final Map<Integer, User> users = Collections.synchronizedMap(new TreeMap<Integer, User>());
+    private final Map<Integer, Poll> polls = Collections.synchronizedMap(new TreeMap<Integer, Poll>());
+    private final Map<Integer, Option> options = Collections.synchronizedMap(new TreeMap<Integer, Option>());
+
     public synchronized void addUser(User user){
-        if (!users.contains(user)){
+        /*if (!users.contains(user)){
             users.add(user);
-        }
+        }*/
+        users.put(user.getId(), user);
     }
 
     public synchronized void addPoll(Poll poll){
-        if (!polls.contains(poll)){
+        /*if (!polls.contains(poll)){
             polls.add(poll);
-        }
+        }*/
+        polls.put(poll.getId(), poll);
     }
 
     public synchronized void addOption(Option option){
-        if (!options.contains(option)){
+        /*if (!options.contains(option)){
             options.add(option);
-        }
+        }*/
+        options.put(option.getId(), option);
     }
 
     public synchronized void addVote(Vote vote){
@@ -65,19 +74,31 @@ public final class OylaDatabase implements Serializable {
     }
 
     public synchronized List<User> getUsers() {
-        return users;
+        return new LinkedList<>(users.values());
     }
 
     public synchronized List<Poll> getPolls() {
-        return polls;
+        return new LinkedList<>(polls.values());
     }
 
     public synchronized List<Option> getOptions() {
-        return options;
+        return new LinkedList<>(options.values());
     }
 
     public synchronized List<Vote> getVotes() {
         return votes;
+    }
+
+    public User getUserById(int id){
+        return users.get(id);
+    }
+
+    public Poll getPollById(int id){
+        return polls.get(id);
+    }
+
+    public Option getOptionById(int id){
+        return options.get(id);
     }
 
     public boolean hasUserCreatedPoll(User user, Poll poll){
@@ -89,7 +110,7 @@ public final class OylaDatabase implements Serializable {
     }
 
     public List<Poll> pollsUserCreated(final User user){
-        return Entity.findAllMatches(polls, new Predicate<Poll>() {
+        return Entity.findAllMatches(new LinkedList<>(polls.values()), new Predicate<Poll>() {
             @Override
             public boolean test(Poll in) {
                 return in.getUser() == user.getId();
@@ -114,7 +135,7 @@ public final class OylaDatabase implements Serializable {
             }
         });
 
-        return Entity.findAllMatches(options, new Predicate<Option>() {
+        return Entity.findAllMatches(new LinkedList<>(options.values()), new Predicate<Option>() {
             @Override
             public boolean test(Option in) {
                 return optionIds.contains(in.getId()) && (poll == null || in.getPoll() == poll.getId());
@@ -130,7 +151,7 @@ public final class OylaDatabase implements Serializable {
             }
         }));
 
-        return Entity.findAllMatches(polls, new Predicate<Poll>() {
+        return Entity.findAllMatches(new LinkedList<>(polls.values()), new Predicate<Poll>() {
             @Override
             public boolean test(Poll in) {
                 return pollIds.contains(in.getId());
@@ -139,7 +160,7 @@ public final class OylaDatabase implements Serializable {
     }
 
     public List<Option> optionsOfPoll(final Poll poll){
-        return Entity.findAllMatches(options, new Predicate<Option>() {
+        return Entity.findAllMatches(new LinkedList<>(options.values()), new Predicate<Option>() {
             @Override
             public boolean test(Option in) {
                 return in.getPoll() == poll.getId();
@@ -163,7 +184,7 @@ public final class OylaDatabase implements Serializable {
     }
 
     public synchronized void sortPollsByIdAsc(){
-        Collections.sort(polls, new Comparator<Poll>() {
+        Collections.sort(new LinkedList<>(polls.values()), new Comparator<Poll>() {
             @Override
             public int compare(Poll p1, Poll p2) {
                 return Integer.valueOf(p1.getId()).compareTo(p2.getId());
@@ -172,7 +193,7 @@ public final class OylaDatabase implements Serializable {
     }
 
     public synchronized void sortPollsByIdDesc(){
-        Collections.sort(polls, new Comparator<Poll>() {
+        Collections.sort(new LinkedList<>(polls.values()), new Comparator<Poll>() {
             @Override
             public int compare(Poll p1, Poll p2) {
                 return Integer.valueOf(p2.getId()).compareTo(p1.getId());
@@ -181,7 +202,7 @@ public final class OylaDatabase implements Serializable {
     }
 
     public synchronized void sortOptionsByIdAsc(){
-        Collections.sort(options, new Comparator<Option>() {
+        Collections.sort(new LinkedList<>(options.values()), new Comparator<Option>() {
             @Override
             public int compare(Option o1, Option o2) {
                 return Integer.valueOf(o1.getId()).compareTo(o2.getId());
@@ -190,7 +211,7 @@ public final class OylaDatabase implements Serializable {
     }
 
     public synchronized void sortOptionsByIdDesc(){
-        Collections.sort(options, new Comparator<Option>() {
+        Collections.sort(new LinkedList<>(options.values()), new Comparator<Option>() {
             @Override
             public int compare(Option o1, Option o2) {
                 return Integer.valueOf(o2.getId()).compareTo(o1.getId());
@@ -199,7 +220,7 @@ public final class OylaDatabase implements Serializable {
     }
 
     public synchronized void sortUsersByIdAsc(){
-        Collections.sort(users, new Comparator<User>() {
+        Collections.sort(new LinkedList<>(users.values()), new Comparator<User>() {
             @Override
             public int compare(User u1, User u2) {
                 return Integer.valueOf(u1.getId()).compareTo(u2.getId());
@@ -208,7 +229,7 @@ public final class OylaDatabase implements Serializable {
     }
 
     public synchronized void sortUsersByIdDesc(){
-        Collections.sort(users, new Comparator<User>() {
+        Collections.sort(new LinkedList<>(users.values()), new Comparator<User>() {
             @Override
             public int compare(User u1, User u2) {
                 return Integer.valueOf(u2.getId()).compareTo(u1.getId());
@@ -217,7 +238,7 @@ public final class OylaDatabase implements Serializable {
     }
 
     public synchronized void sortOptionsAlphabetically(final Locale locale){
-        Collections.sort(options, new Comparator<Option>() {
+        Collections.sort(new LinkedList<>(options.values()), new Comparator<Option>() {
             @Override
             public int compare(Option o1, Option o2) {
                 final Collator collator = Collator.getInstance(locale);
@@ -245,7 +266,7 @@ public final class OylaDatabase implements Serializable {
         for (char i = 'A'; i <= 'Z'; i++) chars.add(i);
         for (char i = '0'; i <= '9'; i++) chars.add(i);
 
-        final List<String> urls = Entity.map(polls, new Function<Poll, String>() {
+        final List<String> urls = Entity.map(new LinkedList<>(polls.values()), new Function<Poll, String>() {
             @Override
             public String apply(Poll in) {
                 return in.getUrl();

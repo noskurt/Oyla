@@ -172,7 +172,7 @@ public class SplashActivity extends AppCompatActivity {
         final boolean internetStatus = isOnline();
         if (!internetStatus) {
             final AlertDialog dialog = new AlertDialog.Builder(SplashActivity.this)
-                    .setTitle("İnternet bağlantısı")
+                    .setTitle("İnternet bağlantınızı kontrol edin")
                     .setMessage("Uygulamanın çalışabilmesi için internet bağlantısı gerekmektedir.\r\n" +
                             "Lütfen internet bağlantınızı kontrol edip uygulamayı tekrar çalıştırın.")
                     .setPositiveButton("Anladım", new DialogInterface.OnClickListener() {

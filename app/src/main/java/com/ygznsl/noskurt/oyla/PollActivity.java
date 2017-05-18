@@ -26,6 +26,7 @@ import com.ygznsl.noskurt.oyla.entity.User;
 import com.ygznsl.noskurt.oyla.entity.Vote;
 import com.ygznsl.noskurt.oyla.helper.Consumer;
 import com.ygznsl.noskurt.oyla.helper.Function;
+import com.ygznsl.noskurt.oyla.helper.Nullable;
 import com.ygznsl.noskurt.oyla.helper.OylaDatabase;
 import com.ygznsl.noskurt.oyla.helper.Predicate;
 
@@ -67,6 +68,7 @@ public class PollActivity extends AppCompatActivity {
     private void showStats(){
         final Intent intent = new Intent(this, PollAnalyticsActivity.class);
         intent.putExtra("poll", poll);
+        intent.putExtra("anonymous", anonymous);
         startActivity(intent);
     }
 
@@ -77,6 +79,13 @@ public class PollActivity extends AppCompatActivity {
         user = (User) extras.getSerializable("user");
         anonymous = extras.getBoolean("anonymous");
         poll = (Poll) extras.getSerializable("poll");
+
+        setTitle(new Nullable<>(poll).orElse(new Function<Poll, String>() {
+            @Override
+            public String apply(Poll in) {
+                return "Oyla - " + in.getTitle();
+            }
+        }, "Oyla"));
 
         final List<Option> options = oyla.optionsOfPoll(poll);
         Collections.sort(options, new Comparator<Option>() {
@@ -248,11 +257,6 @@ public class PollActivity extends AppCompatActivity {
             }
         });
 
-        if (anonymous) {
-            txtUserCannotVotePoll.setVisibility(View.VISIBLE);
-            btnVotePoll.setEnabled(false);
-        }
-
         if (!anonymous && oyla.hasUserVotedPoll(user, poll)){
             final List<Integer> votedOptionIds = Entity.map(oyla.optionsUserVoted(user, poll), new Function<Option, Integer>() {
                 @Override
@@ -286,8 +290,16 @@ public class PollActivity extends AppCompatActivity {
         if (!anonymous && !poll.getGenders().equals("B")){
             if (!poll.getGenders().equals(user.getGender())){
                 btnVotePoll.setEnabled(false);
+                txtUserCannotVotePoll.setText(String.format(locale,
+                        getString(R.string.text_userCannotVote), poll.getGenders().equals("K") ? "kadınlara" : "erkeklere"));
                 txtUserCannotVotePoll.setVisibility(View.VISIBLE);
             }
+        }
+
+        if (anonymous) {
+            txtUserCannotVotePoll.setText(getString(R.string.text_anonymousUserCannotVote));
+            txtUserCannotVotePoll.setVisibility(View.VISIBLE);
+            btnVotePoll.setEnabled(false);
         }
 
         guiInitialized = true;

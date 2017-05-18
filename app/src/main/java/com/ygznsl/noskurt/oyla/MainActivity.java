@@ -40,6 +40,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Random;
 
 public class MainActivity extends AppCompatActivity implements Serializable, View.OnClickListener {
 
@@ -276,7 +277,11 @@ public class MainActivity extends AppCompatActivity implements Serializable, Vie
     }
 
     private void selectRandomPoll(final OylaDatabase oyla) {
-        randomPoll = oyla.randomPollForUser(user);
+        try {
+            randomPoll = oyla.randomPollForUser(user);
+        } catch (Exception ex) {
+            randomPoll = oyla.getPolls().get(new Random().nextInt(oyla.getPolls().size()));
+        }
 
         txtPollTitleMain.setText(randomPoll.getTitle());
         txtPollPublishDateMain.setText(User.DATE_FORMAT.format(tryParseDate(Poll.DATE_FORMAT, randomPoll.getPdate(), new Date())));
@@ -374,6 +379,7 @@ public class MainActivity extends AppCompatActivity implements Serializable, Vie
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        setTitle("Oyla - Ana Sayfa");
         final OylaDatabase oyla = ((MyApplication) getApplication()).oyla();
         if (!guiInitialized) initializeGui(oyla);
         if (pollsGot && user != null) selectRandomPoll(oyla);
@@ -419,7 +425,7 @@ public class MainActivity extends AppCompatActivity implements Serializable, Vie
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this)
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this)
                 .setTitle("Çıkış Yapıyorsunuz!")
                 .setMessage("Çıkış yapmak istediğinize emin misiniz?")
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
@@ -436,13 +442,12 @@ public class MainActivity extends AppCompatActivity implements Serializable, Vie
                 })
                 .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        // İPTAL İŞLEMİ
+                        dialog.dismiss();
                     }
                 })
                 .setIcon(android.R.drawable.ic_dialog_alert);
 
         builder.create().show();
-
         return super.onOptionsItemSelected(item);
     }
 
