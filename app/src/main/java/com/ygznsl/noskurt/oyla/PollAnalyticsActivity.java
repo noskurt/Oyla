@@ -472,15 +472,6 @@ public class PollAnalyticsActivity extends AppCompatActivity {
         }
 
         final RadioButtonCollection radioGroup = new RadioButtonCollection();
-        /*radioGroup.setOnSelectedItemChanged(new ValueChangedEvent<RadioButton>() {
-            @Override
-            public void valueChanged(RadioButton oldValue, RadioButton newValue) {
-                if (!anonymous && btnDetailedAnalysisPollAnalytics != null){
-                    btnDetailedAnalysisPollAnalytics.setEnabled(newValue != null);
-                }
-            }
-        });*/
-
         final List<View> views = new LinkedList<>();
         final LayoutInflater inflater = getLayoutInflater();
         for (final Map.Entry<Integer, List<Vote>> entry : voteCounts.entrySet()){
