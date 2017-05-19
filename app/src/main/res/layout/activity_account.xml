@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -147,9 +148,9 @@
                         android:id="@+id/spinnerCityAccount"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_toEndOf="@+id/txtCityLabelAccount"
                         android:layout_alignParentEnd="true"
-                        android:layout_centerVertical="true" />
+                        android:layout_centerVertical="true"
+                        android:layout_toEndOf="@+id/txtCityLabelAccount" />
 
                 </RelativeLayout>
 
@@ -199,9 +200,9 @@
                 android:id="@+id/llPasswordAndLogout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
                 android:layout_marginEnd="10dp"
                 android:layout_marginStart="10dp"
-                android:layout_marginBottom="10dp"
                 android:orientation="horizontal">
 
                 <Button

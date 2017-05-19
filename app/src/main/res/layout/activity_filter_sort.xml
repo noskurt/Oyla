@@ -23,9 +23,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/text_filterOptions"
+                android:textColor="@android:color/black"
                 android:textSize="9pt"
-                android:textStyle="bold"
-                android:textColor="@android:color/black"/>
+                android:textStyle="bold" />
 
             <LinearLayout
                 android:id="@+id/llAccordingToPollFilterSort"
@@ -38,8 +38,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/text_accordingToPoll"
-                    android:textSize="8pt"
-                    android:textColor="@android:color/black"/>
+                    android:textColor="@android:color/black"
+                    android:textSize="8pt" />
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -49,11 +49,11 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_toStartOf="@+id/spinnerPollCategoryFilterSort"
                         android:layout_alignParentStart="true"
+                        android:layout_toStartOf="@+id/spinnerPollCategoryFilterSort"
                         android:text="@string/text_filterOptionCategory"
-                        android:textSize="8pt"
-                        android:textColor="@android:color/black"/>
+                        android:textColor="@android:color/black"
+                        android:textSize="8pt" />
 
                     <Spinner
                         android:id="@+id/spinnerPollCategoryFilterSort"
@@ -76,8 +76,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/text_filterOptionGender"
-                        android:textSize="8pt"
-                        android:textColor="@android:color/black"/>
+                        android:textColor="@android:color/black"
+                        android:textSize="8pt" />
 
                     <RadioGroup
                         android:layout_width="match_parent"
@@ -103,8 +103,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_weight="0.33"
-                            android:text="@string/text_pollGenderBoth"
-                            android:checked="true" />
+                            android:checked="true"
+                            android:text="@string/text_pollGenderBoth" />
 
                     </RadioGroup>
 
@@ -120,22 +120,22 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/text_filterOptionMultiple"
-                        android:textSize="8pt"
-                        android:textColor="@android:color/black"/>
+                        android:textColor="@android:color/black"
+                        android:textSize="8pt" />
 
                     <CheckBox
                         android:id="@+id/chkMultipleYesFilterSort"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/text_filterOptionMultipleYes"
-                        android:checked="true" />
+                        android:checked="true"
+                        android:text="@string/text_filterOptionMultipleYes" />
 
                     <CheckBox
                         android:id="@+id/chkMultipleNoFilterSort"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/text_filterOptionMultipleNo"
-                        android:checked="true" />
+                        android:checked="true"
+                        android:text="@string/text_filterOptionMultipleNo" />
 
                 </LinearLayout>
 
@@ -152,8 +152,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/text_accordingToUser"
-                    android:textSize="8pt"
-                    android:textColor="@android:color/black"/>
+                    android:textColor="@android:color/black"
+                    android:textSize="8pt" />
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -164,8 +164,8 @@
                         android:id="@+id/radioPollUserFilterSort"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_toStartOf="@+id/spinnerPollUserFilterSort"
                         android:layout_alignParentStart="true"
+                        android:layout_toStartOf="@+id/spinnerPollUserFilterSort"
                         android:text="@string/text_filterOptionUser"
                         android:textSize="8pt" />
 
@@ -208,11 +208,11 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_alignParentStart="true"
-                                android:layout_toStartOf="@+id/spinnerPollUserCityFilterSort"
                                 android:layout_centerVertical="true"
+                                android:layout_toStartOf="@+id/spinnerPollUserCityFilterSort"
                                 android:text="@string/text_filterOptionCity"
-                                android:textSize="8pt"
-                                android:textColor="@android:color/black"/>
+                                android:textColor="@android:color/black"
+                                android:textSize="8pt" />
 
                             <Spinner
                                 android:id="@+id/spinnerPollUserCityFilterSort"
@@ -232,13 +232,13 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_gravity="center_vertical"
                                 android:layout_alignParentStart="true"
-                                android:layout_toStartOf="@+id/radioGroupPollUserGenderFilterSort"
                                 android:layout_centerVertical="true"
+                                android:layout_gravity="center_vertical"
+                                android:layout_toStartOf="@+id/radioGroupPollUserGenderFilterSort"
                                 android:text="@string/content_description"
-                                android:textSize="8pt"
-                                android:textColor="@android:color/black"/>
+                                android:textColor="@android:color/black"
+                                android:textSize="8pt" />
 
                             <RadioGroup
                                 android:id="@+id/radioGroupPollUserGenderFilterSort"
@@ -251,18 +251,18 @@
                                     android:id="@+id/radioPollUserFemaleFilterSort"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:layout_weight="0.5"
-                                    android:layout_marginStart="20dp"
                                     android:layout_marginEnd="20dp"
+                                    android:layout_marginStart="20dp"
+                                    android:layout_weight="0.5"
                                     android:text="@string/text_btnRadioFemale" />
 
                                 <RadioButton
                                     android:id="@+id/radioPollUserMaleFilterSort"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:layout_weight="0.5"
-                                    android:layout_marginStart="20dp"
                                     android:layout_marginEnd="20dp"
+                                    android:layout_marginStart="20dp"
+                                    android:layout_weight="0.5"
                                     android:text="@string/text_btnRadioMale" />
 
                             </RadioGroup>
@@ -278,11 +278,11 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_alignParentStart="true"
-                                android:layout_toStartOf="@+id/spinnerPollUserAgeIntervalFilterSort"
                                 android:layout_centerVertical="true"
+                                android:layout_toStartOf="@+id/spinnerPollUserAgeIntervalFilterSort"
                                 android:text="@string/text_filterOptionAgeInterval"
-                                android:textSize="8pt"
-                                android:textColor="@android:color/black"/>
+                                android:textColor="@android:color/black"
+                                android:textSize="8pt" />
 
                             <Spinner
                                 android:id="@+id/spinnerPollUserAgeIntervalFilterSort"
@@ -313,9 +313,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/text_sortOptions"
+                android:textColor="@android:color/black"
                 android:textSize="9pt"
-                android:textStyle="bold"
-                android:textColor="@android:color/black"/>
+                android:textStyle="bold" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -333,8 +333,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/text_sortOptionAccordingTo"
-                        android:textSize="8pt"
-                        android:textColor="@android:color/black"/>
+                        android:textColor="@android:color/black"
+                        android:textSize="8pt" />
 
                     <RadioGroup
                         android:layout_width="match_parent"
@@ -345,31 +345,31 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:checked="true"
-                            android:text="@string/text_sortOptionPollTitle"/>
+                            android:text="@string/text_sortOptionPollTitle" />
 
                         <RadioButton
                             android:id="@+id/radioSortByCategoryNameFilterSort"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="@string/text_sortOptionCategoryName"/>
+                            android:text="@string/text_sortOptionCategoryName" />
 
                         <RadioButton
                             android:id="@+id/radioSortByPublishDateFilterSort"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="@string/text_sortOptionPublishDate"/>
+                            android:text="@string/text_sortOptionPublishDate" />
 
                         <RadioButton
                             android:id="@+id/radioSortByOptionCountFilterSort"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="@string/text_sortOptionPollOptionCount"/>
+                            android:text="@string/text_sortOptionPollOptionCount" />
 
                         <RadioButton
                             android:id="@+id/radioSortByVoteCountFilterSort"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="@string/text_sortOptionVoteCount"/>
+                            android:text="@string/text_sortOptionVoteCount" />
 
                     </RadioGroup>
 
@@ -385,11 +385,11 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentStart="true"
-                        android:layout_toStartOf="@+id/radioGroupSortOrderFilterSort"
                         android:layout_centerVertical="true"
+                        android:layout_toStartOf="@+id/radioGroupSortOrderFilterSort"
                         android:text="@string/text_sortOptionSortOrder"
-                        android:textSize="8pt"
-                        android:textColor="@android:color/black"/>
+                        android:textColor="@android:color/black"
+                        android:textSize="8pt" />
 
                     <RadioGroup
                         android:id="@+id/radioGroupSortOrderFilterSort"
@@ -402,20 +402,20 @@
                             android:id="@+id/radioAscendingFilterSort"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_weight="0.5"
-                            android:layout_marginStart="15dp"
                             android:layout_marginEnd="15dp"
+                            android:layout_marginStart="15dp"
+                            android:layout_weight="0.5"
                             android:checked="true"
-                            android:text="@string/text_sortOptionAscending"/>
+                            android:text="@string/text_sortOptionAscending" />
 
                         <RadioButton
                             android:id="@+id/radioDescendingFilterSort"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_weight="0.5"
-                            android:layout_marginStart="15dp"
                             android:layout_marginEnd="15dp"
-                            android:text="@string/text_sortOptionDescending"/>
+                            android:layout_marginStart="15dp"
+                            android:layout_weight="0.5"
+                            android:text="@string/text_sortOptionDescending" />
 
                     </RadioGroup>
 
