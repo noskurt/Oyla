@@ -2,6 +2,7 @@ package com.ygznsl.noskurt.oyla;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
@@ -24,7 +25,6 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.ygznsl.noskurt.oyla.entity.Category;
 import com.ygznsl.noskurt.oyla.entity.Entity;
 import com.ygznsl.noskurt.oyla.entity.Option;
@@ -67,7 +67,7 @@ public class CreatePollActivity extends AppCompatActivity {
     private RadioGroup radioGroupPollGenderCreate;
     private ScrollView mainLayoutCreate;
 
-    private void initializeGui(final OylaDatabase oyla){
+    private void initializeGui(final OylaDatabase oyla) {
         categories = Category.getCategories(this).get();
         Collections.sort(categories, new Comparator<Category>() {
             @Override
@@ -114,12 +114,16 @@ public class CreatePollActivity extends AppCompatActivity {
                 node.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
                 final EditText answer = new EditText(CreatePollActivity.this);
-                answer.setHint("Anket seçeneği");
+                answer.setHint("Anket Seçeneği");
                 answer.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, 0.15f));
 
                 final Button btnDeleteOption = new Button(CreatePollActivity.this);
+                btnDeleteOption.setBackground(getDrawable(R.drawable.btn_colored1));
+                btnDeleteOption.setTextColor(Color.parseColor("#FFF0A5"));
                 btnDeleteOption.setText(getString(R.string.text_btnDeletePollOptionCreate));
-                btnDeleteOption.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, 0.85f));
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, 0.85f);
+                params.setMargins(5, 5, 5, 5);
+                btnDeleteOption.setLayoutParams(params);
 
                 btnDeleteOption.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -140,13 +144,14 @@ public class CreatePollActivity extends AppCompatActivity {
         btnCreatePollCreate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (txtPollTitleCreate.getText().toString().trim().length() == 0){
+                // TODO anket oluşturduğunuza emin misiniz eklenebilir
+                if (txtPollTitleCreate.getText().toString().trim().length() == 0) {
                     tilPollTitleCreate.setErrorEnabled(true);
                     tilPollTitleCreate.setError("Anket sorusunu boş bırakamazsınız!");
                     return;
                 }
                 tilPollTitleCreate.setErrorEnabled(false);
-                if (spinnerPollCategoryCreate.getSelectedItem() == null){
+                if (spinnerPollCategoryCreate.getSelectedItem() == null) {
                     Toast.makeText(CreatePollActivity.this, "Anketin kategorisini belirlemelisiniz!", Toast.LENGTH_LONG).show();
                     spinnerPollCategoryCreate.requestFocus();
                     return;
@@ -176,7 +181,7 @@ public class CreatePollActivity extends AppCompatActivity {
                 mainLayoutCreate.setVisibility(View.GONE);
 
                 String genders = "B";
-                switch (radioGroupPollGenderCreate.getCheckedRadioButtonId()){
+                switch (radioGroupPollGenderCreate.getCheckedRadioButtonId()) {
                     case R.id.rdPollGenderMaleCreate:
                         genders = rdPollGenderMaleCreate.getTag().toString();
                         break;
@@ -201,7 +206,7 @@ public class CreatePollActivity extends AppCompatActivity {
                 poll.setCategory(((Category) spinnerPollCategoryCreate.getSelectedItem()).getId());
 
                 final List<Option> options = new LinkedList<>();
-                for (String o : nonEmptyOptions){
+                for (String o : nonEmptyOptions) {
                     final Option option = new Option();
                     option.setTitle(o);
                     option.setPoll(maxPollId);
@@ -215,14 +220,14 @@ public class CreatePollActivity extends AppCompatActivity {
                 pushed.setValue(poll).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()){
+                        if (task.isSuccessful()) {
                             oyla.addPoll(poll);
                             new Thread(new Runnable() {
                                 @Override
                                 public void run() {
 
                                     try {
-                                        for (final Option option : options){
+                                        for (final Option option : options) {
                                             final DatabaseReference pushedOption = Entity.getDatabase().getReference().child("option").push();
                                             pushedOption.setValue(option).addOnCompleteListener(new OnCompleteListener<Void>() {
                                                 @Override
@@ -277,7 +282,9 @@ public class CreatePollActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_poll);
-        setTitle("Oyla - Anket Oluştur");
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setIcon(R.mipmap.ic_launcher);
+        setTitle(" Anket Oluştur");
         final OylaDatabase oyla = ((MyApplication) getApplication()).oyla();
         if (!guiInitialized) initializeGui(oyla);
     }

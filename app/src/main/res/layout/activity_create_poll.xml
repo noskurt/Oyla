@@ -1,183 +1,213 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginBottom="5dp"
-    android:layout_marginEnd="10dp"
-    android:layout_marginStart="10dp"
-    android:layout_marginTop="5dp"
-    android:orientation="vertical"
+    android:background="@color/kulerColor2"
     tools:context="com.ygznsl.noskurt.oyla.CreatePollActivity">
 
-    <ProgressBar
-        android:id="@+id/pbPollCreate"
-        android:layout_width="75dp"
-        android:layout_height="75dp"
-        android:layout_centerHorizontal="true"
-        android:layout_centerInParent="true"
-        android:layout_centerVertical="true"
-        android:layout_margin="20dp"
-        android:visibility="gone" />
-
-    <ScrollView
-        android:id="@+id/mainLayoutCreate"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"
+        android:layout_marginBottom="5dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="5dp"
+        android:orientation="vertical">
 
-        <RelativeLayout
+        <ProgressBar
+            android:id="@+id/pbPollCreate"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            android:layout_centerHorizontal="true"
+            android:layout_centerInParent="true"
+            android:layout_centerVertical="true"
+            android:layout_margin="20dp"
+            android:visibility="gone" />
+
+        <ScrollView
+            android:id="@+id/mainLayoutCreate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <android.support.design.widget.TextInputLayout
-                android:id="@+id/tilPollTitleCreate"
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
-                android:layout_marginBottom="5dp"
-                android:layout_marginEnd="10dp"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="5dp">
+                android:layout_height="wrap_content">
 
-                <EditText
-                    android:id="@+id/txtPollTitleCreate"
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/tilPollTitleCreate"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/hint_pollTitle" />
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="5dp">
 
-            </android.support.design.widget.TextInputLayout>
+                    <EditText
+                        android:id="@+id/txtPollTitleCreate"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/hint_pollTitle" />
 
-            <LinearLayout
-                android:id="@+id/llPollCategoryCreate"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/tilPollTitleCreate"
-                android:layout_marginBottom="10dp"
-                android:layout_marginEnd="10dp"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="5dp"
-                android:orientation="horizontal">
+                </android.support.design.widget.TextInputLayout>
 
-                <TextView
+                <LinearLayout
+                    android:id="@+id/llPollCategoryCreate"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/text_category"
+                    android:layout_below="@+id/tilPollTitleCreate"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="5dp"
+                    android:background="@drawable/border_2"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="5dp"
+                        android:text="@string/text_category"
+                        android:textColor="@android:color/black"
+                        android:textSize="8pt" />
+
+                    <Spinner
+                        android:id="@+id/spinnerPollCategoryCreate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+                    </Spinner>
+
+                </LinearLayout>
+
+                <RelativeLayout
+                    android:id="@+id/radioGroupLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/llPollCategoryCreate"
+                    android:background="@drawable/border_2">
+
+                    <TextView
+                        android:id="@+id/txtPollGenderSpecify"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginBottom="5dp"
+                        android:layout_marginEnd="10dp"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="5dp"
+                        android:text="@string/text_pollGenderSpecify"
+                        android:textColor="@android:color/black"
+                        android:textSize="8pt" />
+
+                    <RadioGroup
+                        android:id="@+id/radioGroupPollGenderCreate"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/txtPollGenderSpecify"
+                        android:layout_marginEnd="10dp"
+                        android:layout_marginStart="10dp"
+                        android:orientation="horizontal">
+
+                        <RadioButton
+                            android:id="@+id/rdPollGenderMaleCreate"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0.33"
+                            android:text="@string/text_pollGenderMale" />
+
+                        <RadioButton
+                            android:id="@+id/rdPollGenderFemaleCreate"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0.33"
+                            android:text="@string/text_pollGenderFemale" />
+
+                        <RadioButton
+                            android:id="@+id/rdPollGenderBothCreate"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0.33"
+                            android:text="@string/text_pollGenderBoth" />
+
+                    </RadioGroup>
+
+                </RelativeLayout>
+
+                <CheckBox
+                    android:id="@+id/checkboxPollMultipleCreate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/radioGroupLayout"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/text_pollMultiple" />
+
+                <TextView
+                    android:id="@+id/txtLabelPollOptionsCreate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/checkboxPollMultipleCreate"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/text_pollOptions"
                     android:textColor="@android:color/black"
                     android:textSize="8pt" />
 
-                <Spinner
-                    android:id="@+id/spinnerPollCategoryCreate"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                </Spinner>
-
-            </LinearLayout>
-
-            <TextView
-                android:id="@+id/txtPollGenderSpecify"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/llPollCategoryCreate"
-                android:layout_marginBottom="5dp"
-                android:layout_marginEnd="10dp"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="5dp"
-                android:text="@string/text_pollGenderSpecify"
-                android:textColor="@android:color/black"
-                android:textSize="8pt" />
-
-            <RadioGroup
-                android:id="@+id/radioGroupPollGenderCreate"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/txtPollGenderSpecify"
-                android:layout_marginEnd="10dp"
-                android:layout_marginStart="10dp"
-                android:orientation="horizontal">
-
-                <RadioButton
-                    android:id="@+id/rdPollGenderMaleCreate"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="0.33"
-                    android:text="@string/text_pollGenderMale" />
-
-                <RadioButton
-                    android:id="@+id/rdPollGenderFemaleCreate"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="0.33"
-                    android:text="@string/text_pollGenderFemale" />
-
-                <RadioButton
-                    android:id="@+id/rdPollGenderBothCreate"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="0.33"
-                    android:text="@string/text_pollGenderBoth" />
-
-            </RadioGroup>
-
-            <CheckBox
-                android:id="@+id/checkboxPollMultipleCreate"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/radioGroupPollGenderCreate"
-                android:layout_marginBottom="5dp"
-                android:layout_marginEnd="10dp"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="10dp"
-                android:text="@string/text_pollMultiple" />
-
-            <TextView
-                android:id="@+id/txtLabelPollOptionsCreate"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/checkboxPollMultipleCreate"
-                android:layout_marginBottom="5dp"
-                android:layout_marginEnd="10dp"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="10dp"
-                android:text="@string/text_pollOptions"
-                android:textColor="@android:color/black"
-                android:textSize="8pt" />
-
-            <LinearLayout
-                android:id="@+id/llPollOptionsCreate"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/txtLabelPollOptionsCreate"
-                android:layout_margin="10dp"
-                android:orientation="vertical">
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/llButtonsCreate"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_below="@+id/llPollOptionsCreate"
-                android:orientation="vertical">
-
-                <Button
-                    android:id="@+id/btnAddPollOptionCreate"
+                <LinearLayout
+                    android:id="@+id/llPollOptionsCreate"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/text_btnAddPollOption" />
+                    android:layout_below="@+id/txtLabelPollOptionsCreate"
+                    android:layout_margin="10dp"
+                    android:orientation="vertical">
 
-                <Button
-                    android:id="@+id/btnCreatePollCreate"
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/llButtonsCreate"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/text_btnPollCreate" />
+                    android:layout_alignParentBottom="true"
+                    android:layout_below="@+id/llPollOptionsCreate"
+                    android:background="@color/kulerColor2"
+                    android:orientation="vertical">
 
-            </LinearLayout>
+                    <Button
+                        android:id="@+id/btnAddPollOptionCreate"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="5dp"
+                        android:background="@drawable/btn_colored3"
+                        android:text="@string/text_btnAddPollOption"
+                        android:textColor="@color/kulerColor2" />
 
-        </RelativeLayout>
+                    <Button
+                        android:id="@+id/btnCreatePollCreate"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:background="@drawable/btn_colored2"
+                        android:text="@string/text_btnPollCreate"
+                        android:textColor="@color/kulerColor2" />
 
-    </ScrollView>
+                </LinearLayout>
 
-</RelativeLayout>
+            </RelativeLayout>
+
+        </ScrollView>
+
+    </RelativeLayout>
+
+</LinearLayout>

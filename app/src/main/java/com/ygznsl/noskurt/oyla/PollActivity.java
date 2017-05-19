@@ -17,7 +17,6 @@ import android.widget.TextView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.ygznsl.noskurt.oyla.entity.Category;
 import com.ygznsl.noskurt.oyla.entity.Entity;
 import com.ygznsl.noskurt.oyla.entity.Option;
@@ -36,7 +35,6 @@ import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -80,12 +78,24 @@ public class PollActivity extends AppCompatActivity {
         anonymous = extras.getBoolean("anonymous");
         poll = (Poll) extras.getSerializable("poll");
 
-        setTitle(new Nullable<>(poll).orElse(new Function<Poll, String>() {
-            @Override
-            public String apply(Poll in) {
-                return "Oyla - " + in.getTitle();
-            }
-        }, "Oyla"));
+//        setTitle(new Nullable<>(poll).orElse(new Function<Poll, String>() {
+//            @Override
+//            public String apply(Poll in) {
+//                return "Oyla - " + in.getTitle();
+//            }
+//        }, "Oyla"));
+
+//        setTitle(" Kategori: "+Entity.findMatches(categories, new Predicate<Category>() {
+//            @Override
+//            public boolean test(Category in) {
+//                return in.getId() == poll.getCategory();
+//            }
+//        }).orElse(new Function<Category, String>() {
+//            @Override
+//            public String apply(Category in) {
+//                return in.getName();
+//            }
+//        }, ""));
 
         final List<Option> options = oyla.optionsOfPoll(poll);
         Collections.sort(options, new Comparator<Option>() {
@@ -309,6 +319,9 @@ public class PollActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_poll);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setIcon(R.mipmap.ic_launcher);
+        setTitle(" Oyla");
         final OylaDatabase oyla = ((MyApplication) getApplication()).oyla();
         if (!guiInitialized) initializeGui(oyla);
     }

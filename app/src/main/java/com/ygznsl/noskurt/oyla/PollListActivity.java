@@ -43,9 +43,9 @@ public class PollListActivity extends AppCompatActivity {
         setTitle(scope.orElse(new Function<String, String>() {
             @Override
             public String apply(String in) {
-                if (in.equals("polls")) return "Oyla - Yayınladıklarım";
-                if (in.equals("votes")) return "Oyla - Oyladıklarım";
-                return "Oyla - Anketler";
+                if (in.equals("polls")) return " Yayınladıklarım";
+                if (in.equals("votes")) return " Oyladıklarım";
+                return " Anketler";
             }
         }, "Oyla"));
 
@@ -109,6 +109,8 @@ public class PollListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_poll_list);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setIcon(R.mipmap.ic_launcher);
         final OylaDatabase oyla = ((MyApplication) getApplication()).oyla();
         if (!guiInitialized) initializeGui(oyla);
     }

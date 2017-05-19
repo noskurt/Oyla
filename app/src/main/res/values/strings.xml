@@ -12,7 +12,7 @@
     <string name="hint_password">Şifre</string>
     <string name="hint_passwordNew">Yeni Şifre</string>
     <string name="hint_passwordNewAgain">Yeni Şifre (Tekrar)</string>
-    <string name="hint_pollTitle">Anket sorusu</string>
+    <string name="hint_pollTitle">Anket Sorusu</string>
     <string name="text_gender">Cinsiyet: </string>
     <string name="text_btnSignIn">Giriş Yap</string>
     <string name="text_btnRegister">Kayıt Ol</string>
@@ -47,9 +47,9 @@
     <string name="text_pollGenderSpecify">Kimler bu ankete oy verebilir?</string>
     <string name="text_pollGenderMale">Erkekler</string>
     <string name="text_pollGenderFemale">Kadınlar</string>
-    <string name="text_pollGenderBoth">İkisi de</string>
+    <string name="text_pollGenderBoth">Herkes</string>
     <string name="text_pollMultiple">Birden fazla seçenek seçilebilsin</string>
-    <string name="text_pollOptions">Anket seçenekleri: </string>
+    <string name="text_pollOptions">Anket Seçenekleri: </string>
     <string name="text_btnAddPollOption">Seçenek Ekle</string>
     <string name="text_btnPollCreate">Anketi Yayınla</string>
     <string name="text_btnDeletePollOptionCreate">Sil</string>

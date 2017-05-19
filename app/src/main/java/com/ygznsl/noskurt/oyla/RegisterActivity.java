@@ -300,7 +300,9 @@ public class RegisterActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
-        setTitle("Oyla - Kayıt Ol");
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setIcon(R.mipmap.ic_launcher);
+        setTitle(" Kayıt Ol");
         if (!guiInitialized) initializeGui();
     }
 
