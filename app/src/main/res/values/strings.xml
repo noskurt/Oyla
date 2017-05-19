@@ -61,7 +61,7 @@
     <string name="text_detailedAnalysis">Detaylı Analiz</string>
     <string name="text_accordingToGender">Cinsiyete Göre</string>
     <string name="text_accordingToAge">Yaşa Göre</string>
-    <string name="text_accordingToCity">Yaşanılan\nŞehre Göre</string>
+    <string name="text_accordingToCity">Yaşanılan Şehre Göre</string>
     <string name="text_btnDetailedAnalysis">Detaylı Analizi Görüntüle</string>
     <string name="text_userCannotSeeDetailedAnalysis">Anonim olarak giriş yaptığınız için\ndetaylı analizi görüntüleyemezsiniz!</string>
     <string name="text_filterAndSort">Filtrele ve Sırala</string>
@@ -69,12 +69,12 @@
     <string name="text_sortOptions">Sıralama Seçenekleri</string>
     <string name="text_accordingToPoll">Ankete Göre</string>
     <string name="text_accordingToUser">Anketi Yayınlayan Kullanıcıya Göre</string>
-    <string name="text_filterOptionCategory">Şu kategorideki\nanketleri göster: </string>
+    <string name="text_filterOptionCategory">Şu kategorideki anketleri göster: </string>
     <string name="text_filterOptionGender">Şu cinsiyete özel anketleri göster: </string>
     <string name="text_filterOptionMultiple">Şu anketleri göster: </string>
     <string name="text_filterOptionMultipleYes">Birden fazla seçeneği oylanabilsin</string>
     <string name="text_filterOptionMultipleNo">Yalnızca bir seçeneği oylanabilsin</string>
-    <string name="text_filterOptionUser">Şu kullanıcının yayınladığı\nanketleri göster: </string>
+    <string name="text_filterOptionUser">Şu kişinin yayınladıklarını göster: </string>
     <string name="text_filterOptionUserOther">Şu özelliklere uyan kullanıcıların yayınladığı anketleri göster: </string>
     <string name="text_filterOptionCity">Yaşadığı şehir: </string>
     <string name="text_filterOptionAgeInterval">Yaş aralığı: </string>

@@ -21,33 +21,20 @@ import java.util.TreeSet;
 
 public final class OylaDatabase implements Serializable {
 
-    /*private final List<User> users = Collections.synchronizedList(new LinkedList<User>());
-    private final List<Poll> polls = Collections.synchronizedList(new LinkedList<Poll>());
-    private final List<Option> options = Collections.synchronizedList(new LinkedList<Option>());*/
     private final List<Vote> votes = Collections.synchronizedList(new LinkedList<Vote>());
-
     private final Map<Integer, User> users = Collections.synchronizedMap(new TreeMap<Integer, User>());
     private final Map<Integer, Poll> polls = Collections.synchronizedMap(new TreeMap<Integer, Poll>());
     private final Map<Integer, Option> options = Collections.synchronizedMap(new TreeMap<Integer, Option>());
 
     public synchronized void addUser(User user){
-        /*if (!users.contains(user)){
-            users.add(user);
-        }*/
         users.put(user.getId(), user);
     }
 
     public synchronized void addPoll(Poll poll){
-        /*if (!polls.contains(poll)){
-            polls.add(poll);
-        }*/
         polls.put(poll.getId(), poll);
     }
 
     public synchronized void addOption(Option option){
-        /*if (!options.contains(option)){
-            options.add(option);
-        }*/
         options.put(option.getId(), option);
     }
 
@@ -58,15 +45,15 @@ public final class OylaDatabase implements Serializable {
     }
 
     public synchronized void removeUser(User user){
-        users.remove(user);
+        users.remove(user.getId());
     }
 
     public synchronized void removePoll(Poll poll){
-        polls.remove(poll);
+        polls.remove(poll.getId());
     }
 
     public synchronized void removeOption(Option option){
-        options.remove(option);
+        options.remove(option.getId());
     }
 
     public synchronized void removeVote(Vote vote){

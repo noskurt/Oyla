@@ -20,24 +20,24 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="5dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:text="@string/text_voteCount"
                 android:textAlignment="center"
-                android:textSize="9pt"
-                android:textStyle="bold"
                 android:textColor="@android:color/black"
-                android:text="@string/text_voteCount"/>
+                android:textSize="9pt"
+                android:textStyle="bold"/>
 
             <LinearLayout
                 android:id="@+id/relOptionsPollAnalytics"
-                android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="5dp"
-                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
                 android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp">
+                android:layout_marginTop="10dp"
+                android:orientation="vertical">
 
             </LinearLayout>
 
@@ -45,14 +45,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="5dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="20dp"
+                android:text="@string/text_detailedAnalysis"
                 android:textAlignment="center"
-                android:textSize="9pt"
-                android:textStyle="bold"
                 android:textColor="@android:color/black"
-                android:text="@string/text_detailedAnalysis"/>
+                android:textSize="9pt"
+                android:textStyle="bold"/>
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -60,12 +60,12 @@
 
                 <ImageView
                     android:id="@+id/btnLeftPollAnalytics"
-                    android:src="@drawable/left_disabled"
-                    android:contentDescription="@string/content_descriptionLeft"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
                     android:layout_alignParentStart="true"
                     android:layout_margin="10dp"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp" />
+                    android:contentDescription="@string/content_descriptionLeft"
+                    android:src="@drawable/left_disabled" />
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -74,51 +74,51 @@
 
                     <RelativeLayout
                         android:id="@+id/relDetailedAnalysisCategoryPollAnalytics"
-                        android:layout_toStartOf="@+id/btnRightPollAnalytics"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_centerVertical="true">
+                        android:layout_centerVertical="true"
+                        android:layout_toStartOf="@+id/btnRightPollAnalytics">
 
                         <TextView
                             android:id="@+id/txtDetail1PollAnalytics"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:textAlignment="center"
-                            android:textSize="9pt"
-                            android:textColor="@android:color/black"
                             android:text="@string/text_accordingToGender"
+                            android:textAlignment="center"
+                            android:textColor="@android:color/black"
+                            android:textSize="9pt"
                             android:visibility="visible" />
 
                         <TextView
                             android:id="@+id/txtDetail2PollAnalytics"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:textAlignment="center"
-                            android:textSize="9pt"
-                            android:textColor="@android:color/black"
                             android:text="@string/text_accordingToAge"
+                            android:textAlignment="center"
+                            android:textColor="@android:color/black"
+                            android:textSize="9pt"
                             android:visibility="gone" />
 
                         <TextView
                             android:id="@+id/txtDetail3PollAnalytics"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:textAlignment="center"
-                            android:textSize="9pt"
-                            android:textColor="@android:color/black"
                             android:text="@string/text_accordingToCity"
+                            android:textAlignment="center"
+                            android:textColor="@android:color/black"
+                            android:textSize="9pt"
                             android:visibility="gone" />
 
                     </RelativeLayout>
 
                     <ImageView
                         android:id="@+id/btnRightPollAnalytics"
-                        android:src="@drawable/right"
-                        android:contentDescription="@string/content_descriptionRight"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
                         android:layout_alignParentEnd="true"
                         android:layout_margin="10dp"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp" />
+                        android:contentDescription="@string/content_descriptionRight"
+                        android:src="@drawable/right" />
 
                 </RelativeLayout>
 
@@ -129,21 +129,20 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="5dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"
-                android:textAlignment="center"
-                android:textSize="7pt"
-                android:textColor="@android:color/holo_red_dark"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
                 android:text="@string/text_userCannotSeeDetailedAnalysis"
+                android:textAlignment="center"
+                android:textColor="@android:color/holo_red_dark"
+                android:textSize="7pt"
                 android:visibility="gone" />
 
             <Button
                 android:id="@+id/btnDetailedAnalysisPollAnalytics"
-                android:text="@string/text_btnDetailedAnalysis"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:enabled="false" />
+                android:text="@string/text_btnDetailedAnalysis" />
 
         </LinearLayout>
 

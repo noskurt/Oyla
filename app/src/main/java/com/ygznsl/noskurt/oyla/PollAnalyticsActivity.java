@@ -24,7 +24,6 @@ import com.ygznsl.noskurt.oyla.helper.Function;
 import com.ygznsl.noskurt.oyla.helper.Nullable;
 import com.ygznsl.noskurt.oyla.helper.OylaDatabase;
 import com.ygznsl.noskurt.oyla.helper.RadioButtonCollection;
-import com.ygznsl.noskurt.oyla.helper.ValueChangedEvent;
 
 import org.joda.time.LocalDate;
 import org.joda.time.Years;
@@ -58,6 +57,62 @@ public class PollAnalyticsActivity extends AppCompatActivity {
     private TextView txtDetail3PollAnalytics;
     private TextView txtUserCannotSeeDetailedAnalysis;
     private Button btnDetailedAnalysisPollAnalytics;
+
+    private View createAccordingToAllGender(OylaDatabase oyla){
+        final List<Vote> forMale = new LinkedList<>();
+        final List<Vote> forFemale = new LinkedList<>();
+        for (Vote vote : votes){
+            final User user = oyla.getUserById(vote.getU());
+            if (user.getGender().equals("E")) forMale.add(vote);
+            else forFemale.add(vote);
+        }
+
+        final LayoutInflater inflater = getLayoutInflater();
+
+        final View viewForMale = inflater.inflate(R.layout.vote_count_control_without_radio_button, null);
+        final View viewForFemale = inflater.inflate(R.layout.vote_count_control_without_radio_button, null);
+
+        final TextView lblForMale = (TextView) viewForMale.findViewById(R.id.lblVoteCountWithout);
+        final TextView lblForFemale = (TextView) viewForFemale.findViewById(R.id.lblVoteCountWithout);
+
+        final ProgressBar pbForMale = (ProgressBar) viewForMale.findViewById(R.id.pbVoteCountWithout);
+        final ProgressBar pbForFemale = (ProgressBar) viewForFemale.findViewById(R.id.pbVoteCountWithout);
+
+        final TextView txtForMale = (TextView) viewForMale.findViewById(R.id.txtVoteCountWithout);
+        final TextView txtForFemale = (TextView) viewForFemale.findViewById(R.id.txtVoteCountWithout);
+
+        final float percentageForMaleFloat = (((float) forMale.size()) / votes.size()) * 100;
+        final int percentageForMale = Math.round(percentageForMaleFloat);
+
+        final float percentageForFemaleFloat = (((float) forFemale.size()) / votes.size()) * 100;
+        final int percentageForFemale = Math.round(percentageForFemaleFloat);
+
+        lblForMale.setText(String.format(locale, "(%d) Erkek", forMale.size()));
+        lblForFemale.setText(String.format(locale, "(%d) Kadın", forFemale.size()));
+
+        pbForMale.setProgress(percentageForMale);
+        pbForFemale.setProgress(percentageForFemale);
+
+        txtForMale.setText(String.format(locale, "%.2f%%", percentageForMaleFloat));
+        txtForFemale.setText(String.format(locale, "%.2f%%", percentageForFemaleFloat));
+
+        final View view = inflater.inflate(R.layout.detailed_analysis_dialog, null);
+
+        final TextView txtOptionTitleDetailedAnalysisDialog = (TextView) view.findViewById(R.id.txtOptionTitleDetailedAnalysisDialog);
+        final LinearLayout analysisLayout = (LinearLayout) view.findViewById(R.id.analysisLayout);
+
+        txtOptionTitleDetailedAnalysisDialog.setText(String.valueOf("Oylanan: Anket Geneli"));
+
+        if (forFemale.size() < forMale.size()){
+            analysisLayout.addView(viewForMale);
+            analysisLayout.addView(viewForFemale);
+        } else {
+            analysisLayout.addView(viewForFemale);
+            analysisLayout.addView(viewForMale);
+        }
+
+        return view;
+    }
 
     private View createAccordingToGender(OylaDatabase oyla, int optionId){
         int totalSize = 0;
@@ -119,6 +174,71 @@ public class PollAnalyticsActivity extends AppCompatActivity {
             analysisLayout.addView(viewForFemale);
             analysisLayout.addView(viewForMale);
         }
+
+        return view;
+    }
+
+    private View createAccordingToAllAge(OylaDatabase oyla){
+        final HashMap<String, List<Vote>> voteMap = new HashMap<>();
+        for (String ageInterval : Arrays.asList("18'den küçük", "18-25", "26-40", "41-65", "65'ten büyük")){
+            voteMap.put(ageInterval, new LinkedList<Vote>());
+        }
+        for (Vote vote : votes){
+            final User user = oyla.getUserById(vote.getU());
+            try {
+                final LocalDate now = LocalDate.now();
+                final LocalDate birthDate = LocalDate.fromDateFields(User.DATE_FORMAT.parse(user.getBdate()));
+                final int age = Years.yearsBetween(birthDate, now).getYears();
+                if (age < 18){
+                    voteMap.get("18'den küçük").add(vote);
+                } else if (age >= 18 && age <= 25) {
+                    voteMap.get("18-25").add(vote);
+                } else if (age >= 26 && age <= 40) {
+                    voteMap.get("26-40").add(vote);
+                } else if (age >= 41 && age <= 65) {
+                    voteMap.get("41-65").add(vote);
+                } else {
+                    voteMap.get("65'ten büyük").add(vote);
+                }
+            } catch (ParseException ex) {
+                Log.e("createAccordingToAge", ex.getMessage());
+            }
+        }
+
+        final LayoutInflater inflater = getLayoutInflater();
+
+        final List<View> views = new LinkedList<>();
+        for (Map.Entry<String, List<Vote>> entry : voteMap.entrySet()){
+            final View view = inflater.inflate(R.layout.vote_count_control_without_radio_button, null);
+            final TextView lblVoteCountWithout = (TextView) view.findViewById(R.id.lblVoteCountWithout);
+            final ProgressBar pbVoteCountWithout = (ProgressBar) view.findViewById(R.id.pbVoteCountWithout);
+            final TextView txtVoteCountWithout = (TextView) view.findViewById(R.id.txtVoteCountWithout);
+
+            final float percentageFloat = (((float) entry.getValue().size()) / votes.size()) * 100;
+            final int percentage = Math.round(percentageFloat);
+
+            lblVoteCountWithout.setText(String.format(locale, "(%d) %s", entry.getValue().size(), entry.getKey()));
+            pbVoteCountWithout.setProgress(percentage);
+            txtVoteCountWithout.setText(String.format(locale, "%.2f%%", percentageFloat));
+
+            view.setTag(percentageFloat);
+            views.add(view);
+        }
+
+        Collections.sort(views, new Comparator<View>() {
+            @Override
+            public int compare(View v1, View v2) {
+                return ((Float) v2.getTag()).compareTo((Float) v1.getTag());
+            }
+        });
+
+        final View view = inflater.inflate(R.layout.detailed_analysis_dialog, null);
+        final TextView txtOptionTitleDetailedAnalysisDialog = (TextView) view.findViewById(R.id.txtOptionTitleDetailedAnalysisDialog);
+        final LinearLayout analysisLayout = (LinearLayout) view.findViewById(R.id.analysisLayout);
+
+        txtOptionTitleDetailedAnalysisDialog.setText(String.valueOf("Oylanan: Anket Geneli"));
+
+        for (View v : views) analysisLayout.addView(v);
 
         return view;
     }
@@ -191,6 +311,65 @@ public class PollAnalyticsActivity extends AppCompatActivity {
                 return String.format(locale, "Oylanan: %s", in.getTitle());
             }
         }, "Oylanan: "));
+
+        for (View v : views) analysisLayout.addView(v);
+
+        return view;
+    }
+
+    private View createAccordingToAllCity(OylaDatabase oyla){
+        final HashMap<City, List<Vote>> voteMap = new HashMap<>();
+        for (Vote vote : votes){
+            final User user = oyla.getUserById(vote.getU());
+            final City city = Entity.findById(cities, user.getCity()).get();
+            if (voteMap.containsKey(city)){
+                voteMap.get(city).add(vote);
+            } else {
+                final List<Vote> list = new LinkedList<>();
+                list.add(vote);
+                voteMap.put(city, list);
+            }
+        }
+
+        final LayoutInflater inflater = getLayoutInflater();
+        final List<View> views = new LinkedList<>();
+        for (Map.Entry<City, List<Vote>> entry : voteMap.entrySet()){
+            final View view = inflater.inflate(R.layout.vote_count_control_without_radio_button, null);
+            final TextView lblVoteCountWithout = (TextView) view.findViewById(R.id.lblVoteCountWithout);
+            final ProgressBar pbVoteCountWithout = (ProgressBar) view.findViewById(R.id.pbVoteCountWithout);
+            final TextView txtVoteCountWithout = (TextView) view.findViewById(R.id.txtVoteCountWithout);
+
+            final float percentageFloat = (((float) entry.getValue().size()) / votes.size()) * 100;
+            final int percentage = Math.round(percentageFloat);
+
+            lblVoteCountWithout.setTag(entry.getKey().getName());
+            lblVoteCountWithout.setText(String.format(locale, "(%d) %s", entry.getValue().size(), entry.getKey()));
+            pbVoteCountWithout.setProgress(percentage);
+            txtVoteCountWithout.setText(String.format(locale, "%.2f%%", percentageFloat));
+
+            view.setTag(percentageFloat);
+            views.add(view);
+        }
+
+        Collections.sort(views, new Comparator<View>() {
+            @Override
+            public int compare(View v1, View v2) {
+                final int first = ((Float) v2.getTag()).compareTo((Float) v1.getTag());
+                if (first != 0) return first;
+                final Collator collator = Collator.getInstance(locale);
+                final TextView txt1 = (TextView) v1.findViewById(R.id.lblVoteCountWithout);
+                final TextView txt2 = (TextView) v2.findViewById(R.id.lblVoteCountWithout);
+                final String city1 = txt1.getTag().toString();
+                final String city2 = txt2.getTag().toString();
+                return collator.compare(city1, city2);
+            }
+        });
+
+        final View view = inflater.inflate(R.layout.detailed_analysis_dialog, null);
+        final TextView txtOptionTitleDetailedAnalysisDialog = (TextView) view.findViewById(R.id.txtOptionTitleDetailedAnalysisDialog);
+        final LinearLayout analysisLayout = (LinearLayout) view.findViewById(R.id.analysisLayout);
+
+        txtOptionTitleDetailedAnalysisDialog.setText(String.valueOf("Oylanan: Anket Geneli"));
 
         for (View v : views) analysisLayout.addView(v);
 
@@ -293,14 +472,14 @@ public class PollAnalyticsActivity extends AppCompatActivity {
         }
 
         final RadioButtonCollection radioGroup = new RadioButtonCollection();
-        radioGroup.setOnSelectedItemChanged(new ValueChangedEvent<RadioButton>() {
+        /*radioGroup.setOnSelectedItemChanged(new ValueChangedEvent<RadioButton>() {
             @Override
             public void valueChanged(RadioButton oldValue, RadioButton newValue) {
                 if (!anonymous && btnDetailedAnalysisPollAnalytics != null){
                     btnDetailedAnalysisPollAnalytics.setEnabled(newValue != null);
                 }
             }
-        });
+        });*/
 
         final List<View> views = new LinkedList<>();
         final LayoutInflater inflater = getLayoutInflater();
@@ -392,21 +571,33 @@ public class PollAnalyticsActivity extends AppCompatActivity {
         btnDetailedAnalysisPollAnalytics.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                final int optionId = (Integer) radioGroup.getSelectedItem().getTag();
-
                 View v = null;
                 String title = "";
-                if (txtDetail1PollAnalytics.getVisibility() == View.VISIBLE){
-                    v = createAccordingToGender(oyla, optionId);
-                    title = "Detaylı Analiz - Cinsiyete Göre";
-                } else if (txtDetail2PollAnalytics.getVisibility() == View.VISIBLE){
-                    v = createAccordingToAge(oyla, optionId);
-                    title = "Detaylı Analiz - Yaşa Göre";
+                final RadioButton selected = radioGroup.getSelectedItem();
+                if (selected == null){
+                    if (txtDetail1PollAnalytics.getVisibility() == View.VISIBLE){
+                        v = createAccordingToAllGender(oyla);
+                        title = "Detaylı Analiz - Cinsiyete Göre";
+                    } else if (txtDetail2PollAnalytics.getVisibility() == View.VISIBLE){
+                        v = createAccordingToAllAge(oyla);
+                        title = "Detaylı Analiz - Yaşa Göre";
+                    } else {
+                        v = createAccordingToAllCity(oyla);
+                        title = "Detaylı Analiz - Yaşanılan Şehre Göre";
+                    }
                 } else {
-                    v = createAccordingToCity(oyla, optionId);
-                    title = "Detaylı Analiz - Yaşanılan Şehre Göre";
+                    final int optionId = (Integer) selected.getTag();
+                    if (txtDetail1PollAnalytics.getVisibility() == View.VISIBLE){
+                        v = createAccordingToGender(oyla, optionId);
+                        title = "Detaylı Analiz - Cinsiyete Göre";
+                    } else if (txtDetail2PollAnalytics.getVisibility() == View.VISIBLE){
+                        v = createAccordingToAge(oyla, optionId);
+                        title = "Detaylı Analiz - Yaşa Göre";
+                    } else {
+                        v = createAccordingToCity(oyla, optionId);
+                        title = "Detaylı Analiz - Yaşanılan Şehre Göre";
+                    }
                 }
-
                 final AlertDialog dialog = new AlertDialog.Builder(PollAnalyticsActivity.this)
                         .setTitle(title)
                         .setView(v)

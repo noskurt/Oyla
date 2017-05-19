@@ -81,11 +81,20 @@ public class CreatePollActivity extends AppCompatActivity {
 
         final Bundle extras = getIntent().getExtras();
         user = (User) extras.getSerializable("user");
-        oyla.sortPollsByIdDesc();
-        oyla.sortOptionsByIdDesc();
 
-        maxPollId = oyla.getPolls().get(0).getId();
-        maxOptionId = oyla.getOptions().get(0).getId();
+        maxPollId = Entity.maxId(Entity.map(oyla.getPolls(), new Function<Poll, Integer>() {
+            @Override
+            public Integer apply(Poll in) {
+                return in.getId();
+            }
+        }));
+
+        maxOptionId = Entity.maxId(Entity.map(oyla.getOptions(), new Function<Option, Integer>() {
+            @Override
+            public Integer apply(Option in) {
+                return in.getId();
+            }
+        }));
 
         pbPollCreate = (ProgressBar) findViewById(R.id.pbPollCreate);
         txtPollTitleCreate = (EditText) findViewById(R.id.txtPollTitleCreate);
@@ -146,6 +155,38 @@ public class CreatePollActivity extends AppCompatActivity {
         btnCreatePollCreate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (txtPollTitleCreate.getText().toString().trim().length() == 0) {
+                    tilPollTitleCreate.setErrorEnabled(true);
+                    tilPollTitleCreate.setError("Anket sorusunu boş bırakamazsınız!");
+                    return;
+                }
+                tilPollTitleCreate.setErrorEnabled(false);
+                if (spinnerPollCategoryCreate.getSelectedItem() == null) {
+                    Toast.makeText(CreatePollActivity.this, "Anketin kategorisini belirlemelisiniz!", Toast.LENGTH_LONG).show();
+                    spinnerPollCategoryCreate.requestFocus();
+                    return;
+                }
+                if (radioGroupPollGenderCreate.getCheckedRadioButtonId() == -1) {
+                    Toast.makeText(CreatePollActivity.this, "Ankete oy verebilecek cinsiyeti belirlemelisiniz!", Toast.LENGTH_LONG).show();
+                    radioGroupPollGenderCreate.requestFocus();
+                    return;
+                }
+                final List<String> nonEmptyOptions = Entity.findAllMatches(pollOptions, new Predicate<EditText>() {
+                    @Override
+                    public boolean test(EditText in) {
+                        return in.getText().toString().trim().length() > 0;
+                    }
+                }, new Function<EditText, String>() {
+                    @Override
+                    public String apply(EditText in) {
+                        return in.getText().toString();
+                    }
+                });
+                if (nonEmptyOptions.size() < 2) {
+                    Toast.makeText(CreatePollActivity.this, "Anketin en az 2 seçeneği olmalıdır!", Toast.LENGTH_LONG).show();
+                    return;
+                }
+
                 final AlertDialog dialog = new AlertDialog.Builder(CreatePollActivity.this)
                         .setTitle("Anket oluşturulacak")
                         .setMessage("Emin misiniz?")
@@ -158,37 +199,7 @@ public class CreatePollActivity extends AppCompatActivity {
                         .setPositiveButton("Evet", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                if (txtPollTitleCreate.getText().toString().trim().length() == 0) {
-                                    tilPollTitleCreate.setErrorEnabled(true);
-                                    tilPollTitleCreate.setError("Anket sorusunu boş bırakamazsınız!");
-                                    return;
-                                }
-                                tilPollTitleCreate.setErrorEnabled(false);
-                                if (spinnerPollCategoryCreate.getSelectedItem() == null) {
-                                    Toast.makeText(CreatePollActivity.this, "Anketin kategorisini belirlemelisiniz!", Toast.LENGTH_LONG).show();
-                                    spinnerPollCategoryCreate.requestFocus();
-                                    return;
-                                }
-                                if (radioGroupPollGenderCreate.getCheckedRadioButtonId() == -1) {
-                                    Toast.makeText(CreatePollActivity.this, "Ankete oy verebilecek cinsiyeti belirlemelisiniz!", Toast.LENGTH_LONG).show();
-                                    radioGroupPollGenderCreate.requestFocus();
-                                    return;
-                                }
-                                final List<String> nonEmptyOptions = Entity.findAllMatches(pollOptions, new Predicate<EditText>() {
-                                    @Override
-                                    public boolean test(EditText in) {
-                                        return in.getText().toString().trim().length() > 0;
-                                    }
-                                }, new Function<EditText, String>() {
-                                    @Override
-                                    public String apply(EditText in) {
-                                        return in.getText().toString();
-                                    }
-                                });
-                                if (nonEmptyOptions.size() < 2) {
-                                    Toast.makeText(CreatePollActivity.this, "Anketin en az 2 seçeneği olmalıdır!", Toast.LENGTH_LONG).show();
-                                    return;
-                                }
+                                dialogInterface.dismiss();
 
                                 pbPollCreate.setVisibility(View.VISIBLE);
                                 mainLayoutCreate.setVisibility(View.GONE);
@@ -238,7 +249,6 @@ public class CreatePollActivity extends AppCompatActivity {
                                             new Thread(new Runnable() {
                                                 @Override
                                                 public void run() {
-
                                                     try {
                                                         for (final Option option : options) {
                                                             final DatabaseReference pushedOption = Entity.getDatabase().getReference().child("option").push();

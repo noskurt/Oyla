@@ -5,14 +5,12 @@ import com.ygznsl.noskurt.oyla.helper.Function;
 import com.ygznsl.noskurt.oyla.helper.Nullable;
 import com.ygznsl.noskurt.oyla.helper.Predicate;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
 public abstract class Entity {
     private static FirebaseDatabase db;
-
-    public abstract int getId();
-    public abstract void setId(int id);
 
     public static FirebaseDatabase getDatabase() {
         if (db == null) {
@@ -66,5 +64,13 @@ public abstract class Entity {
             ll.add(mapper.apply(entity));
         return ll;
     }
+
+    public static int maxId(List<Integer> list){
+        return Collections.max(list);
+    }
+
+    public abstract int getId();
+
+    public abstract void setId(int id);
 
 }
