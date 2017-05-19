@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageView;
@@ -176,11 +177,16 @@ public class PollActivity extends AppCompatActivity {
 
         llOptionsPoll.removeAllViews();
 
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        params.setMargins(5, 5, 5, 5);
+
         if (poll.getMult() == 1) {
+
             for (Option o : options) {
                 final CheckBox checkBox = new CheckBox(this);
                 checkBox.setText(o.getTitle());
                 checkBox.setTag(o.getId());
+                checkBox.setLayoutParams(params);
                 llOptionsPoll.addView(checkBox);
                 checkBoxes.add(checkBox);
             }
@@ -190,6 +196,7 @@ public class PollActivity extends AppCompatActivity {
                 final RadioButton radioButton = new RadioButton(this);
                 radioButton.setText(o.getTitle());
                 radioButton.setTag(o.getId());
+                radioButton.setLayoutParams(params);
                 radioGroup.addView(radioButton);
                 radioButtons.add(radioButton);
             }
