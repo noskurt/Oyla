@@ -66,6 +66,13 @@ public final class City extends Entity implements Serializable {
         return name;
     }
 
+    public static City all(){
+        final City c = new City();
+        c.setId(-1);
+        c.setName("Hepsi");
+        return c;
+    }
+
     public static Nullable<List<City>> getCities(Context context){
         final List<City> cities = new LinkedList<>();
         try (InputStreamReader isr = new InputStreamReader(context.getAssets().open("city.json"), Charset.forName("utf-8"))){

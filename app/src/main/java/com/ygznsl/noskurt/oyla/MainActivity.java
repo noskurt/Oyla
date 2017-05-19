@@ -420,35 +420,38 @@ public class MainActivity extends AppCompatActivity implements Serializable, Vie
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         final MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.main_activity_menu, menu);
+        inflater.inflate(R.menu.logout_menu, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(this)
-                .setTitle("Çıkış Yapıyorsunuz!")
-                .setMessage("Çıkış yapmak istediğinize emin misiniz?")
-                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        try {
-                            auth.signOut();
-                            final Intent intent = new Intent(MainActivity.this, SplashActivity.class);
-                            startActivity(intent);
-                            finish();
-                        } catch (Exception ex) {
-                            Toast.makeText(MainActivity.this, "Çıkış yapılırken bir hata meydana geldi:\r\n" + ex.getMessage(), Toast.LENGTH_LONG).show();
+        if (item.getItemId() == R.id.menuLogOut){
+            final AlertDialog.Builder builder = new AlertDialog.Builder(this)
+                    .setTitle("Çıkış Yapıyorsunuz!")
+                    .setMessage("Çıkış yapmak istediğinize emin misiniz?")
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            try {
+                                auth.signOut();
+                                final Intent intent = new Intent(MainActivity.this, SplashActivity.class);
+                                startActivity(intent);
+                                finish();
+                            } catch (Exception ex) {
+                                Toast.makeText(MainActivity.this, "Çıkış yapılırken bir hata meydana geldi:\r\n" + ex.getMessage(), Toast.LENGTH_LONG).show();
+                            }
                         }
-                    }
-                })
-                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                })
-                .setIcon(android.R.drawable.ic_dialog_alert);
+                    })
+                    .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    })
+                    .setIcon(android.R.drawable.ic_dialog_alert);
 
-        builder.create().show();
+            builder.create().show();
+            return true;
+        }
         return super.onOptionsItemSelected(item);
     }
 

@@ -78,14 +78,7 @@ public final class User extends Entity implements Serializable {
 
     @Override
     public String toString() {
-        return "User{" +
-                "bdate='" + bdate + '\'' +
-                ", email='" + email + '\'' +
-                ", gender='" + gender + '\'' +
-                ", name='" + name + '\'' +
-                ", id=" + id +
-                ", city=" + city +
-                '}';
+        return name;
     }
 
 }

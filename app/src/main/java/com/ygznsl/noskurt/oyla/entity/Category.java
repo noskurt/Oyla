@@ -58,6 +58,13 @@ public final class Category extends Entity implements Serializable {
         return name;
     }
 
+    public static Category all(){
+        final Category c = new Category();
+        c.setId(-1);
+        c.setName("Hepsi");
+        return c;
+    }
+
     public static Nullable<List<Category>> getCategories(Context context){
         final List<Category> categories = new LinkedList<>();
         try (InputStreamReader isr = new InputStreamReader(context.getAssets().open("category.json"), Charset.forName("utf-8"))){

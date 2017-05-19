@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Oyla</string>
-    <string name="content_description">Cinsiyet</string>
+    <string name="content_description">Cinsiyet:</string>
     <string name="content_descriptionLeft">Sol</string>
     <string name="content_descriptionRight">Sağ</string>
     <string name="hint_txtEmailSignIn">E-posta Adresi</string>
@@ -64,4 +64,28 @@
     <string name="text_accordingToCity">Yaşanılan\nŞehre Göre</string>
     <string name="text_btnDetailedAnalysis">Detaylı Analizi Görüntüle</string>
     <string name="text_userCannotSeeDetailedAnalysis">Anonim olarak giriş yaptığınız için\ndetaylı analizi görüntüleyemezsiniz!</string>
+    <string name="text_filterAndSort">Filtrele ve Sırala</string>
+    <string name="text_filterOptions">Filtreleme Seçenekleri</string>
+    <string name="text_sortOptions">Sıralama Seçenekleri</string>
+    <string name="text_accordingToPoll">Ankete Göre</string>
+    <string name="text_accordingToUser">Anketi Yayınlayan Kullanıcıya Göre</string>
+    <string name="text_filterOptionCategory">Şu kategorideki\nanketleri göster: </string>
+    <string name="text_filterOptionGender">Şu cinsiyete özel anketleri göster: </string>
+    <string name="text_filterOptionMultiple">Şu anketleri göster: </string>
+    <string name="text_filterOptionMultipleYes">Birden fazla seçeneği oylanabilsin</string>
+    <string name="text_filterOptionMultipleNo">Yalnızca bir seçeneği oylanabilsin</string>
+    <string name="text_filterOptionUser">Şu kullanıcının yayınladığı\nanketleri göster: </string>
+    <string name="text_filterOptionUserOther">Şu özelliklere uyan kullanıcıların yayınladığı anketleri göster: </string>
+    <string name="text_filterOptionCity">Yaşadığı şehir: </string>
+    <string name="text_filterOptionAgeInterval">Yaş aralığı: </string>
+    <string name="text_sortOptionAccordingTo">Şuna göre sırala: </string>
+    <string name="text_sortOptionSortOrder">Sıralama yönü: </string>
+    <string name="text_sortOptionPollTitle">Anket sorusuna göre</string>
+    <string name="text_sortOptionCategoryName">Kategori ismine göre</string>
+    <string name="text_sortOptionPublishDate">Yayınlanma tarihine göre</string>
+    <string name="text_sortOptionPollOptionCount">Seçenek sayısına göre</string>
+    <string name="text_sortOptionVoteCount">Oylanma sayısına göre</string>
+    <string name="text_sortOptionDescending">Azalan</string>
+    <string name="text_sortOptionAscending">Artan</string>
+    <string name="text_btnApply">Uygula</string>
 </resources>

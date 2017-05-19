@@ -1,11 +1,13 @@
 package com.ygznsl.noskurt.oyla;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -144,134 +146,149 @@ public class CreatePollActivity extends AppCompatActivity {
         btnCreatePollCreate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO anket oluşturduğunuza emin misiniz eklenebilir
-                if (txtPollTitleCreate.getText().toString().trim().length() == 0) {
-                    tilPollTitleCreate.setErrorEnabled(true);
-                    tilPollTitleCreate.setError("Anket sorusunu boş bırakamazsınız!");
-                    return;
-                }
-                tilPollTitleCreate.setErrorEnabled(false);
-                if (spinnerPollCategoryCreate.getSelectedItem() == null) {
-                    Toast.makeText(CreatePollActivity.this, "Anketin kategorisini belirlemelisiniz!", Toast.LENGTH_LONG).show();
-                    spinnerPollCategoryCreate.requestFocus();
-                    return;
-                }
-                if (radioGroupPollGenderCreate.getCheckedRadioButtonId() == -1) {
-                    Toast.makeText(CreatePollActivity.this, "Ankete oy verebilecek cinsiyeti belirlemelisiniz!", Toast.LENGTH_LONG).show();
-                    radioGroupPollGenderCreate.requestFocus();
-                    return;
-                }
-                final List<String> nonEmptyOptions = Entity.findAllMatches(pollOptions, new Predicate<EditText>() {
-                    @Override
-                    public boolean test(EditText in) {
-                        return in.getText().toString().trim().length() > 0;
-                    }
-                }, new Function<EditText, String>() {
-                    @Override
-                    public String apply(EditText in) {
-                        return in.getText().toString();
-                    }
-                });
-                if (nonEmptyOptions.size() < 2) {
-                    Toast.makeText(CreatePollActivity.this, "Anketin en az 2 seçeneği olmalıdır!", Toast.LENGTH_LONG).show();
-                    return;
-                }
-
-                pbPollCreate.setVisibility(View.VISIBLE);
-                mainLayoutCreate.setVisibility(View.GONE);
-
-                String genders = "B";
-                switch (radioGroupPollGenderCreate.getCheckedRadioButtonId()) {
-                    case R.id.rdPollGenderMaleCreate:
-                        genders = rdPollGenderMaleCreate.getTag().toString();
-                        break;
-                    case R.id.rdPollGenderFemaleCreate:
-                        genders = rdPollGenderFemaleCreate.getTag().toString();
-                        break;
-                    case R.id.rdPollGenderBothCreate:
-                        genders = rdPollGenderBothCreate.getTag().toString();
-                        break;
-                }
-
-                final int multiple = checkboxPollMultipleCreate.isChecked() ? 1 : 0;
-
-                final Poll poll = new Poll();
-                poll.setMult(multiple);
-                poll.setId(++maxPollId);
-                poll.setGenders(genders);
-                poll.setUser(user.getId());
-                poll.setUrl(oyla.randomPollUrl());
-                poll.setTitle(txtPollTitleCreate.getText().toString());
-                poll.setPdate(Poll.DATE_FORMAT.format(Calendar.getInstance(locale).getTime()));
-                poll.setCategory(((Category) spinnerPollCategoryCreate.getSelectedItem()).getId());
-
-                final List<Option> options = new LinkedList<>();
-                for (String o : nonEmptyOptions) {
-                    final Option option = new Option();
-                    option.setTitle(o);
-                    option.setPoll(maxPollId);
-                    option.setId(++maxOptionId);
-                    options.add(option);
-                }
-
-                final CountDownLatch latch = new CountDownLatch(options.size());
-
-                final DatabaseReference pushed = Entity.getDatabase().getReference().child("poll").push();
-                pushed.setValue(poll).addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            oyla.addPoll(poll);
-                            new Thread(new Runnable() {
-                                @Override
-                                public void run() {
-
-                                    try {
-                                        for (final Option option : options) {
-                                            final DatabaseReference pushedOption = Entity.getDatabase().getReference().child("option").push();
-                                            pushedOption.setValue(option).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                @Override
-                                                public void onComplete(@NonNull Task<Void> task) {
-                                                    latch.countDown();
-                                                    if (task.isSuccessful()) {
-                                                        oyla.addOption(option);
-                                                    } else {
-                                                        Log.e("option.push", task.getException() == null ? "Error" : task.getException().getMessage());
-                                                    }
-                                                }
-                                            });
-                                        }
-
-                                        latch.await();
-                                    } catch (InterruptedException ex) {
-                                        Log.e("options.push", ex.getMessage());
-                                    } finally {
-                                        runOnUiThread(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                pbPollCreate.setVisibility(View.GONE);
-                                                mainLayoutCreate.setVisibility(View.VISIBLE);
-
-                                                final Intent intent = new Intent();
-                                                intent.putExtra("newPoll", poll);
-                                                CreatePollActivity.this.setResult(Activity.RESULT_OK, intent);
-                                                CreatePollActivity.this.finish();
-                                            }
-                                        });
-                                    }
-
+                final AlertDialog dialog = new AlertDialog.Builder(CreatePollActivity.this)
+                        .setTitle("Anket oluşturulacak")
+                        .setMessage("Emin misiniz?")
+                        .setNegativeButton("Hayır", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                dialogInterface.dismiss();
+                            }
+                        })
+                        .setPositiveButton("Evet", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                if (txtPollTitleCreate.getText().toString().trim().length() == 0) {
+                                    tilPollTitleCreate.setErrorEnabled(true);
+                                    tilPollTitleCreate.setError("Anket sorusunu boş bırakamazsınız!");
+                                    return;
                                 }
-                            }).start();
-                        } else {
-                            Toast.makeText(CreatePollActivity.this,
-                                    ("Anket oluştururken hata meydana geldi: \r\n" + (task.getException() == null ? "" : task.getException().getMessage())).trim(),
-                                    Toast.LENGTH_LONG).show();
+                                tilPollTitleCreate.setErrorEnabled(false);
+                                if (spinnerPollCategoryCreate.getSelectedItem() == null) {
+                                    Toast.makeText(CreatePollActivity.this, "Anketin kategorisini belirlemelisiniz!", Toast.LENGTH_LONG).show();
+                                    spinnerPollCategoryCreate.requestFocus();
+                                    return;
+                                }
+                                if (radioGroupPollGenderCreate.getCheckedRadioButtonId() == -1) {
+                                    Toast.makeText(CreatePollActivity.this, "Ankete oy verebilecek cinsiyeti belirlemelisiniz!", Toast.LENGTH_LONG).show();
+                                    radioGroupPollGenderCreate.requestFocus();
+                                    return;
+                                }
+                                final List<String> nonEmptyOptions = Entity.findAllMatches(pollOptions, new Predicate<EditText>() {
+                                    @Override
+                                    public boolean test(EditText in) {
+                                        return in.getText().toString().trim().length() > 0;
+                                    }
+                                }, new Function<EditText, String>() {
+                                    @Override
+                                    public String apply(EditText in) {
+                                        return in.getText().toString();
+                                    }
+                                });
+                                if (nonEmptyOptions.size() < 2) {
+                                    Toast.makeText(CreatePollActivity.this, "Anketin en az 2 seçeneği olmalıdır!", Toast.LENGTH_LONG).show();
+                                    return;
+                                }
 
-                            mainLayoutCreate.setVisibility(View.VISIBLE);
-                            pbPollCreate.setVisibility(View.GONE);
-                        }
-                    }
-                });
+                                pbPollCreate.setVisibility(View.VISIBLE);
+                                mainLayoutCreate.setVisibility(View.GONE);
+
+                                String genders = "B";
+                                switch (radioGroupPollGenderCreate.getCheckedRadioButtonId()) {
+                                    case R.id.rdPollGenderMaleCreate:
+                                        genders = rdPollGenderMaleCreate.getTag().toString();
+                                        break;
+                                    case R.id.rdPollGenderFemaleCreate:
+                                        genders = rdPollGenderFemaleCreate.getTag().toString();
+                                        break;
+                                    case R.id.rdPollGenderBothCreate:
+                                        genders = rdPollGenderBothCreate.getTag().toString();
+                                        break;
+                                }
+
+                                final int multiple = checkboxPollMultipleCreate.isChecked() ? 1 : 0;
+
+                                final Poll poll = new Poll();
+                                poll.setMult(multiple);
+                                poll.setId(++maxPollId);
+                                poll.setGenders(genders);
+                                poll.setUser(user.getId());
+                                poll.setUrl(oyla.randomPollUrl());
+                                poll.setTitle(txtPollTitleCreate.getText().toString());
+                                poll.setPdate(Poll.DATE_FORMAT.format(Calendar.getInstance(locale).getTime()));
+                                poll.setCategory(((Category) spinnerPollCategoryCreate.getSelectedItem()).getId());
+
+                                final List<Option> options = new LinkedList<>();
+                                for (String o : nonEmptyOptions) {
+                                    final Option option = new Option();
+                                    option.setTitle(o);
+                                    option.setPoll(maxPollId);
+                                    option.setId(++maxOptionId);
+                                    options.add(option);
+                                }
+
+                                final CountDownLatch latch = new CountDownLatch(options.size());
+
+                                final DatabaseReference pushed = Entity.getDatabase().getReference().child("poll").push();
+                                pushed.setValue(poll).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if (task.isSuccessful()) {
+                                            oyla.addPoll(poll);
+                                            new Thread(new Runnable() {
+                                                @Override
+                                                public void run() {
+
+                                                    try {
+                                                        for (final Option option : options) {
+                                                            final DatabaseReference pushedOption = Entity.getDatabase().getReference().child("option").push();
+                                                            pushedOption.setValue(option).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                @Override
+                                                                public void onComplete(@NonNull Task<Void> task) {
+                                                                    latch.countDown();
+                                                                    if (task.isSuccessful()) {
+                                                                        oyla.addOption(option);
+                                                                    } else {
+                                                                        Log.e("option.push", task.getException() == null ? "Error" : task.getException().getMessage());
+                                                                    }
+                                                                }
+                                                            });
+                                                        }
+
+                                                        latch.await();
+                                                    } catch (InterruptedException ex) {
+                                                        Log.e("options.push", ex.getMessage());
+                                                    } finally {
+                                                        runOnUiThread(new Runnable() {
+                                                            @Override
+                                                            public void run() {
+                                                                pbPollCreate.setVisibility(View.GONE);
+                                                                mainLayoutCreate.setVisibility(View.VISIBLE);
+
+                                                                final Intent intent = new Intent();
+                                                                intent.putExtra("newPoll", poll);
+                                                                CreatePollActivity.this.setResult(Activity.RESULT_OK, intent);
+                                                                CreatePollActivity.this.finish();
+                                                            }
+                                                        });
+                                                    }
+
+                                                }
+                                            }).start();
+                                        } else {
+                                            Toast.makeText(CreatePollActivity.this,
+                                                    ("Anket oluştururken hata meydana geldi: \r\n" + (task.getException() == null ? "" : task.getException().getMessage())).trim(),
+                                                    Toast.LENGTH_LONG).show();
+
+                                            mainLayoutCreate.setVisibility(View.VISIBLE);
+                                            pbPollCreate.setVisibility(View.GONE);
+                                        }
+                                    }
+                                });
+                            }
+                        })
+                        .create();
+                dialog.show();
             }
         });
 
