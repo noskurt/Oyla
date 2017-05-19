@@ -9,5 +9,16 @@
     <color name="kulerColor3">#FFB03B</color>
     <color name="kulerColor4">#B64926</color>
     <color name="kulerColor5">#8E2800</color>
+
+    <color name="kulerColor6">#459296</color>
+    <color name="kulerColor7">#4AA08B</color>
+    <color name="kulerColor8">#4AA05B</color>
+    <color name="kulerColor9">#4E9645</color>
+
+    <color name="kulerColor10">#C3771F</color>
+    <color name="kulerColor11">#CD6421</color>
+    <color name="kulerColor12">#CD3121</color>
+    <color name="kulerColor13">#C31F3A</color>
+
     <color name="black">#000000</color>
 </resources>

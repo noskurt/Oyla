@@ -525,6 +525,8 @@ public class PollAnalyticsActivity extends AppCompatActivity {
 
         for (View view : views) relOptionsPollAnalytics.addView(view);
 
+        // TODO sağ ve sol oklarına gerek olmayabilir radio button atsak yeterli olabilir
+
         btnLeftPollAnalytics.setTag("false");
         btnRightPollAnalytics.setTag("true");
 
