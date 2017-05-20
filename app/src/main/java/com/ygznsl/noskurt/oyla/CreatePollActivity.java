@@ -69,12 +69,6 @@ public class CreatePollActivity extends AppCompatActivity {
     private RadioGroup radioGroupPollGenderCreate;
     private ScrollView mainLayoutCreate;
 
-    /*
-        TODO "Seçenek Ekle" butonu seçeneklerin eklendiği Linear Layout'un üzerinde olsa daha iyi olur.
-        Art arda seçenek eklemek için tıklandığında buton sürekli aşağı kaydığı için yanlışlıkla
-        EditText içine giriliyor. "Anketi Yayınla" butonu yine en altta kalabilir.
-     */
-
     private void initializeGui(final OylaDatabase oyla) {
         categories = Category.getCategories(this).get();
         Collections.sort(categories, new Comparator<Category>() {
