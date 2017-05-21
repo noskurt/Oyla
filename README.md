@@ -24,12 +24,12 @@
 This application is built to run on Android devices that has (at minimum) Android 5.0 Lollipop (API 21).
 
 ### Dependencies
-*	Google GSON: Gson is an open source Java library to serialize and deserialize Java objects to (and from) JSON.
-*	Joda-Time: Joda-Time provides a quality replacement for the Java date and time classes.
-*	Firebase Authentication: Manage your users in a simple and secure way. Firebase Auth offers multiple methods to authenticate, including email/password, third-party providers like Google or Facebook, or using your existing account system directly. Build your own interface, or take advantage of our open source, fully customizable UI.
-*	Firebase Real-Time Database: Store and sync data between users and devices in real-time using a cloud-hosted, noSQL database. Updated data syncs across connected devices in milliseconds, and data remains available if your app goes offline, providing a great user experience regardless of network connectivity.
-*	Android RecyclerView: Android RecyclerView is more advanced version of ListView with improved performance and other benefits.
-*	Android CardView: Using CardView you can represent the information in a card manner with a drop shadow and corner radius which looks consistent across the platform. 
+*	**Google GSON**: Gson is an open source Java library to serialize and deserialize Java objects to (and from) JSON.
+*	**Joda-Time**: Joda-Time provides a quality replacement for the Java date and time classes.
+*	**Firebase Authentication**: Manage your users in a simple and secure way. Firebase Auth offers multiple methods to authenticate, including email/password, third-party providers like Google or Facebook, or using your existing account system directly. Build your own interface, or take advantage of our open source, fully customizable UI.
+*	**Firebase Real-Time Database**: Store and sync data between users and devices in real-time using a cloud-hosted, noSQL database. Updated data syncs across connected devices in milliseconds, and data remains available if your app goes offline, providing a great user experience regardless of network connectivity.
+*	**Android RecyclerView**: Android RecyclerView is more advanced version of ListView with improved performance and other benefits.
+*	**Android CardView**: Using CardView you can represent the information in a card manner with a drop shadow and corner radius which looks consistent across the platform. 
 
 ### Version Control System
 GitHub – https://github.com/noskurt/Oyla (Public)
