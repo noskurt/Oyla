@@ -30,6 +30,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.FirebaseUser;
+import com.ygznsl.noskurt.oyla.helper.Consumer;
+import com.ygznsl.noskurt.oyla.helper.Function;
+import com.ygznsl.noskurt.oyla.helper.Nullable;
 
 public class SplashActivity extends AppCompatActivity {
 
@@ -96,26 +99,38 @@ public class SplashActivity extends AppCompatActivity {
                                     editor.apply();
                                     logIn(false);
                                 } else {
-                                    final Class c = task.getException().getClass();
-                                    runOnUiThread(new Runnable() {
+                                    final Nullable<Exception> exception = new Nullable<>(task.getException());
+                                    exception.operate(new Consumer<Exception>() {
                                         @Override
-                                        public void run() {
-                                            if (c.equals(FirebaseAuthInvalidUserException.class)) {
-                                                Toast.makeText(SplashActivity.this, "Böyle bir kullanıcı mevcut değil.\r\nGiriş yapabilmek için lütfen kaydolun.", Toast.LENGTH_LONG).show();
-                                                emailLayout.setError("Böyle bir kullanıcı mevcut değil");
-                                                txtEmailSignIn.requestFocus();
-                                            } else if (c.equals(FirebaseAuthInvalidCredentialsException.class)) {
-                                                Toast.makeText(SplashActivity.this, "Hatalı şifre girdiniz.", Toast.LENGTH_LONG).show();
-                                                pwLayout.setError("Hatalı şifre girdiniz.");
-                                                txtPasswordSignIn.requestFocus();
-                                            } else {
-                                                Toast.makeText(SplashActivity.this, "Giriş başarısız oldu.", Toast.LENGTH_LONG).show();
-                                                emailLayout.setErrorEnabled(false);
-                                                pwLayout.setErrorEnabled(false);
-                                            }
-                                            hideProgressBar();
+                                        public void accept(Exception in) {
+                                            final Class c = in.getClass();
+                                            runOnUiThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    if (c.equals(FirebaseAuthInvalidUserException.class)) {
+                                                        Toast.makeText(SplashActivity.this, "Böyle bir kullanıcı mevcut değil.\r\nGiriş yapabilmek için lütfen kaydolun.", Toast.LENGTH_LONG).show();
+                                                        emailLayout.setError("Böyle bir kullanıcı mevcut değil");
+                                                        txtEmailSignIn.requestFocus();
+                                                    } else if (c.equals(FirebaseAuthInvalidCredentialsException.class)) {
+                                                        Toast.makeText(SplashActivity.this, "Hatalı şifre girdiniz.", Toast.LENGTH_LONG).show();
+                                                        pwLayout.setError("Hatalı şifre girdiniz.");
+                                                        txtPasswordSignIn.requestFocus();
+                                                    } else {
+                                                        Toast.makeText(SplashActivity.this, "Giriş başarısız oldu.", Toast.LENGTH_LONG).show();
+                                                        emailLayout.setErrorEnabled(false);
+                                                        pwLayout.setErrorEnabled(false);
+                                                    }
+                                                    hideProgressBar();
+                                                }
+                                            });
                                         }
                                     });
+                                    if (!exception.hasValue()){
+                                        Toast.makeText(SplashActivity.this, "Giriş başarısız oldu.", Toast.LENGTH_LONG).show();
+                                        emailLayout.setErrorEnabled(false);
+                                        pwLayout.setErrorEnabled(false);
+                                        hideProgressBar();
+                                    }
                                 }
                             }
                         });
@@ -152,7 +167,12 @@ public class SplashActivity extends AppCompatActivity {
                                     logIn(true);
                                 } else {
                                     Toast.makeText(SplashActivity.this,
-                                            ("Giriş başarısız oldu: \r\n" + (task.getException() == null ? "" : task.getException().getMessage())).trim(),
+                                            ("Giriş başarısız oldu: \r\n" + new Nullable<>(task.getException()).orElse(new Function<Exception, String>() {
+                                                @Override
+                                                public String apply(Exception in) {
+                                                    return in.getMessage();
+                                                }
+                                            }, "")).trim(),
                                             Toast.LENGTH_LONG).show();
                                 }
                                 hideProgressBar();

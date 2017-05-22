@@ -10,15 +10,12 @@ import android.widget.TextView;
 
 import com.ygznsl.noskurt.oyla.entity.Category;
 import com.ygznsl.noskurt.oyla.entity.Entity;
-import com.ygznsl.noskurt.oyla.entity.Option;
 import com.ygznsl.noskurt.oyla.entity.Poll;
 import com.ygznsl.noskurt.oyla.entity.User;
 import com.ygznsl.noskurt.oyla.helper.Function;
 import com.ygznsl.noskurt.oyla.helper.OylaDatabase;
 
 import java.text.ParseException;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 public class PollViewAdapter extends RecyclerView.Adapter<PollViewAdapter.CustomViewHolder> {
@@ -52,15 +49,6 @@ public class PollViewAdapter extends RecyclerView.Adapter<PollViewAdapter.Custom
     public void onBindViewHolder(final CustomViewHolder holder, int position) {
         final Poll poll = polls.get(position);
 
-        final StringBuilder str = new StringBuilder();
-        for (Option o : oyla.getOptions()){
-            if (o.getPoll() == poll.getId()){
-                str.append("\"").append(o.getTitle()).append("\", ");
-            }
-        }
-//        final String options = "[" + str.toString().trim().substring(0, str.toString().trim().length() - 1) + "]";
-//        holder.txtPollOptionsPollView.setText(options.length() <= 50 ? options : options.substring(0, 48) + "...");
-
         holder.txtPollTitlePollView.setText(poll.getTitle());
         try {
             holder.txtPollPublishDatePollView.setText(User.DATE_FORMAT.format(Poll.DATE_FORMAT.parse(poll.getPdate())));
@@ -87,38 +75,11 @@ public class PollViewAdapter extends RecyclerView.Adapter<PollViewAdapter.Custom
 
     @Override
     public int getItemCount() {
-        return (null != polls ? polls.size() : 0);
-    }
-
-    public void clear() {
-        polls.clear();
-        notifyDataSetChanged();
+        return (polls != null ? polls.size() : 0);
     }
 
     public void add(Poll poll) {
         polls.add(poll);
-        notifyDataSetChanged();
-    }
-
-    public void addAll(List<Poll> list) {
-        polls.addAll(list);
-        notifyDataSetChanged();
-    }
-
-    public boolean remove(Poll poll){
-        final boolean tmp = polls.remove(poll);
-        if (tmp) notifyDataSetChanged();
-        return tmp;
-    }
-
-    public Poll removeAt(int index){
-        final Poll tmp = polls.remove(index);
-        notifyDataSetChanged();
-        return tmp;
-    }
-
-    public void sort(Comparator<Poll> comparator){
-        Collections.sort(polls, comparator);
         notifyDataSetChanged();
     }
 
@@ -127,7 +88,6 @@ public class PollViewAdapter extends RecyclerView.Adapter<PollViewAdapter.Custom
         final TextView txtPollTitlePollView;
         final TextView txtPollPublishDatePollView;
         final TextView txtPollCategoryPollView;
-//        final TextView txtPollOptionsPollView;
         final ImageView imgPollGenderPollView;
 
         public CustomViewHolder(View view) {
@@ -135,7 +95,6 @@ public class PollViewAdapter extends RecyclerView.Adapter<PollViewAdapter.Custom
             txtPollTitlePollView = (TextView) view.findViewById(R.id.txtPollTitlePollView);
             txtPollPublishDatePollView = (TextView) view.findViewById(R.id.txtPollPublishDatePollView);
             txtPollCategoryPollView = (TextView) view.findViewById(R.id.txtPollCategoryPollView);
-//            txtPollOptionsPollView = (TextView) view.findViewById(R.id.txtPollOptionsPollView);
             imgPollGenderPollView = (ImageView) view.findViewById(R.id.imgPollGenderPollView);
         }
 

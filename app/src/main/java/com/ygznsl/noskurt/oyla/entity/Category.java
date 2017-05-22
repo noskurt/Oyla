@@ -20,6 +20,27 @@ public final class Category extends Entity implements Serializable {
     private int id;
     private String name;
 
+    public static Category all(){
+        final Category c = new Category();
+        c.setId(-1);
+        c.setName("Hepsi");
+        return c;
+    }
+
+    public static Nullable<List<Category>> getCategories(Context context){
+        final List<Category> categories = new LinkedList<>();
+        try (InputStreamReader isr = new InputStreamReader(context.getAssets().open("category.json"), Charset.forName("utf-8"))){
+            try (JsonReader reader = new JsonReader(isr)){
+                final Category[] array = new Gson().fromJson(reader, Category[].class);
+                categories.addAll(Arrays.asList(array));
+                return new Nullable<>(categories);
+            }
+        } catch (IOException ex) {
+            Log.e("City.getCities", ex.getMessage());
+            return new Nullable<>();
+        }
+    }
+
     @Override
     public int getId() {
         return id;
@@ -42,9 +63,7 @@ public final class Category extends Entity implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
-        Category category = (Category) o;
-
+        final Category category = (Category) o;
         return id == category.id;
     }
 
@@ -56,27 +75,6 @@ public final class Category extends Entity implements Serializable {
     @Override
     public String toString() {
         return name;
-    }
-
-    public static Category all(){
-        final Category c = new Category();
-        c.setId(-1);
-        c.setName("Hepsi");
-        return c;
-    }
-
-    public static Nullable<List<Category>> getCategories(Context context){
-        final List<Category> categories = new LinkedList<>();
-        try (InputStreamReader isr = new InputStreamReader(context.getAssets().open("category.json"), Charset.forName("utf-8"))){
-            try (JsonReader reader = new JsonReader(isr)){
-                final Category[] array = new Gson().fromJson(reader, Category[].class);
-                categories.addAll(Arrays.asList(array));
-                return new Nullable<>(categories);
-            }
-        } catch (IOException ex) {
-            Log.e("City.getCities", ex.getMessage());
-            return new Nullable<>();
-        }
     }
 
 }

@@ -24,6 +24,27 @@ public final class City extends Entity implements Serializable {
     private int id;
     private String name;
 
+    public static Nullable<List<City>> getCities(Context context){
+        final List<City> cities = new LinkedList<>();
+        try (InputStreamReader isr = new InputStreamReader(context.getAssets().open("city.json"), Charset.forName("utf-8"))){
+            try (JsonReader reader = new JsonReader(isr)){
+                final City[] array = new Gson().fromJson(reader, City[].class);
+                cities.addAll(Arrays.asList(array));
+                Collections.sort(cities, new Comparator<City>() {
+                    @Override
+                    public int compare(City c1, City c2) {
+                        final Collator collator = Collator.getInstance(new Locale("tr", "TR"));
+                        return collator.compare(c1.getName(), c2.getName());
+                    }
+                });
+                return new Nullable<>(cities);
+            }
+        } catch (IOException ex) {
+            Log.e("City.getCities", ex.getMessage());
+            return new Nullable<>();
+        }
+    }
+
     @Override
     public int getId() {
         return id;
@@ -46,12 +67,8 @@ public final class City extends Entity implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
-        City city = (City) o;
-
-        if (id != city.id) return false;
-        return name.equals(city.name);
-
+        final City city = (City) o;
+        return id == city.id;
     }
 
     @Override
@@ -64,34 +81,6 @@ public final class City extends Entity implements Serializable {
     @Override
     public String toString() {
         return name;
-    }
-
-    public static City all(){
-        final City c = new City();
-        c.setId(-1);
-        c.setName("Hepsi");
-        return c;
-    }
-
-    public static Nullable<List<City>> getCities(Context context){
-        final List<City> cities = new LinkedList<>();
-        try (InputStreamReader isr = new InputStreamReader(context.getAssets().open("city.json"), Charset.forName("utf-8"))){
-            try (JsonReader reader = new JsonReader(isr)){
-                final City[] array = new Gson().fromJson(reader, City[].class);
-                cities.addAll(Arrays.asList(array));
-                Collections.sort(cities, new Comparator<City>() {
-                    @Override
-                    public int compare(City c1, City c2) {
-                        final Collator collator = Collator.getInstance(new Locale("tr", "TR"));
-                        return collator.compare(c1.getName(), c2.getName());
-                    }
-                });
-                return new Nullable<>(cities);
-            }
-        } catch (IOException ex) {
-            Log.e("City.getCities", ex.getMessage());
-            return new Nullable<>();
-        }
     }
 
 }

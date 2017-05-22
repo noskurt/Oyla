@@ -43,8 +43,8 @@ import java.util.Locale;
 
 public class AccountActivity extends AppCompatActivity {
 
-    private FirebaseAuth auth = FirebaseAuth.getInstance();
     private final Locale locale = new Locale("tr", "TR");
+    private FirebaseAuth auth = FirebaseAuth.getInstance();
     private boolean guiInitialized = false;
     private boolean anonymous;
     private FirebaseUser currentUser;
@@ -312,8 +312,7 @@ public class AccountActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_account);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setIcon(R.mipmap.ic_launcher);
+        MyApplication.setIconBar(this);
         setTitle(" Hesabım");
         final OylaDatabase oyla = ((MyApplication) getApplication()).oyla();
         if (!guiInitialized) initializeGui(oyla);

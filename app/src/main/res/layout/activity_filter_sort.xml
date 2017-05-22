@@ -37,6 +37,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
                     android:layout_margin="5dp"
                     android:text="@string/text_filterOptionCategory"
                     android:textColor="@android:color/black"
@@ -44,10 +45,10 @@
 
                 <Spinner
                     android:id="@+id/spinnerPollCategoryFilterSort"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="5dp"
-                    android:background="@drawable/btn_colored2">
+                    android:layout_gravity="center_vertical"
+                    android:layout_margin="5dp">
 
                 </Spinner>
 

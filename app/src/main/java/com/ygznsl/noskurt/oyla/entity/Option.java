@@ -37,11 +37,8 @@ public final class Option extends Entity implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
-        Option option = (Option) o;
-
+        final Option option = (Option) o;
         return id == option.id;
-
     }
 
     @Override
@@ -51,11 +48,7 @@ public final class Option extends Entity implements Serializable {
 
     @Override
     public String toString() {
-        return "Option{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", poll=" + poll +
-                '}';
+        return title;
     }
 
 }

@@ -17,6 +17,17 @@
             android:orientation="vertical">
 
             <TextView
+                android:id="@+id/txPollTitlePollAnalytics"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:background="@drawable/btn_colored1"
+                android:textAlignment="center"
+                android:textColor="@android:color/white"
+                android:textSize="10pt"
+                android:textStyle="bold" />
+
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="5dp"
@@ -144,7 +155,6 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
                 android:background="@drawable/btn_colored2"
-                android:enabled="false"
                 android:text="@string/text_btnDetailedAnalysis"
                 android:textColor="@color/kulerColor2" />
 

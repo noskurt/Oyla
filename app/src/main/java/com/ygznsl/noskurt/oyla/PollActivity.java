@@ -26,13 +26,11 @@ import com.ygznsl.noskurt.oyla.entity.User;
 import com.ygznsl.noskurt.oyla.entity.Vote;
 import com.ygznsl.noskurt.oyla.helper.Consumer;
 import com.ygznsl.noskurt.oyla.helper.Function;
-import com.ygznsl.noskurt.oyla.helper.Nullable;
 import com.ygznsl.noskurt.oyla.helper.OylaDatabase;
 import com.ygznsl.noskurt.oyla.helper.Predicate;
 
 import java.text.Collator;
 import java.text.ParseException;
-
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
@@ -78,25 +76,6 @@ public class PollActivity extends AppCompatActivity {
         user = (User) extras.getSerializable("user");
         anonymous = extras.getBoolean("anonymous");
         poll = (Poll) extras.getSerializable("poll");
-
-//        setTitle(new Nullable<>(poll).orElse(new Function<Poll, String>() {
-//            @Override
-//            public String apply(Poll in) {
-//                return "Oyla - " + in.getTitle();
-//            }
-//        }, "Oyla"));
-
-//        setTitle(" Kategori: "+Entity.findMatches(categories, new Predicate<Category>() {
-//            @Override
-//            public boolean test(Category in) {
-//                return in.getId() == poll.getCategory();
-//            }
-//        }).orElse(new Function<Category, String>() {
-//            @Override
-//            public String apply(Category in) {
-//                return in.getName();
-//            }
-//        }, ""));
 
         final List<Option> options = oyla.optionsOfPoll(poll);
         Collections.sort(options, new Comparator<Option>() {
@@ -177,11 +156,10 @@ public class PollActivity extends AppCompatActivity {
 
         llOptionsPoll.removeAllViews();
 
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        final LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         params.setMargins(5, 5, 5, 5);
 
         if (poll.getMult() == 1) {
-
             for (Option o : options) {
                 final CheckBox checkBox = new CheckBox(this);
                 checkBox.setText(o.getTitle());
@@ -326,8 +304,7 @@ public class PollActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_poll);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setIcon(R.mipmap.ic_launcher);
+        MyApplication.setIconBar(this);
         setTitle(" Oyla");
         final OylaDatabase oyla = ((MyApplication) getApplication()).oyla();
         if (!guiInitialized) initializeGui(oyla);

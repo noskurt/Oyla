@@ -309,8 +309,7 @@ public class CreatePollActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_poll);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setIcon(R.mipmap.ic_launcher);
+        MyApplication.setIconBar(this);
         setTitle(" Anket Oluştur");
         final OylaDatabase oyla = ((MyApplication) getApplication()).oyla();
         if (!guiInitialized) initializeGui(oyla);

@@ -43,6 +43,8 @@ import java.util.Random;
 
 public class MainActivity extends AppCompatActivity implements Serializable, View.OnClickListener {
 
+    private static final int CREATE_POLL = 4444;
+
     private transient final FirebaseAuth auth = FirebaseAuth.getInstance();
     private boolean guiInitialized = false;
     private boolean pollsGot = false;
@@ -62,6 +64,14 @@ public class MainActivity extends AppCompatActivity implements Serializable, Vie
     private transient TextView txtPollPublishDateMain;
     private transient TextView txtPollCategoryMain;
     private transient ImageView imgPollGenderMain;
+
+    public static Date tryParseDate(SimpleDateFormat sdf, String str, Date def) {
+        try {
+            return sdf.parse(str);
+        } catch (ParseException ex) {
+            return def;
+        }
+    }
 
     private void getUsers(final OylaDatabase oyla) {
         Entity.getDatabase().getReference().child("user").keepSynced(true);
@@ -106,7 +116,6 @@ public class MainActivity extends AppCompatActivity implements Serializable, Vie
 
                             }
                         }
-                        oyla.sortUsersByIdAsc();
                         Entity.getDatabase().getReference().child("user").addChildEventListener(new ChildEventListener() {
                             @Override
                             public void onChildAdded(DataSnapshot dataSnapshot, String previousChildName) {
@@ -156,8 +165,6 @@ public class MainActivity extends AppCompatActivity implements Serializable, Vie
                             final Poll poll = ds.getValue(Poll.class);
                             oyla.addPoll(poll);
                         }
-                        oyla.sortPollsByIdDesc();
-
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -359,7 +366,7 @@ public class MainActivity extends AppCompatActivity implements Serializable, Vie
                 final Intent intent = new Intent(MainActivity.this, CreatePollActivity.class);
                 intent.putExtra("user", user);
                 intent.putExtra("anonymous", anonymous);
-                startActivityForResult(intent, 4444);
+                startActivityForResult(intent, CREATE_POLL);
             }
         });
 
@@ -378,8 +385,7 @@ public class MainActivity extends AppCompatActivity implements Serializable, Vie
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setIcon(R.mipmap.ic_launcher);
+        MyApplication.setIconBar(this);
         setTitle(" Ana Sayfa");
         final OylaDatabase oyla = ((MyApplication) getApplication()).oyla();
         if (!guiInitialized) initializeGui(oyla);
@@ -405,7 +411,7 @@ public class MainActivity extends AppCompatActivity implements Serializable, Vie
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == 4444 && resultCode == Activity.RESULT_OK) {
+        if (requestCode == CREATE_POLL && resultCode == Activity.RESULT_OK) {
             final Poll poll = (Poll) data.getExtras().getSerializable("newPoll");
             if (poll != null) {
                 final Intent intent = new Intent(this, PollActivity.class);
@@ -453,14 +459,6 @@ public class MainActivity extends AppCompatActivity implements Serializable, Vie
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    public static Date tryParseDate(SimpleDateFormat sdf, String str, Date def) {
-        try {
-            return sdf.parse(str);
-        } catch (ParseException ex) {
-            return def;
-        }
     }
 
 }

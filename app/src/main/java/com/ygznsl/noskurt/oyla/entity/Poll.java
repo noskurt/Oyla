@@ -9,10 +9,9 @@ import java.util.Locale;
 public final class Poll extends Entity implements Serializable {
 
     public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", new Locale("tr", "TR"));
-
+    private final List<Option> options = new LinkedList<>();
     private int id, category, mult, user;
     private String pdate, title, url, genders;
-    private final List<Option> options = new LinkedList<>();
 
     @Override
     public int getId() {
@@ -88,9 +87,7 @@ public final class Poll extends Entity implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
-        Poll poll = (Poll) o;
-
+        final Poll poll = (Poll) o;
         return id == poll.id;
     }
 
@@ -101,16 +98,7 @@ public final class Poll extends Entity implements Serializable {
 
     @Override
     public String toString() {
-        return "Poll{" +
-                "id=" + id +
-                ", category=" + category +
-                ", mult=" + mult +
-                ", user=" + user +
-                ", pdate='" + pdate + '\'' +
-                ", title='" + title + '\'' +
-                ", url='" + url + '\'' +
-                ", genders='" + genders + '\'' +
-                '}';
+        return title;
     }
 
 }

@@ -7,12 +7,9 @@ import com.ygznsl.noskurt.oyla.entity.User;
 import com.ygznsl.noskurt.oyla.entity.Vote;
 
 import java.io.Serializable;
-import java.text.Collator;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
@@ -168,74 +165,6 @@ public final class OylaDatabase implements Serializable {
                 return optionIds.contains(in.getO());
             }
         });
-    }
-
-    public synchronized void sortPollsByIdAsc(){
-        Collections.sort(new LinkedList<>(polls.values()), new Comparator<Poll>() {
-            @Override
-            public int compare(Poll p1, Poll p2) {
-                return Integer.valueOf(p1.getId()).compareTo(p2.getId());
-            }
-        });
-    }
-
-    public synchronized void sortPollsByIdDesc(){
-        Collections.sort(new LinkedList<>(polls.values()), new Comparator<Poll>() {
-            @Override
-            public int compare(Poll p1, Poll p2) {
-                return Integer.valueOf(p2.getId()).compareTo(p1.getId());
-            }
-        });
-    }
-
-    public synchronized void sortOptionsByIdAsc(){
-        Collections.sort(new LinkedList<>(options.values()), new Comparator<Option>() {
-            @Override
-            public int compare(Option o1, Option o2) {
-                return Integer.valueOf(o1.getId()).compareTo(o2.getId());
-            }
-        });
-    }
-
-    public synchronized void sortOptionsByIdDesc(){
-        Collections.sort(new LinkedList<>(options.values()), new Comparator<Option>() {
-            @Override
-            public int compare(Option o1, Option o2) {
-                return Integer.valueOf(o2.getId()).compareTo(o1.getId());
-            }
-        });
-    }
-
-    public synchronized void sortUsersByIdAsc(){
-        Collections.sort(new LinkedList<>(users.values()), new Comparator<User>() {
-            @Override
-            public int compare(User u1, User u2) {
-                return Integer.valueOf(u1.getId()).compareTo(u2.getId());
-            }
-        });
-    }
-
-    public synchronized void sortUsersByIdDesc(){
-        Collections.sort(new LinkedList<>(users.values()), new Comparator<User>() {
-            @Override
-            public int compare(User u1, User u2) {
-                return Integer.valueOf(u2.getId()).compareTo(u1.getId());
-            }
-        });
-    }
-
-    public synchronized void sortOptionsAlphabetically(final Locale locale){
-        Collections.sort(new LinkedList<>(options.values()), new Comparator<Option>() {
-            @Override
-            public int compare(Option o1, Option o2) {
-                final Collator collator = Collator.getInstance(locale);
-                return collator.compare(o1.getTitle(), o2.getTitle());
-            }
-        });
-    }
-
-    public synchronized void sortOptionsAlphabetically(){
-        sortOptionsAlphabetically(Locale.getDefault());
     }
 
     public Poll randomPollForUser(User user){

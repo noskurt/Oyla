@@ -55,6 +55,7 @@
     <string name="text_btnDeletePollOptionCreate">Sil</string>
     <string name="text_userAlreadyVoted">Bu anketi daha önce oylamışsınız!</string>
     <string name="text_userCannotVote">Bu anket sadece %s özeldir!</string>
+    <string name="text_noPollsFound">Aramanızla eşleşen\nanket bulunamadı</string>
     <string name="text_anonymousUserCannotVote">Anonim olarak giriş yaptığınız için\nbu anketi oylayamazsınız!</string>
     <string name="text_anonymousUser">Anonim</string>
     <string name="text_voteCount">Oy Sayıları</string>
@@ -69,7 +70,7 @@
     <string name="text_sortOptions">Sıralama Seçenekleri</string>
     <string name="text_accordingToPoll">Ankete Göre</string>
     <string name="text_accordingToUser">Anketi Yayınlayan Kullanıcıya Göre</string>
-    <string name="text_filterOptionCategory">Şu kategorideki anketleri göster: </string>
+    <string name="text_filterOptionCategory">Şu kategorideki\nanketleri göster: </string>
     <string name="text_filterOptionGender">Şu cinsiyete özel anketleri göster: </string>
     <string name="text_filterOptionMultiple">Şu anketleri göster: </string>
     <string name="text_filterOptionMultipleYes">Birden fazla seçeneği oylanabilsin</string>

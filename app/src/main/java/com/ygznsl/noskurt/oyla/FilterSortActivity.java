@@ -8,11 +8,14 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.RadioButton;
 import android.widget.Spinner;
 
 import com.ygznsl.noskurt.oyla.entity.Category;
+import com.ygznsl.noskurt.oyla.helper.Consumer;
 import com.ygznsl.noskurt.oyla.helper.FilterAndSortOptions;
+import com.ygznsl.noskurt.oyla.helper.Nullable;
 
 import java.util.List;
 
@@ -58,6 +61,50 @@ public class FilterSortActivity extends AppCompatActivity {
         final Button btnApplyFilterSort = (Button) findViewById(R.id.btnApplyFilterSort);
 
         spinnerPollCategoryFilterSort.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, categories));
+
+        final CompoundButton.OnCheckedChangeListener listener = new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (!chkMultipleYesFilterSort.isChecked() && !chkMultipleNoFilterSort.isChecked()){
+                    chkMultipleYesFilterSort.setChecked(true);
+                    chkMultipleNoFilterSort.setChecked(true);
+                }
+            }
+        };
+
+        chkMultipleYesFilterSort.setOnCheckedChangeListener(listener);
+        chkMultipleNoFilterSort.setOnCheckedChangeListener(listener);
+
+        final Nullable<FilterAndSortOptions> options = new Nullable<>((FilterAndSortOptions) getIntent().getExtras().getSerializable("filterSort"));
+        options.operate(new Consumer<FilterAndSortOptions>() {
+            @Override
+            public void accept(FilterAndSortOptions in) {
+                spinnerPollCategoryFilterSort.setSelection(categories.indexOf(in.getPollCategory()));
+
+                final FilterAndSortOptions.PollGender pollGender = in.getPollGender();
+                final FilterAndSortOptions.PollMultiple pollMultiple = in.getPollMultiple();
+                final FilterAndSortOptions.SortField sortField = in.getSortField();
+                final FilterAndSortOptions.SortOrder sortOrder = in.getSortOrder();
+
+                if (pollGender == FilterAndSortOptions.PollGender.GENDER_BOTH) radioGenderBothFilterSort.setChecked(true);
+                else if (pollGender == FilterAndSortOptions.PollGender.GENDER_FEMALE) radioGenderFemaleFilterSort.setChecked(true);
+                else if (pollGender == FilterAndSortOptions.PollGender.GENDER_MALE) radioGenderMaleFilterSort.setChecked(true);
+
+                if (pollMultiple != FilterAndSortOptions.PollMultiple.BOTH){
+                    if (pollMultiple == FilterAndSortOptions.PollMultiple.YES) chkMultipleNoFilterSort.setChecked(false);
+                    else if (pollMultiple == FilterAndSortOptions.PollMultiple.NO) chkMultipleYesFilterSort.setChecked(false);
+                }
+
+                if (sortField == FilterAndSortOptions.SortField.BY_TITLE) radioSortByPollTitleFilterSort.setChecked(true);
+                else if (sortField == FilterAndSortOptions.SortField.BY_CATEGORY_NAME) radioSortByCategoryNameFilterSort.setChecked(true);
+                else if (sortField == FilterAndSortOptions.SortField.BY_PUBLISH_DATE) radioSortByPublishDateFilterSort.setChecked(true);
+                else if (sortField == FilterAndSortOptions.SortField.BY_OPTION_COUNT) radioSortByOptionCountFilterSort.setChecked(true);
+                else if (sortField == FilterAndSortOptions.SortField.BY_VOTE_COUNT) radioSortByVoteCountFilterSort.setChecked(true);
+
+                if (sortOrder == FilterAndSortOptions.SortOrder.ASCENDING) radioAscendingFilterSort.setChecked(true);
+                else if (sortOrder == FilterAndSortOptions.SortOrder.DESCENDING) radioDescendingFilterSort.setChecked(true);
+            }
+        });
 
         btnCancelFilterSort.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -108,6 +155,8 @@ public class FilterSortActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_filter_sort);
+        MyApplication.setIconBar(this);
+        setTitle(" Filtrele ve Sırala");
         if (!guiInitialized) initializeGui();
     }
 

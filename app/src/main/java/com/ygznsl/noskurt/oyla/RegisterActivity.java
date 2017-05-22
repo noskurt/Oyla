@@ -32,6 +32,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.ygznsl.noskurt.oyla.entity.City;
 import com.ygznsl.noskurt.oyla.entity.Entity;
 import com.ygznsl.noskurt.oyla.entity.User;
+import com.ygznsl.noskurt.oyla.helper.Function;
+import com.ygznsl.noskurt.oyla.helper.Nullable;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -251,7 +253,13 @@ public class RegisterActivity extends AppCompatActivity {
                                         });
                                     } else {
                                         Toast.makeText(RegisterActivity.this,
-                                                ("Kullanıcı oluşturulurken hata meydana geldi:\r\n" + (task.getException() == null ? "" : task.getException().getMessage())).trim(),
+                                                ("Kullanıcı oluşturulurken hata meydana geldi:\r\n" +
+                                                        new Nullable<>(task.getException()).orElse(new Function<Exception, String>() {
+                                                            @Override
+                                                            public String apply(Exception in) {
+                                                                return in.getMessage();
+                                                            }
+                                                        }, "")).trim(),
                                                 Toast.LENGTH_LONG).show();
                                     }
                                 }
@@ -300,8 +308,7 @@ public class RegisterActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setIcon(R.mipmap.ic_launcher);
+        MyApplication.setIconBar(this);
         setTitle(" Kayıt Ol");
         if (!guiInitialized) initializeGui();
     }

@@ -52,6 +52,7 @@ public class PollAnalyticsActivity extends AppCompatActivity {
     private LinearLayout relOptionsPollAnalytics;
     private ImageView btnLeftPollAnalytics;
     private ImageView btnRightPollAnalytics;
+    private TextView txPollTitlePollAnalytics;
     private TextView txtDetail1PollAnalytics;
     private TextView txtDetail2PollAnalytics;
     private TextView txtDetail3PollAnalytics;
@@ -508,6 +509,7 @@ public class PollAnalyticsActivity extends AppCompatActivity {
         relOptionsPollAnalytics = (LinearLayout) findViewById(R.id.relOptionsPollAnalytics);
         btnLeftPollAnalytics = (ImageView) findViewById(R.id.btnLeftPollAnalytics);
         btnRightPollAnalytics = (ImageView) findViewById(R.id.btnRightPollAnalytics);
+        txPollTitlePollAnalytics = (TextView) findViewById(R.id.txPollTitlePollAnalytics);
         txtDetail1PollAnalytics = (TextView) findViewById(R.id.txtDetail1PollAnalytics);
         txtDetail2PollAnalytics = (TextView) findViewById(R.id.txtDetail2PollAnalytics);
         txtDetail3PollAnalytics = (TextView) findViewById(R.id.txtDetail3PollAnalytics);
@@ -516,8 +518,7 @@ public class PollAnalyticsActivity extends AppCompatActivity {
 
         for (View view : views) relOptionsPollAnalytics.addView(view);
 
-        // TODO sağ ve sol oklarına gerek olmayabilir radio button atsak yeterli olabilir
-
+        txPollTitlePollAnalytics.setText(poll.getTitle());
         btnLeftPollAnalytics.setTag("false");
         btnRightPollAnalytics.setTag("true");
 
@@ -564,8 +565,8 @@ public class PollAnalyticsActivity extends AppCompatActivity {
         btnDetailedAnalysisPollAnalytics.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                View v = null;
-                String title = "";
+                View v;
+                String title;
                 final RadioButton selected = radioGroup.getSelectedItem();
                 if (selected == null){
                     if (txtDetail1PollAnalytics.getVisibility() == View.VISIBLE){
@@ -618,8 +619,7 @@ public class PollAnalyticsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_poll_analytics);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setIcon(R.mipmap.ic_launcher);
+        MyApplication.setIconBar(this);
         setTitle(" Anket İstatistikleri");
         final OylaDatabase oyla = ((MyApplication) getApplication()).oyla();
         if (!guiInitialized) initializeGui(oyla);

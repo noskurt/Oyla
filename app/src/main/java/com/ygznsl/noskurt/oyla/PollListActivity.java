@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.ygznsl.noskurt.oyla.entity.Category;
 import com.ygznsl.noskurt.oyla.entity.Poll;
@@ -38,6 +39,7 @@ public class PollListActivity extends AppCompatActivity {
     private User user;
 
     private LinearLayout llMainLayoutPollList;
+    private TextView txtNoPollsFoundPollList;
     private RecyclerView rvPollList;
     private ProgressBar pbPollList;
 
@@ -78,6 +80,7 @@ public class PollListActivity extends AppCompatActivity {
                         final List<Poll> filteredAndSorted = options.filterAndSort(polls, oyla, categories);
                         final PollViewAdapter pva = new PollViewAdapter(PollListActivity.this, filteredAndSorted, oyla);
                         rvPollList.setAdapter(pva);
+                        txtNoPollsFoundPollList.setVisibility(filteredAndSorted.isEmpty() ? View.VISIBLE : View.GONE);
                         hideProgressPar();
                     }
                 });
@@ -104,10 +107,12 @@ public class PollListActivity extends AppCompatActivity {
             }
         }, "Oyla"));
 
-        rvPollList = (RecyclerView) findViewById(R.id.rvPollList);
-        rvPollList.setLayoutManager(new LinearLayoutManager(this));
-        pbPollList = (ProgressBar) findViewById(R.id.pbPollList);
         llMainLayoutPollList = (LinearLayout) findViewById(R.id.llMainLayoutPollList);
+        txtNoPollsFoundPollList = (TextView) findViewById(R.id.txtNoPollsFoundPollList);
+        rvPollList = (RecyclerView) findViewById(R.id.rvPollList);
+        pbPollList = (ProgressBar) findViewById(R.id.pbPollList);
+
+        rvPollList.setLayoutManager(new LinearLayoutManager(this));
 
         polls = new LinkedList<>(new HashSet<>(anonymous ? oyla.getPolls() :
                 scope.orElse(new Function<String, List<Poll>>() {
@@ -154,6 +159,7 @@ public class PollListActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.menuFilterAndSort){
             final Intent intent = new Intent(this, FilterSortActivity.class);
+            intent.putExtra("filterSort", options);
             startActivityForResult(intent, FILTER_SORT);
             return true;
         }
@@ -173,8 +179,7 @@ public class PollListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_poll_list);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setIcon(R.mipmap.ic_launcher);
+        MyApplication.setIconBar(this);
         final OylaDatabase oyla = ((MyApplication) getApplication()).oyla();
         if (!guiInitialized) initializeGui(oyla);
     }
