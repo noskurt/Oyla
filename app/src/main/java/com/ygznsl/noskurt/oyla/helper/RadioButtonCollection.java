@@ -11,7 +11,7 @@ import java.util.List;
 public final class RadioButtonCollection implements Serializable {
 
     private final List<RadioButton> list = Collections.synchronizedList(new LinkedList<RadioButton>());
-    private ValueChangedEvent<RadioButton> onSelectedItemChanged = null;
+    private Nullable<ValueChangedEvent<RadioButton>> onSelectedItemChanged = new Nullable<>();
     private RadioButton selectedItem = null;
 
     public void add(final RadioButton button){
@@ -25,8 +25,13 @@ public final class RadioButtonCollection implements Serializable {
                 }
                 final RadioButton tmp = selectedItem;
                 selectedItem = button;
-                if (onSelectedItemChanged != null && selectedItem != tmp){
-                    onSelectedItemChanged.valueChanged(tmp, selectedItem);
+                if (selectedItem != tmp){
+                    onSelectedItemChanged.operate(new Consumer<ValueChangedEvent<RadioButton>>() {
+                        @Override
+                        public void accept(ValueChangedEvent<RadioButton> in) {
+                            in.valueChanged(tmp, selectedItem);
+                        }
+                    });
                 }
             }
         });
@@ -41,11 +46,11 @@ public final class RadioButtonCollection implements Serializable {
     }
 
     public ValueChangedEvent<RadioButton> getOnSelectedItemChanged() {
-        return onSelectedItemChanged;
+        return onSelectedItemChanged.get();
     }
 
     public void setOnSelectedItemChanged(ValueChangedEvent<RadioButton> onSelectedItemChanged) {
-        this.onSelectedItemChanged = onSelectedItemChanged;
+        this.onSelectedItemChanged.set(onSelectedItemChanged);
     }
 
 }

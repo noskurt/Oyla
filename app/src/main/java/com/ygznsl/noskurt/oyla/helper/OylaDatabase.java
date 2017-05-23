@@ -89,15 +89,15 @@ public final class OylaDatabase implements Serializable {
         return poll.getUser() == user.getId();
     }
 
-    public boolean hasUserVotedPoll(final User user, Poll poll){
+    public boolean hasUserVotedPoll(User user, Poll poll){
         return pollsUserVoted(user).contains(poll);
     }
 
     public List<Poll> pollsUserCreated(final User user){
-        return Entity.findAllMatches(new LinkedList<>(polls.values()), new Predicate<Poll>() {
+        return Entity.findAllMatches(getPolls(), new Predicate<Poll>() {
             @Override
             public boolean test(Poll in) {
-                return in.getUser() == user.getId();
+                return hasUserCreatedPoll(user, in);
             }
         });
     }
@@ -107,7 +107,7 @@ public final class OylaDatabase implements Serializable {
     }
 
     public List<Option> optionsUserVoted(final User user, final Poll poll){
-        final List<Integer> optionIds = Entity.findAllMatches(votes, new Predicate<Vote>() {
+        final List<Integer> optionIds = Entity.findAllMatches(getVotes(), new Predicate<Vote>() {
             @Override
             public boolean test(Vote in) {
                 return in.getU() == user.getId();
@@ -119,7 +119,7 @@ public final class OylaDatabase implements Serializable {
             }
         });
 
-        return Entity.findAllMatches(new LinkedList<>(options.values()), new Predicate<Option>() {
+        return Entity.findAllMatches(getOptions(), new Predicate<Option>() {
             @Override
             public boolean test(Option in) {
                 return optionIds.contains(in.getId()) && (poll == null || in.getPoll() == poll.getId());
@@ -135,7 +135,7 @@ public final class OylaDatabase implements Serializable {
             }
         }));
 
-        return Entity.findAllMatches(new LinkedList<>(polls.values()), new Predicate<Poll>() {
+        return Entity.findAllMatches(getPolls(), new Predicate<Poll>() {
             @Override
             public boolean test(Poll in) {
                 return pollIds.contains(in.getId());
@@ -144,7 +144,7 @@ public final class OylaDatabase implements Serializable {
     }
 
     public List<Option> optionsOfPoll(final Poll poll){
-        return Entity.findAllMatches(new LinkedList<>(options.values()), new Predicate<Option>() {
+        return Entity.findAllMatches(getOptions(), new Predicate<Option>() {
             @Override
             public boolean test(Option in) {
                 return in.getPoll() == poll.getId();
@@ -159,7 +159,7 @@ public final class OylaDatabase implements Serializable {
                 return in.getId();
             }
         });
-        return Entity.findAllMatches(votes, new Predicate<Vote>() {
+        return Entity.findAllMatches(getVotes(), new Predicate<Vote>() {
             @Override
             public boolean test(Vote in) {
                 return optionIds.contains(in.getO());
@@ -182,7 +182,7 @@ public final class OylaDatabase implements Serializable {
         for (char i = 'A'; i <= 'Z'; i++) chars.add(i);
         for (char i = '0'; i <= '9'; i++) chars.add(i);
 
-        final List<String> urls = Entity.map(new LinkedList<>(polls.values()), new Function<Poll, String>() {
+        final List<String> urls = Entity.map(getPolls(), new Function<Poll, String>() {
             @Override
             public String apply(Poll in) {
                 return in.getUrl();
