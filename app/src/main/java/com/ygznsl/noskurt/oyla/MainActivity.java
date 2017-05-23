@@ -74,6 +74,12 @@ public class MainActivity extends AppCompatActivity implements Serializable, Vie
     }
 
     private void getUsers(final OylaDatabase oyla) {
+        if (txtUserNameMain != null) {
+            txtUserNameMain.setVisibility(View.GONE);
+        }
+        if (pbUserNameMain != null) {
+            pbUserNameMain.setVisibility(View.VISIBLE);
+        }
         Entity.getDatabase().getReference().child("user").keepSynced(true);
         Entity.getDatabase().getReference().child("user").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -153,6 +159,12 @@ public class MainActivity extends AppCompatActivity implements Serializable, Vie
     }
 
     private void getPolls(final OylaDatabase oyla) {
+        if (txtPollCountMain != null) {
+            txtPollCountMain.setVisibility(View.GONE);
+        }
+        if (pbPollCountMain != null) {
+            pbPollCountMain.setVisibility(View.VISIBLE);
+        }
         Entity.getDatabase().getReference().child("poll").keepSynced(true);
         Entity.getDatabase().getReference().child("poll").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -283,6 +295,9 @@ public class MainActivity extends AppCompatActivity implements Serializable, Vie
     }
 
     private void selectRandomPoll(final OylaDatabase oyla) {
+        pbRandomPollMain.setVisibility(View.VISIBLE);
+        llRandomPollMain.setVisibility(View.GONE);
+
         try {
             randomPoll = oyla.randomPollForUser(user);
         } catch (Exception ex) {
