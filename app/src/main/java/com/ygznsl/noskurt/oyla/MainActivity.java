@@ -447,7 +447,7 @@ public class MainActivity extends AppCompatActivity implements Serializable, Vie
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.menuLogOut){
+        if (item.getItemId() == R.id.menuLogOut) {
             final AlertDialog.Builder builder = new AlertDialog.Builder(this)
                     .setTitle("Çıkış Yapıyorsunuz!")
                     .setMessage("Çıkış yapmak istediğinize emin misiniz?")
@@ -468,9 +468,11 @@ public class MainActivity extends AppCompatActivity implements Serializable, Vie
                             dialog.dismiss();
                         }
                     })
-                    .setIcon(android.R.drawable.ic_dialog_alert);
+                    .setIcon(android.R.drawable.ic_delete);
 
-            builder.create().show();
+            AlertDialog dialog = builder.create();
+            dialog.show();
+            dialog.getWindow().setBackgroundDrawableResource(R.color.kulerColor2);
             return true;
         }
         return super.onOptionsItemSelected(item);

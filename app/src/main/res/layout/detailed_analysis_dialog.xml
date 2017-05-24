@@ -7,21 +7,23 @@
 
     <TextView
         android:id="@+id/txtOptionTitleDetailedAnalysisDialog"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:layout_margin="10dp"
         android:textColor="@android:color/black"
-        android:textSize="9pt" />
+        android:textSize="9pt"
+        android:textStyle="bold" />
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp">
 
         <LinearLayout
             android:id="@+id/analysisLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
             android:orientation="vertical">
 
         </LinearLayout>

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -22,33 +23,37 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@drawable/btn_colored3"
                 android:text="@string/text_filterOptions"
                 android:textAlignment="center"
-                android:textColor="@android:color/black"
-                android:textSize="9pt"
+                android:textColor="@color/kulerColor2"
+                android:textSize="10pt"
                 android:textStyle="bold" />
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
                 android:layout_margin="10dp"
                 android:orientation="horizontal">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
+                    android:layout_gravity="center"
                     android:layout_margin="5dp"
                     android:text="@string/text_filterOptionCategory"
                     android:textColor="@android:color/black"
-                    android:textSize="8pt" />
+                    android:textSize="8pt"
+                    android:textStyle="bold" />
 
                 <Spinner
                     android:id="@+id/spinnerPollCategoryFilterSort"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_margin="5dp">
+                    android:layout_gravity="center"
+                    android:layout_margin="5dp"
+                    android:background="@drawable/border_2">
 
                 </Spinner>
 
@@ -67,7 +72,8 @@
                     android:layout_gravity="center"
                     android:text="@string/text_filterOptionGender"
                     android:textColor="@android:color/black"
-                    android:textSize="8pt" />
+                    android:textSize="8pt"
+                    android:textStyle="bold" />
 
                 <RadioGroup
                     android:layout_width="match_parent"
@@ -113,7 +119,8 @@
                     android:layout_gravity="center"
                     android:text="@string/text_filterOptionMultiple"
                     android:textColor="@android:color/black"
-                    android:textSize="8pt" />
+                    android:textSize="8pt"
+                    android:textStyle="bold" />
 
                 <CheckBox
                     android:id="@+id/chkMultipleYesFilterSort"
@@ -145,10 +152,11 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@drawable/btn_colored3"
                 android:text="@string/text_sortOptions"
                 android:textAlignment="center"
-                android:textColor="@android:color/black"
-                android:textSize="9pt"
+                android:textColor="@color/kulerColor2"
+                android:textSize="10pt"
                 android:textStyle="bold" />
 
             <LinearLayout
@@ -170,7 +178,8 @@
                         android:text="@string/text_sortOptionAccordingTo"
                         android:textAlignment="center"
                         android:textColor="@android:color/black"
-                        android:textSize="8pt" />
+                        android:textSize="8pt"
+                        android:textStyle="bold" />
 
                     <RadioGroup
                         android:layout_width="wrap_content"
@@ -225,7 +234,8 @@
                         android:layout_gravity="center"
                         android:text="@string/text_sortOptionSortOrder"
                         android:textColor="@android:color/black"
-                        android:textSize="8pt" />
+                        android:textSize="8pt"
+                        android:textStyle="bold" />
 
                     <RadioGroup
                         android:id="@+id/radioGroupSortOrderFilterSort"

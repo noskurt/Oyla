@@ -27,8 +27,9 @@
                 android:orientation="vertical">
 
                 <LinearLayout
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center"
                     android:layout_marginBottom="5dp"
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="10dp"
@@ -50,6 +51,7 @@
                         android:layout_marginRight="5dp"
                         android:textColor="@android:color/black"
                         android:textSize="10pt"
+                        android:textStyle="bold"
                         android:visibility="gone" />
 
                     <TextView
@@ -81,8 +83,9 @@
                 android:orientation="vertical">
 
                 <LinearLayout
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center"
                     android:layout_marginBottom="5dp"
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="10dp"
@@ -111,6 +114,7 @@
                         android:layout_marginRight="5dp"
                         android:textColor="@android:color/black"
                         android:textSize="10pt"
+                        android:textStyle="bold"
                         android:visibility="gone" />
 
                     <TextView
@@ -144,6 +148,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center"
                     android:layout_marginBottom="5dp"
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="10dp"
@@ -175,7 +180,7 @@
                     android:id="@+id/txtRandomPollMain"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
+                    android:layout_centerHorizontal="true"
                     android:layout_marginBottom="5dp"
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="10dp"
@@ -251,8 +256,9 @@
                         android:layout_marginEnd="5dp"
                         android:layout_marginStart="5dp"
                         android:layout_marginTop="15dp"
-                        android:textColor="@color/kulerColor2"
-                        android:textSize="10pt" />
+                        android:textColor="@color/kulerColor4"
+                        android:textSize="10pt"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/txtPollCategoryMain"
@@ -264,8 +270,9 @@
                         android:layout_marginTop="15dp"
                         android:layout_toEndOf="@+id/txtPollPublishDateMain"
                         android:textAlignment="textEnd"
-                        android:textColor="@color/kulerColor2"
-                        android:textSize="10pt" />
+                        android:textColor="@color/kulerColor4"
+                        android:textSize="10pt"
+                        android:textStyle="bold" />
 
                 </RelativeLayout>
 

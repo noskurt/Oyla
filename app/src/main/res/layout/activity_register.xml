@@ -129,7 +129,8 @@
                             android:layout_marginStart="5dp"
                             android:text="@string/text_gender"
                             android:textColor="@android:color/black"
-                            android:textSize="10pt" />
+                            android:textSize="10pt"
+                            android:textStyle="bold" />
 
                         <RadioGroup
                             android:id="@+id/radioGrpRegister"
@@ -173,7 +174,8 @@
                             android:layout_marginStart="5dp"
                             android:text="@string/text_city"
                             android:textColor="@android:color/black"
-                            android:textSize="10pt" />
+                            android:textSize="10pt"
+                            android:textStyle="bold" />
 
                         <Spinner
                             android:id="@+id/spinnerCityRegister"

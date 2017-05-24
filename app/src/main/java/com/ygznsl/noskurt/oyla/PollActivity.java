@@ -62,7 +62,7 @@ public class PollActivity extends AppCompatActivity {
     private Button btnVotePoll;
     private Button btnStatsPoll;
 
-    private void showStats(){
+    private void showStats() {
         final Intent intent = new Intent(this, PollAnalyticsActivity.class);
         intent.putExtra("poll", poll);
         intent.putExtra("anonymous", anonymous);
@@ -157,7 +157,7 @@ public class PollActivity extends AppCompatActivity {
         llOptionsPoll.removeAllViews();
 
         final LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        params.setMargins(5, 5, 5, 5);
+        params.setMargins(10, 10, 10, 10);
 
         if (poll.getMult() == 1) {
             for (Option o : options) {
@@ -197,7 +197,7 @@ public class PollActivity extends AppCompatActivity {
                         }
                     });
                     if (!optionIds.isEmpty()) btnVotePoll.setEnabled(false);
-                    for (int oid : optionIds){
+                    for (int oid : optionIds) {
                         final Vote vote = new Vote();
                         vote.setO(oid);
                         vote.setU(user.getId());
@@ -207,7 +207,7 @@ public class PollActivity extends AppCompatActivity {
                         pushed.setValue(vote).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
-                                if (task.isSuccessful()){
+                                if (task.isSuccessful()) {
                                     oyla.addVote(vote);
                                 }
                             }
@@ -233,7 +233,7 @@ public class PollActivity extends AppCompatActivity {
                             pushed.setValue(vote).addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
-                                    if (task.isSuccessful()){
+                                    if (task.isSuccessful()) {
                                         oyla.addVote(vote);
                                         showStats();
                                     }
@@ -252,7 +252,7 @@ public class PollActivity extends AppCompatActivity {
             }
         });
 
-        if (!anonymous && oyla.hasUserVotedPoll(user, poll)){
+        if (!anonymous && oyla.hasUserVotedPoll(user, poll)) {
             final List<Integer> votedOptionIds = Entity.map(oyla.optionsUserVoted(user, poll), new Function<Option, Integer>() {
                 @Override
                 public Integer apply(Option in) {
@@ -260,17 +260,17 @@ public class PollActivity extends AppCompatActivity {
                 }
             });
 
-            if (poll.getMult() == 1){
-                for (CheckBox cb : checkBoxes){
+            if (poll.getMult() == 1) {
+                for (CheckBox cb : checkBoxes) {
                     cb.setEnabled(false);
-                    if (votedOptionIds.contains(cb.getTag())){
+                    if (votedOptionIds.contains(cb.getTag())) {
                         cb.setChecked(true);
                     }
                 }
             } else {
-                for (RadioButton rb : radioButtons){
+                for (RadioButton rb : radioButtons) {
                     rb.setEnabled(false);
-                    if (votedOptionIds.contains(rb.getTag())){
+                    if (votedOptionIds.contains(rb.getTag())) {
                         rb.setChecked(true);
                     }
                 }
@@ -282,8 +282,8 @@ public class PollActivity extends AppCompatActivity {
             txtUserAlreadyVotedPoll.setVisibility(View.GONE);
         }
 
-        if (!anonymous && !poll.getGenders().equals("B")){
-            if (!poll.getGenders().equals(user.getGender())){
+        if (!anonymous && !poll.getGenders().equals("B")) {
+            if (!poll.getGenders().equals(user.getGender())) {
                 btnVotePoll.setEnabled(false);
                 txtUserCannotVotePoll.setText(String.format(locale,
                         getString(R.string.text_userCannotVote), poll.getGenders().equals("K") ? "kadınlara" : "erkeklere"));

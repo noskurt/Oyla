@@ -73,7 +73,8 @@
                         android:layout_margin="5dp"
                         android:text="@string/text_category"
                         android:textColor="@android:color/black"
-                        android:textSize="8pt" />
+                        android:textSize="8pt"
+                        android:textStyle="bold" />
 
                     <Spinner
                         android:id="@+id/spinnerPollCategoryCreate"
@@ -102,7 +103,8 @@
                         android:layout_marginTop="5dp"
                         android:text="@string/text_pollGenderSpecify"
                         android:textColor="@android:color/black"
-                        android:textSize="8pt" />
+                        android:textSize="8pt"
+                        android:textStyle="bold" />
 
                     <RadioGroup
                         android:id="@+id/radioGroupPollGenderCreate"
@@ -148,7 +150,8 @@
                     android:layout_marginEnd="10dp"
                     android:layout_marginStart="10dp"
                     android:layout_marginTop="10dp"
-                    android:text="@string/text_pollMultiple" />
+                    android:text="@string/text_pollMultiple"
+                    android:textStyle="bold" />
 
                 <Button
                     android:id="@+id/btnAddPollOptionCreate"
@@ -172,7 +175,8 @@
                     android:layout_marginTop="10dp"
                     android:text="@string/text_pollOptions"
                     android:textColor="@android:color/black"
-                    android:textSize="8pt" />
+                    android:textSize="8pt"
+                    android:textStyle="bold" />
 
                 <LinearLayout
                     android:id="@+id/llPollOptionsCreate"

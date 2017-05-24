@@ -68,7 +68,7 @@ public class AccountActivity extends AppCompatActivity {
     private EditText txtPasswordNewUpdate;
     private EditText txtPasswordNewAgainUpdate;
 
-    private boolean checkChanges(){
+    private boolean checkChanges() {
         if (anonymous) return false;
         if (user == null) return false;
         return (!user.getName().equals(txtUserNameAccount.getText().toString())) ||
@@ -76,7 +76,7 @@ public class AccountActivity extends AppCompatActivity {
                 (user.getCity() != ((City) spinnerCityAccount.getSelectedItem()).getId());
     }
 
-    private void initializeGui(OylaDatabase oyla){
+    private void initializeGui(OylaDatabase oyla) {
         currentUser = auth.getCurrentUser();
         if (currentUser == null) finish();
 
@@ -87,7 +87,8 @@ public class AccountActivity extends AppCompatActivity {
 
         final TextWatcher textWatcher = new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence charSequence, int start, int before, int count) {}
+            public void beforeTextChanged(CharSequence charSequence, int start, int before, int count) {
+            }
 
             @Override
             public void onTextChanged(CharSequence charSequence, int start, int count, int after) {
@@ -95,7 +96,8 @@ public class AccountActivity extends AppCompatActivity {
             }
 
             @Override
-            public void afterTextChanged(Editable editable) {}
+            public void afterTextChanged(Editable editable) {
+            }
         };
 
         txtEmailAccount = (TextView) findViewById(R.id.txtEmailAccount);
@@ -118,7 +120,8 @@ public class AccountActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {}
+            public void onNothingSelected(AdapterView<?> adapterView) {
+            }
         });
 
         final View viewPasswordUpdate = LayoutInflater.from(this).inflate(R.layout.layout_password_update, null);
@@ -150,7 +153,7 @@ public class AccountActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View view) {
                         try {
-                            if (!txtPasswordNewUpdate.getText().toString().equals(txtPasswordNewAgainUpdate.getText().toString())){
+                            if (!txtPasswordNewUpdate.getText().toString().equals(txtPasswordNewAgainUpdate.getText().toString())) {
                                 Toast.makeText(AccountActivity.this, "Şifreler uyuşmuyor.", Toast.LENGTH_LONG).show();
                                 txtPasswordNewUpdate.requestFocus();
                                 return;
@@ -163,7 +166,7 @@ public class AccountActivity extends AppCompatActivity {
                                         public void onComplete(@NonNull Task<Void> task) {
                                             pbPasswordUpdate.setVisibility(View.GONE);
                                             llResetPassword.setVisibility(View.VISIBLE);
-                                            if (task.isSuccessful()){
+                                            if (task.isSuccessful()) {
                                                 Toast.makeText(AccountActivity.this, "Şifreniz başarıyla değiştirildi!", Toast.LENGTH_LONG).show();
                                                 dialogInterface.dismiss();
                                             } else {
@@ -205,6 +208,8 @@ public class AccountActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 dialogPasswordUpdate.show();
+                dialogPasswordUpdate.getWindow().setBackgroundDrawableResource(R.color.kulerColor2);
+
             }
         });
 
@@ -250,11 +255,11 @@ public class AccountActivity extends AppCompatActivity {
             }
         });
 
-        if (!anonymous && oyla.pollsUserCreated(user).isEmpty()){
+        if (!anonymous && oyla.pollsUserCreated(user).isEmpty()) {
             btnMyPollsAccount.setEnabled(false);
         }
 
-        if (!anonymous && oyla.pollsUserVoted(user).isEmpty()){
+        if (!anonymous && oyla.pollsUserVoted(user).isEmpty()) {
             btnMyVotesAccount.setEnabled(false);
         }
 
@@ -262,7 +267,7 @@ public class AccountActivity extends AppCompatActivity {
         txtUserNameAccount.setText(user == null ? "Anonim" : user.getName());
         txtBirthDateAccount.setText(user == null ? "Anonim" : user.getBdate());
 
-        if (anonymous){
+        if (anonymous) {
             spinnerCityAccount.setSelected(false);
             spinnerCityAccount.setEnabled(false);
             btnUpdateAccount.setEnabled(false);
@@ -283,8 +288,8 @@ public class AccountActivity extends AppCompatActivity {
         guiInitialized = true;
     }
 
-    private void updateUserInfo(){
-        if (user != null){
+    private void updateUserInfo() {
+        if (user != null) {
             final String name = txtUserNameAccount.getText().toString();
             final String bdate = txtBirthDateAccount.getText().toString();
             final int city = ((City) spinnerCityAccount.getSelectedItem()).getId();
@@ -298,7 +303,7 @@ public class AccountActivity extends AppCompatActivity {
             Entity.getDatabase().getReference().child("user").updateChildren(map, new DatabaseReference.CompletionListener() {
                 @Override
                 public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                    if (databaseError == null){
+                    if (databaseError == null) {
                         Toast.makeText(AccountActivity.this, "Tercihler başarıyla güncellendi.", Toast.LENGTH_LONG).show();
                     } else {
                         Toast.makeText(AccountActivity.this, "Tercihler güncellenemedi:\r\n" + databaseError.getMessage(), Toast.LENGTH_LONG).show();

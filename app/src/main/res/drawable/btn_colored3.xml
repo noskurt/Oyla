@@ -2,28 +2,28 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:state_pressed="true">
         <shape android:shape="rectangle">
-            <corners android:radius="40dip" />
+            <corners android:radius="35dip" />
             <stroke android:width="2dip" android:color="@color/kulerColor1" />
             <gradient android:angle="90" android:endColor="@color/kulerColor1" android:startColor="@color/kulerColor1" />
         </shape>
     </item>
     <item android:state_focused="true">
         <shape android:shape="rectangle">
-            <corners android:radius="40dip" />
+            <corners android:radius="35dip" />
             <stroke android:width="2dip" android:color="@color/kulerColor1" />
             <solid android:color="@color/kulerColor1" />
         </shape>
     </item>
     <item android:state_enabled="false">
         <shape android:shape="rectangle">
-            <corners android:radius="100dip" />
+            <corners android:radius="35dip" />
             <stroke android:width="2dip" android:color="#77AAAAAA" />
             <gradient android:angle="90" android:endColor="#77AAAAAA" android:startColor="#77AAAAAA" />
         </shape>
     </item>
     <item>
         <shape android:shape="rectangle">
-            <corners android:radius="40dip" />
+            <corners android:radius="35dip" />
             <stroke android:width="2dip" android:color="@color/kulerColor3" />
             <gradient android:angle="90" android:endColor="@color/kulerColor3" android:startColor="@color/kulerColor3" />
         </shape>

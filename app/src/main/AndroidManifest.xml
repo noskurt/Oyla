@@ -43,7 +43,7 @@
             android:label="Anket Oluştur"
             android:windowSoftInputMode="stateHidden" />
         <activity android:name=".PollAnalyticsActivity" />
-        <activity android:name=".FilterSortActivity"></activity>
+        <activity android:name=".FilterSortActivity" />
     </application>
 
 </manifest>

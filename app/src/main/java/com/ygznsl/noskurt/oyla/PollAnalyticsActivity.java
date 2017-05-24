@@ -59,10 +59,10 @@ public class PollAnalyticsActivity extends AppCompatActivity {
     private TextView txtUserCannotSeeDetailedAnalysis;
     private Button btnDetailedAnalysisPollAnalytics;
 
-    private View createAccordingToAllGender(OylaDatabase oyla){
+    private View createAccordingToAllGender(OylaDatabase oyla) {
         final List<Vote> forMale = new LinkedList<>();
         final List<Vote> forFemale = new LinkedList<>();
-        for (Vote vote : votes){
+        for (Vote vote : votes) {
             final User user = oyla.getUserById(vote.getU());
             if (user.getGender().equals("E")) forMale.add(vote);
             else forFemale.add(vote);
@@ -104,7 +104,7 @@ public class PollAnalyticsActivity extends AppCompatActivity {
 
         txtOptionTitleDetailedAnalysisDialog.setText(String.valueOf("Oylanan: Anket Geneli"));
 
-        if (forFemale.size() < forMale.size()){
+        if (forFemale.size() < forMale.size()) {
             analysisLayout.addView(viewForMale);
             analysisLayout.addView(viewForFemale);
         } else {
@@ -115,11 +115,11 @@ public class PollAnalyticsActivity extends AppCompatActivity {
         return view;
     }
 
-    private View createAccordingToGender(OylaDatabase oyla, int optionId){
+    private View createAccordingToGender(OylaDatabase oyla, int optionId) {
         int totalSize = 0;
         final List<Vote> forMale = new LinkedList<>();
         final List<Vote> forFemale = new LinkedList<>();
-        for (Vote vote : votes){
+        for (Vote vote : votes) {
             if (vote.getO() != optionId) continue;
             final User user = oyla.getUserById(vote.getU());
             if (user.getGender().equals("E")) forMale.add(vote);
@@ -168,7 +168,7 @@ public class PollAnalyticsActivity extends AppCompatActivity {
             }
         }, "Oylanan: "));
 
-        if (forFemale.size() < forMale.size()){
+        if (forFemale.size() < forMale.size()) {
             analysisLayout.addView(viewForMale);
             analysisLayout.addView(viewForFemale);
         } else {
@@ -179,18 +179,18 @@ public class PollAnalyticsActivity extends AppCompatActivity {
         return view;
     }
 
-    private View createAccordingToAllAge(OylaDatabase oyla){
+    private View createAccordingToAllAge(OylaDatabase oyla) {
         final HashMap<String, List<Vote>> voteMap = new HashMap<>();
-        for (String ageInterval : Arrays.asList("18'den küçük", "18-25", "26-40", "41-65", "65'ten büyük")){
+        for (String ageInterval : Arrays.asList("18'den küçük", "18-25", "26-40", "41-65", "65'ten büyük")) {
             voteMap.put(ageInterval, new LinkedList<Vote>());
         }
-        for (Vote vote : votes){
+        for (Vote vote : votes) {
             final User user = oyla.getUserById(vote.getU());
             try {
                 final LocalDate now = LocalDate.now();
                 final LocalDate birthDate = LocalDate.fromDateFields(User.DATE_FORMAT.parse(user.getBdate()));
                 final int age = Years.yearsBetween(birthDate, now).getYears();
-                if (age < 18){
+                if (age < 18) {
                     voteMap.get("18'den küçük").add(vote);
                 } else if (age >= 18 && age <= 25) {
                     voteMap.get("18-25").add(vote);
@@ -209,7 +209,7 @@ public class PollAnalyticsActivity extends AppCompatActivity {
         final LayoutInflater inflater = getLayoutInflater();
 
         final List<View> views = new LinkedList<>();
-        for (Map.Entry<String, List<Vote>> entry : voteMap.entrySet()){
+        for (Map.Entry<String, List<Vote>> entry : voteMap.entrySet()) {
             final View view = inflater.inflate(R.layout.vote_count_control_without_radio_button, null);
             final TextView lblVoteCountWithout = (TextView) view.findViewById(R.id.lblVoteCountWithout);
             final ProgressBar pbVoteCountWithout = (ProgressBar) view.findViewById(R.id.pbVoteCountWithout);
@@ -244,20 +244,20 @@ public class PollAnalyticsActivity extends AppCompatActivity {
         return view;
     }
 
-    private View createAccordingToAge(OylaDatabase oyla, int optionId){
+    private View createAccordingToAge(OylaDatabase oyla, int optionId) {
         int totalSize = 0;
         final HashMap<String, List<Vote>> voteMap = new HashMap<>();
-        for (String ageInterval : Arrays.asList("18'den küçük", "18-25", "26-40", "41-65", "65'ten büyük")){
+        for (String ageInterval : Arrays.asList("18'den küçük", "18-25", "26-40", "41-65", "65'ten büyük")) {
             voteMap.put(ageInterval, new LinkedList<Vote>());
         }
-        for (Vote vote : votes){
+        for (Vote vote : votes) {
             if (vote.getO() != optionId) continue;
             final User user = oyla.getUserById(vote.getU());
             try {
                 final LocalDate now = LocalDate.now();
                 final LocalDate birthDate = LocalDate.fromDateFields(User.DATE_FORMAT.parse(user.getBdate()));
                 final int age = Years.yearsBetween(birthDate, now).getYears();
-                if (age < 18){
+                if (age < 18) {
                     voteMap.get("18'den küçük").add(vote);
                 } else if (age >= 18 && age <= 25) {
                     voteMap.get("18-25").add(vote);
@@ -278,7 +278,7 @@ public class PollAnalyticsActivity extends AppCompatActivity {
         final LayoutInflater inflater = getLayoutInflater();
 
         final List<View> views = new LinkedList<>();
-        for (Map.Entry<String, List<Vote>> entry : voteMap.entrySet()){
+        for (Map.Entry<String, List<Vote>> entry : voteMap.entrySet()) {
             final View view = inflater.inflate(R.layout.vote_count_control_without_radio_button, null);
             final TextView lblVoteCountWithout = (TextView) view.findViewById(R.id.lblVoteCountWithout);
             final ProgressBar pbVoteCountWithout = (ProgressBar) view.findViewById(R.id.pbVoteCountWithout);
@@ -318,12 +318,12 @@ public class PollAnalyticsActivity extends AppCompatActivity {
         return view;
     }
 
-    private View createAccordingToAllCity(OylaDatabase oyla){
+    private View createAccordingToAllCity(OylaDatabase oyla) {
         final HashMap<City, List<Vote>> voteMap = new HashMap<>();
-        for (Vote vote : votes){
+        for (Vote vote : votes) {
             final User user = oyla.getUserById(vote.getU());
             final City city = Entity.findById(cities, user.getCity()).get();
-            if (voteMap.containsKey(city)){
+            if (voteMap.containsKey(city)) {
                 voteMap.get(city).add(vote);
             } else {
                 final List<Vote> list = new LinkedList<>();
@@ -334,7 +334,7 @@ public class PollAnalyticsActivity extends AppCompatActivity {
 
         final LayoutInflater inflater = getLayoutInflater();
         final List<View> views = new LinkedList<>();
-        for (Map.Entry<City, List<Vote>> entry : voteMap.entrySet()){
+        for (Map.Entry<City, List<Vote>> entry : voteMap.entrySet()) {
             final View view = inflater.inflate(R.layout.vote_count_control_without_radio_button, null);
             final TextView lblVoteCountWithout = (TextView) view.findViewById(R.id.lblVoteCountWithout);
             final ProgressBar pbVoteCountWithout = (ProgressBar) view.findViewById(R.id.pbVoteCountWithout);
@@ -377,14 +377,14 @@ public class PollAnalyticsActivity extends AppCompatActivity {
         return view;
     }
 
-    private View createAccordingToCity(OylaDatabase oyla, int optionId){
+    private View createAccordingToCity(OylaDatabase oyla, int optionId) {
         int totalSize = 0;
         final HashMap<City, List<Vote>> voteMap = new HashMap<>();
-        for (Vote vote : votes){
+        for (Vote vote : votes) {
             if (vote.getO() != optionId) continue;
             final User user = oyla.getUserById(vote.getU());
             final City city = Entity.findById(cities, user.getCity()).get();
-            if (voteMap.containsKey(city)){
+            if (voteMap.containsKey(city)) {
                 voteMap.get(city).add(vote);
             } else {
                 final List<Vote> list = new LinkedList<>();
@@ -396,7 +396,7 @@ public class PollAnalyticsActivity extends AppCompatActivity {
 
         final LayoutInflater inflater = getLayoutInflater();
         final List<View> views = new LinkedList<>();
-        for (Map.Entry<City, List<Vote>> entry : voteMap.entrySet()){
+        for (Map.Entry<City, List<Vote>> entry : voteMap.entrySet()) {
             final View view = inflater.inflate(R.layout.vote_count_control_without_radio_button, null);
             final TextView lblVoteCountWithout = (TextView) view.findViewById(R.id.lblVoteCountWithout);
             final ProgressBar pbVoteCountWithout = (ProgressBar) view.findViewById(R.id.pbVoteCountWithout);
@@ -444,7 +444,7 @@ public class PollAnalyticsActivity extends AppCompatActivity {
         return view;
     }
 
-    private void initializeGui(final OylaDatabase oyla){
+    private void initializeGui(final OylaDatabase oyla) {
         cities = City.getCities(this).get();
 
         final Bundle extras = getIntent().getExtras();
@@ -455,9 +455,9 @@ public class PollAnalyticsActivity extends AppCompatActivity {
         votes = oyla.votesOfPoll(poll);
 
         final HashMap<Integer, List<Vote>> voteCounts = new HashMap<>();
-        for (Vote vote : votes){
+        for (Vote vote : votes) {
             final List<Vote> list = voteCounts.get(vote.getO());
-            if (list != null){
+            if (list != null) {
                 list.add(vote);
             } else {
                 final List<Vote> l = new LinkedList<>();
@@ -466,8 +466,8 @@ public class PollAnalyticsActivity extends AppCompatActivity {
             }
         }
 
-        for (Option option : options){
-            if (!voteCounts.containsKey(option.getId())){
+        for (Option option : options) {
+            if (!voteCounts.containsKey(option.getId())) {
                 voteCounts.put(option.getId(), new LinkedList<Vote>());
             }
         }
@@ -475,7 +475,7 @@ public class PollAnalyticsActivity extends AppCompatActivity {
         final RadioButtonCollection radioGroup = new RadioButtonCollection();
         final List<View> views = new LinkedList<>();
         final LayoutInflater inflater = getLayoutInflater();
-        for (final Map.Entry<Integer, List<Vote>> entry : voteCounts.entrySet()){
+        for (final Map.Entry<Integer, List<Vote>> entry : voteCounts.entrySet()) {
             final View view = inflater.inflate(R.layout.vote_count_control, null);
             final RadioButton radioVoteCount = (RadioButton) view.findViewById(R.id.radioVoteCount);
             final ProgressBar pbVoteCount = (ProgressBar) view.findViewById(R.id.pbVoteCount);
@@ -526,7 +526,7 @@ public class PollAnalyticsActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 final boolean enabled = Boolean.valueOf(btnLeftPollAnalytics.getTag().toString());
-                if (enabled){
+                if (enabled) {
                     if (txtDetail3PollAnalytics.getVisibility() == View.VISIBLE) {
                         txtDetail3PollAnalytics.setVisibility(View.GONE);
                         txtDetail2PollAnalytics.setVisibility(View.VISIBLE);
@@ -546,7 +546,7 @@ public class PollAnalyticsActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 final boolean enabled = Boolean.valueOf(btnRightPollAnalytics.getTag().toString());
-                if (enabled){
+                if (enabled) {
                     if (txtDetail1PollAnalytics.getVisibility() == View.VISIBLE) {
                         txtDetail1PollAnalytics.setVisibility(View.GONE);
                         txtDetail2PollAnalytics.setVisibility(View.VISIBLE);
@@ -568,11 +568,11 @@ public class PollAnalyticsActivity extends AppCompatActivity {
                 View v;
                 String title;
                 final RadioButton selected = radioGroup.getSelectedItem();
-                if (selected == null){
-                    if (txtDetail1PollAnalytics.getVisibility() == View.VISIBLE){
+                if (selected == null) {
+                    if (txtDetail1PollAnalytics.getVisibility() == View.VISIBLE) {
                         v = createAccordingToAllGender(oyla);
                         title = "Detaylı Analiz - Cinsiyete Göre";
-                    } else if (txtDetail2PollAnalytics.getVisibility() == View.VISIBLE){
+                    } else if (txtDetail2PollAnalytics.getVisibility() == View.VISIBLE) {
                         v = createAccordingToAllAge(oyla);
                         title = "Detaylı Analiz - Yaşa Göre";
                     } else {
@@ -581,10 +581,10 @@ public class PollAnalyticsActivity extends AppCompatActivity {
                     }
                 } else {
                     final int optionId = (Integer) selected.getTag();
-                    if (txtDetail1PollAnalytics.getVisibility() == View.VISIBLE){
+                    if (txtDetail1PollAnalytics.getVisibility() == View.VISIBLE) {
                         v = createAccordingToGender(oyla, optionId);
                         title = "Detaylı Analiz - Cinsiyete Göre";
-                    } else if (txtDetail2PollAnalytics.getVisibility() == View.VISIBLE){
+                    } else if (txtDetail2PollAnalytics.getVisibility() == View.VISIBLE) {
                         v = createAccordingToAge(oyla, optionId);
                         title = "Detaylı Analiz - Yaşa Göre";
                     } else {
@@ -604,10 +604,11 @@ public class PollAnalyticsActivity extends AppCompatActivity {
                         .create();
 
                 dialog.show();
+                dialog.getWindow().setBackgroundDrawableResource(R.color.kulerColor2);
             }
         });
 
-        if (anonymous){
+        if (anonymous) {
             txtUserCannotSeeDetailedAnalysis.setVisibility(View.VISIBLE);
             btnDetailedAnalysisPollAnalytics.setEnabled(false);
         }

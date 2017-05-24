@@ -5,7 +5,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -40,28 +39,28 @@ public class PollListActivity extends AppCompatActivity {
 
     private LinearLayout llMainLayoutPollList;
     private TextView txtNoPollsFoundPollList;
-    private RecyclerView rvPollList;
+    private CustomRecyclerView rvPollList;
     private ProgressBar pbPollList;
 
-    private void showProgressPar(){
-        if (llMainLayoutPollList != null){
+    private void showProgressPar() {
+        if (llMainLayoutPollList != null) {
             llMainLayoutPollList.setVisibility(View.GONE);
         }
-        if (pbPollList != null){
+        if (pbPollList != null) {
             pbPollList.setVisibility(View.VISIBLE);
         }
     }
 
-    private void hideProgressPar(){
-        if (pbPollList != null){
+    private void hideProgressPar() {
+        if (pbPollList != null) {
             pbPollList.setVisibility(View.GONE);
         }
-        if (llMainLayoutPollList != null){
+        if (llMainLayoutPollList != null) {
             llMainLayoutPollList.setVisibility(View.VISIBLE);
         }
     }
 
-    private void sort(final OylaDatabase oyla){
+    private void sort(final OylaDatabase oyla) {
         final AsyncTask<FilterAndSortOptions, Integer, Boolean> task = new AsyncTask<FilterAndSortOptions, Integer, Boolean>() {
             @Override
             protected void onPreExecute() {
@@ -90,7 +89,7 @@ public class PollListActivity extends AppCompatActivity {
         task.execute();
     }
 
-    private void initializeGui(final OylaDatabase oyla){
+    private void initializeGui(final OylaDatabase oyla) {
         categories = Category.getCategories(this).get();
 
         final Bundle extras = getIntent().getExtras();
@@ -109,7 +108,7 @@ public class PollListActivity extends AppCompatActivity {
 
         llMainLayoutPollList = (LinearLayout) findViewById(R.id.llMainLayoutPollList);
         txtNoPollsFoundPollList = (TextView) findViewById(R.id.txtNoPollsFoundPollList);
-        rvPollList = (RecyclerView) findViewById(R.id.rvPollList);
+        rvPollList = (CustomRecyclerView) findViewById(R.id.rvPollList);
         pbPollList = (ProgressBar) findViewById(R.id.pbPollList);
 
         rvPollList.setLayoutManager(new LinearLayoutManager(this));
@@ -138,7 +137,8 @@ public class PollListActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onLongItemClick(View view, int position) {}
+            public void onLongItemClick(View view, int position) {
+            }
         }));
 
         pbPollList.setVisibility(View.GONE);
@@ -157,7 +157,7 @@ public class PollListActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.menuFilterAndSort){
+        if (item.getItemId() == R.id.menuFilterAndSort) {
             final Intent intent = new Intent(this, FilterSortActivity.class);
             intent.putExtra("filterSort", options);
             startActivityForResult(intent, FILTER_SORT);
@@ -168,7 +168,7 @@ public class PollListActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == RESULT_OK && requestCode == FILTER_SORT){
+        if (resultCode == RESULT_OK && requestCode == FILTER_SORT) {
             options = (FilterAndSortOptions) data.getExtras().getSerializable("filterSort");
             final OylaDatabase oyla = ((MyApplication) getApplication()).oyla();
             sort(oyla);

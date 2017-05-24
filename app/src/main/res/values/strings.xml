@@ -57,7 +57,8 @@
     <string name="hint_txtBirthDateRegister">Doğum Tarihi</string>
     <string name="text_filterOptionCity">Yaşadığı şehir: </string>
     <string name="text_btnChangePassword">Şifreyi Değiştir</string>
-    <string name="text_sortOptionSortOrder">Sıralama yönü: </string>
+    <string name="text_sortOptionSortOrder">Sıralama Yönü: </string>
+    <string name="text_filterOptionGender">Cinsiyete Göre: </string>
     <string name="hint_passwordNewAgain">Yeni Şifre (Tekrar)</string>
     <string name="text_accordingToCity">Yaşanılan Şehre Göre</string>
     <string name="text_filterOptions">Filtreleme Seçenekleri</string>
@@ -65,12 +66,13 @@
     <string name="text_btnShowStats">İstatistikleri Görüntüle</string>
     <string name="text_createPoll">Hemen bir anket oluşturun!</string>
     <string name="text_filterOptionAgeInterval">Yaş aralığı: </string>
+    <string name="text_filterOptionCategory">Kategoriye Göre: </string>
     <string name="text_sortOptionPollTitle">Anket sorusuna göre</string>
-    <string name="text_sortOptionAccordingTo">Şuna göre sırala: </string>
+    <string name="text_sortOptionAccordingTo">Sıralama Yöntemi: </string>
     <string name="text_sortOptionVoteCount">Oylanma sayısına göre</string>
     <string name="text_pollPublishDatePoll"> tarihinde yayınlandı.</string>
     <string name="text_userCannotVote">Bu anket sadece %s özeldir!</string>
-    <string name="text_filterOptionMultiple">Şu anketleri göster: </string>
+    <string name="text_filterOptionMultiple">Seçenek Türüne Göre: </string>
     <string name="text_sortOptionCategoryName">Kategori ismine göre</string>
     <string name="text_btnSignInAnonymously">Giriş yapmadan devam et</string>
     <string name="text_btnDetailedAnalysis">Detaylı Analizi Görüntüle</string>
@@ -82,8 +84,6 @@
     <string name="text_userAlreadyVoted">Bu anketi daha önce oylamışsınız!</string>
     <string name="text_accordingToUser">Anketi Yayınlayan Kullanıcıya Göre</string>
     <string name="text_filterOptionUser">Şu kişinin yayınladıklarını göster: </string>
-    <string name="text_filterOptionGender">Şu cinsiyete özel anketleri göster: </string>
-    <string name="text_filterOptionCategory">Şu kategorideki\nanketleri göster: </string>
     <string name="text_filterOptionMultipleNo">Yalnızca bir seçeneği oylanabilsin</string>
     <string name="text_filterOptionMultipleYes">Birden fazla seçeneği oylanabilsin</string>
     <string name="text_anonymousUserCannotVote">Anonim olarak giriş yaptığınız için\nbu anketi oylayamazsınız!</string>

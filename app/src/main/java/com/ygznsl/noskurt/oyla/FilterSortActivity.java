@@ -39,7 +39,7 @@ public class FilterSortActivity extends AppCompatActivity {
     private RadioButton radioAscendingFilterSort;
     private RadioButton radioDescendingFilterSort;
 
-    private void initializeGui(){
+    private void initializeGui() {
         final List<Category> categories = Category.getCategories(this).get();
         categories.add(0, Category.all());
 
@@ -65,7 +65,7 @@ public class FilterSortActivity extends AppCompatActivity {
         final CompoundButton.OnCheckedChangeListener listener = new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (!chkMultipleYesFilterSort.isChecked() && !chkMultipleNoFilterSort.isChecked()){
+                if (!chkMultipleYesFilterSort.isChecked() && !chkMultipleNoFilterSort.isChecked()) {
                     chkMultipleYesFilterSort.setChecked(true);
                     chkMultipleNoFilterSort.setChecked(true);
                 }
@@ -86,23 +86,35 @@ public class FilterSortActivity extends AppCompatActivity {
                 final FilterAndSortOptions.SortField sortField = in.getSortField();
                 final FilterAndSortOptions.SortOrder sortOrder = in.getSortOrder();
 
-                if (pollGender == FilterAndSortOptions.PollGender.GENDER_BOTH) radioGenderBothFilterSort.setChecked(true);
-                else if (pollGender == FilterAndSortOptions.PollGender.GENDER_FEMALE) radioGenderFemaleFilterSort.setChecked(true);
-                else if (pollGender == FilterAndSortOptions.PollGender.GENDER_MALE) radioGenderMaleFilterSort.setChecked(true);
+                if (pollGender == FilterAndSortOptions.PollGender.GENDER_BOTH)
+                    radioGenderBothFilterSort.setChecked(true);
+                else if (pollGender == FilterAndSortOptions.PollGender.GENDER_FEMALE)
+                    radioGenderFemaleFilterSort.setChecked(true);
+                else if (pollGender == FilterAndSortOptions.PollGender.GENDER_MALE)
+                    radioGenderMaleFilterSort.setChecked(true);
 
-                if (pollMultiple != FilterAndSortOptions.PollMultiple.BOTH){
-                    if (pollMultiple == FilterAndSortOptions.PollMultiple.YES) chkMultipleNoFilterSort.setChecked(false);
-                    else if (pollMultiple == FilterAndSortOptions.PollMultiple.NO) chkMultipleYesFilterSort.setChecked(false);
+                if (pollMultiple != FilterAndSortOptions.PollMultiple.BOTH) {
+                    if (pollMultiple == FilterAndSortOptions.PollMultiple.YES)
+                        chkMultipleNoFilterSort.setChecked(false);
+                    else if (pollMultiple == FilterAndSortOptions.PollMultiple.NO)
+                        chkMultipleYesFilterSort.setChecked(false);
                 }
 
-                if (sortField == FilterAndSortOptions.SortField.BY_TITLE) radioSortByPollTitleFilterSort.setChecked(true);
-                else if (sortField == FilterAndSortOptions.SortField.BY_CATEGORY_NAME) radioSortByCategoryNameFilterSort.setChecked(true);
-                else if (sortField == FilterAndSortOptions.SortField.BY_PUBLISH_DATE) radioSortByPublishDateFilterSort.setChecked(true);
-                else if (sortField == FilterAndSortOptions.SortField.BY_OPTION_COUNT) radioSortByOptionCountFilterSort.setChecked(true);
-                else if (sortField == FilterAndSortOptions.SortField.BY_VOTE_COUNT) radioSortByVoteCountFilterSort.setChecked(true);
+                if (sortField == FilterAndSortOptions.SortField.BY_TITLE)
+                    radioSortByPollTitleFilterSort.setChecked(true);
+                else if (sortField == FilterAndSortOptions.SortField.BY_CATEGORY_NAME)
+                    radioSortByCategoryNameFilterSort.setChecked(true);
+                else if (sortField == FilterAndSortOptions.SortField.BY_PUBLISH_DATE)
+                    radioSortByPublishDateFilterSort.setChecked(true);
+                else if (sortField == FilterAndSortOptions.SortField.BY_OPTION_COUNT)
+                    radioSortByOptionCountFilterSort.setChecked(true);
+                else if (sortField == FilterAndSortOptions.SortField.BY_VOTE_COUNT)
+                    radioSortByVoteCountFilterSort.setChecked(true);
 
-                if (sortOrder == FilterAndSortOptions.SortOrder.ASCENDING) radioAscendingFilterSort.setChecked(true);
-                else if (sortOrder == FilterAndSortOptions.SortOrder.DESCENDING) radioDescendingFilterSort.setChecked(true);
+                if (sortOrder == FilterAndSortOptions.SortOrder.ASCENDING)
+                    radioAscendingFilterSort.setChecked(true);
+                else if (sortOrder == FilterAndSortOptions.SortOrder.DESCENDING)
+                    radioDescendingFilterSort.setChecked(true);
             }
         });
 
@@ -123,23 +135,36 @@ public class FilterSortActivity extends AppCompatActivity {
                 final Category category = (Category) spinnerPollCategoryFilterSort.getSelectedItem();
                 if (category.getId() != -1) options.setPollCategory(category);
 
-                if (radioGenderFemaleFilterSort.isChecked()) options.setPollGender(FilterAndSortOptions.PollGender.GENDER_FEMALE);
-                else if (radioGenderMaleFilterSort.isChecked()) options.setPollGender(FilterAndSortOptions.PollGender.GENDER_MALE);
-                else if (radioGenderBothFilterSort.isChecked()) options.setPollGender(FilterAndSortOptions.PollGender.GENDER_BOTH);
+                if (radioGenderFemaleFilterSort.isChecked())
+                    options.setPollGender(FilterAndSortOptions.PollGender.GENDER_FEMALE);
+                else if (radioGenderMaleFilterSort.isChecked())
+                    options.setPollGender(FilterAndSortOptions.PollGender.GENDER_MALE);
+                else if (radioGenderBothFilterSort.isChecked())
+                    options.setPollGender(FilterAndSortOptions.PollGender.GENDER_BOTH);
 
-                if (chkMultipleYesFilterSort.isChecked() && chkMultipleNoFilterSort.isChecked()) options.setPollMultiple(FilterAndSortOptions.PollMultiple.BOTH);
-                else if (chkMultipleYesFilterSort.isChecked()) options.setPollMultiple(FilterAndSortOptions.PollMultiple.YES);
-                else if (chkMultipleNoFilterSort.isChecked()) options.setPollMultiple(FilterAndSortOptions.PollMultiple.NO);
+                if (chkMultipleYesFilterSort.isChecked() && chkMultipleNoFilterSort.isChecked())
+                    options.setPollMultiple(FilterAndSortOptions.PollMultiple.BOTH);
+                else if (chkMultipleYesFilterSort.isChecked())
+                    options.setPollMultiple(FilterAndSortOptions.PollMultiple.YES);
+                else if (chkMultipleNoFilterSort.isChecked())
+                    options.setPollMultiple(FilterAndSortOptions.PollMultiple.NO);
                 else options.setPollMultiple(FilterAndSortOptions.PollMultiple.BOTH);
 
-                if (radioSortByPollTitleFilterSort.isChecked()) options.setSortField(FilterAndSortOptions.SortField.BY_TITLE);
-                else if (radioSortByCategoryNameFilterSort.isChecked()) options.setSortField(FilterAndSortOptions.SortField.BY_CATEGORY_NAME);
-                else if (radioSortByPublishDateFilterSort.isChecked()) options.setSortField(FilterAndSortOptions.SortField.BY_PUBLISH_DATE);
-                else if (radioSortByOptionCountFilterSort.isChecked()) options.setSortField(FilterAndSortOptions.SortField.BY_OPTION_COUNT);
-                else if (radioSortByVoteCountFilterSort.isChecked()) options.setSortField(FilterAndSortOptions.SortField.BY_VOTE_COUNT);
+                if (radioSortByPollTitleFilterSort.isChecked())
+                    options.setSortField(FilterAndSortOptions.SortField.BY_TITLE);
+                else if (radioSortByCategoryNameFilterSort.isChecked())
+                    options.setSortField(FilterAndSortOptions.SortField.BY_CATEGORY_NAME);
+                else if (radioSortByPublishDateFilterSort.isChecked())
+                    options.setSortField(FilterAndSortOptions.SortField.BY_PUBLISH_DATE);
+                else if (radioSortByOptionCountFilterSort.isChecked())
+                    options.setSortField(FilterAndSortOptions.SortField.BY_OPTION_COUNT);
+                else if (radioSortByVoteCountFilterSort.isChecked())
+                    options.setSortField(FilterAndSortOptions.SortField.BY_VOTE_COUNT);
 
-                if (radioAscendingFilterSort.isChecked()) options.setSortOrder(FilterAndSortOptions.SortOrder.ASCENDING);
-                else if (radioDescendingFilterSort.isChecked()) options.setSortOrder(FilterAndSortOptions.SortOrder.DESCENDING);
+                if (radioAscendingFilterSort.isChecked())
+                    options.setSortOrder(FilterAndSortOptions.SortOrder.ASCENDING);
+                else if (radioDescendingFilterSort.isChecked())
+                    options.setSortOrder(FilterAndSortOptions.SortOrder.DESCENDING);
 
                 final Intent intent = new Intent();
                 intent.putExtra("filterSort", options);

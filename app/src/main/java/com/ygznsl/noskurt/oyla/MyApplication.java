@@ -12,7 +12,7 @@ public final class MyApplication extends Application {
 
     private final OylaDatabase OYLA = new OylaDatabase();
 
-    public static synchronized void setIconBar(AppCompatActivity activity){
+    public static synchronized void setIconBar(AppCompatActivity activity) {
         new Nullable<>(activity.getSupportActionBar()).operate(new Consumer<ActionBar>() {
             @Override
             public void accept(ActionBar in) {

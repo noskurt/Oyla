@@ -45,14 +45,6 @@
                 android:textSize="10pt"
                 android:textStyle="bold" />
 
-            <!--<TextView-->
-            <!--android:id="@+id/txtPollOptionsPollView"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_below="@+id/txtPollTitlePollView"-->
-            <!--android:textColor="@color/kulerColor2"-->
-            <!--android:textSize="10pt" />-->
-
         </RelativeLayout>
 
         <LinearLayout
