@@ -49,8 +49,8 @@ public class CreatePollActivity extends AppCompatActivity {
 
     private final List<EditText> pollOptions = Collections.synchronizedList(new LinkedList<EditText>());
     private final Locale locale = new Locale("tr", "TR");
-    private List<Category> categories;
     private boolean guiInitialized = false;
+    private List<Category> categories;
     private int maxOptionId;
     private int maxPollId;
     private User user;
@@ -79,8 +79,7 @@ public class CreatePollActivity extends AppCompatActivity {
             }
         });
 
-        final Bundle extras = getIntent().getExtras();
-        user = (User) extras.getSerializable("user");
+        user = (User) getIntent().getExtras().getSerializable("user");
 
         maxPollId = Entity.maxId(Entity.map(oyla.getPolls(), new Function<Poll, Integer>() {
             @Override

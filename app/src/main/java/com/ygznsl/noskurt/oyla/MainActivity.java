@@ -451,7 +451,7 @@ public class MainActivity extends AppCompatActivity implements Serializable, Vie
             final AlertDialog.Builder builder = new AlertDialog.Builder(this)
                     .setTitle("Çıkış Yapıyorsunuz!")
                     .setMessage("Çıkış yapmak istediğinize emin misiniz?")
-                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    .setPositiveButton("Evet", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             try {
                                 auth.signOut();
@@ -463,7 +463,7 @@ public class MainActivity extends AppCompatActivity implements Serializable, Vie
                             }
                         }
                     })
-                    .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                    .setNegativeButton("Hayır", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.dismiss();
                         }

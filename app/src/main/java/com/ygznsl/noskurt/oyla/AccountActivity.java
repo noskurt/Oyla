@@ -304,6 +304,7 @@ public class AccountActivity extends AppCompatActivity {
                 @Override
                 public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
                     if (databaseError == null) {
+                        btnUpdateAccount.setEnabled(false);
                         Toast.makeText(AccountActivity.this, "Tercihler başarıyla güncellendi.", Toast.LENGTH_LONG).show();
                     } else {
                         Toast.makeText(AccountActivity.this, "Tercihler güncellenemedi:\r\n" + databaseError.getMessage(), Toast.LENGTH_LONG).show();
