@@ -60,6 +60,8 @@ public class MainActivity extends AppCompatActivity implements Serializable, Vie
     private transient ProgressBar pbRandomPollMain;
     private transient TextView txtUserNameMain;
     private transient TextView txtPollCountMain;
+    private transient TextView txtUserCannotCreatePollMain;
+    private transient TextView txtCreatePollMain;
     private transient TextView txtPollTitleMain;
     private transient TextView txtPollPublishDateMain;
     private transient TextView txtPollCategoryMain;
@@ -342,6 +344,8 @@ public class MainActivity extends AppCompatActivity implements Serializable, Vie
         llRandomPollMain = (RelativeLayout) findViewById(R.id.llRandomPollMain);
         txtUserNameMain = (TextView) findViewById(R.id.txtUserNameMain);
         txtPollCountMain = (TextView) findViewById(R.id.txtPollCountMain);
+        txtUserCannotCreatePollMain = (TextView) findViewById(R.id.txtUserCannotCreatePollMain);
+        txtCreatePollMain = (TextView) findViewById(R.id.txtCreatePollMain);
         txtPollTitleMain = (TextView) findViewById(R.id.txtPollTitleMain);
         txtPollPublishDateMain = (TextView) findViewById(R.id.txtPollPublishDateMain);
         txtPollCategoryMain = (TextView) findViewById(R.id.txtPollCategoryMain);
@@ -389,6 +393,8 @@ public class MainActivity extends AppCompatActivity implements Serializable, Vie
             txtUserNameMain.setText(getString(R.string.text_anonymousUser));
             txtUserNameMain.setVisibility(View.VISIBLE);
             pbUserNameMain.setVisibility(View.GONE);
+            txtUserCannotCreatePollMain.setVisibility(View.VISIBLE);
+            txtCreatePollMain.setVisibility(View.GONE);
             btnCreatePollMain.setEnabled(false);
             btnAccountMain.setEnabled(false);
         }

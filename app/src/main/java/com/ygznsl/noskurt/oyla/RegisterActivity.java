@@ -300,6 +300,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     private void logIn(){
         final Intent intent = new Intent(this, MainActivity.class);
+        intent.putExtra("anonymous", false);
         startActivity(intent);
         finish();
     }

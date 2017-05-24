@@ -84,6 +84,7 @@
     <string name="text_userAlreadyVoted">Bu anketi daha önce oylamışsınız!</string>
     <string name="text_accordingToUser">Anketi Yayınlayan Kullanıcıya Göre</string>
     <string name="text_filterOptionUser">Şu kişinin yayınladıklarını göster: </string>
+    <string name="text_userCannotCreatePoll">Anket oluşturmak için giriş yapın</string>
     <string name="text_filterOptionMultipleNo">Yalnızca bir seçeneği oylanabilsin</string>
     <string name="text_filterOptionMultipleYes">Birden fazla seçeneği oylanabilsin</string>
     <string name="text_anonymousUserCannotVote">Anonim olarak giriş yaptığınız için\nbu anketi oylayamazsınız!</string>
